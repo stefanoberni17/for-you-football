@@ -2,6 +2,57 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-12 — Ritocchi dalla prova da ragazzo nuovo (review da sales manager)
+
+Prova completa sul Preview con un account finto (registrazione, introduzione, prova con la carta di test, Giorno 1, Corpo, test, prima settimana). Sistemati i punti di sola presentazione; restano da decidere con Ste la carta prima del Giorno 1 e l'ordine obiettivi → test nel Corpo.
+- **Prezzi**: un pacchetto con le iscrizioni chiuse (anche come cambio, per chi è già abbonato) ha «In arrivo» sulla scheda (al posto di «Il più completo» e «Lancio») e va sotto quelli che si possono comprare. Prima il Completo era il primo in alto e si scopriva «Avvisami quando apre» solo dopo averlo scelto.
+- **Palestra in prova**: al posto di «Il percorso completo · Sblocca» c'è «In prova fino al 19 novembre 2026» (→ Account). Chi aveva appena messo la carta pensava di non aver comprato niente.
+- **Pagina della pratica**: prima della pratica il bottone accanto a «Inizia» è un discreto «Salta la pratica» (prima un secondo «Continua» grande, tre bottoni insieme); «Leggi i passi prima di iniziare» ha la freccia e si vede che si apre.
+- **La prova con la carta detta prima** (Ste: «inserisci la tua carta per attivare l'abbonamento, prova per 7 giorni, se non sei contento puoi disdire»): nell'introduzione, sotto «Si parte dalla Settimana 1», la card «Prima del Giorno 1 attivi la prova» (solo a chi la prova la deve ancora attivare); in cima alla pagina prezzi «Inserisci la carta per attivare l'abbonamento: i primi 7 giorni sono gratis. Se non ti convince, disdici entro i 7 giorni e non paghi niente». Sulla pagina di Stripe il testo nostro non si può mettere: provato il 12/11, `custom_text` con Managed Payments è rifiutato (aggiunto a `VIETATI_MANAGED_PAYMENTS`); Stripe mostra già da solo «7 giorni gratis, quindi … al mese a partire dal …».
+- **Corpo, prima gli obiettivi** (Ste: ok): senza obiettivi né attrezzi il primo passo nell'hub è «Il tuo setup · 2 minuti» (non più «Fai i test»); salvato il primo setup l'hub torna su Oggi con i test per i suoi obiettivi.
+- **Nomi**: «Testa e corpo, per calciatori» in login, registrazione e introduzione (prima «Allenamento mentale per calciatori», ma l'app ha anche il Corpo); «Entra» al posto di «Entra nel Campo»; tolta la domanda sullo sport in registrazione e in «Completa il profilo» (l'app è per calciatori, resta «calcio»); nell'Account compare solo a chi aveva scelto un altro sport.
+
+## 2026-11-11 — I test per i tuoi obiettivi, setup in un ordine nuovo (solo presentazione)
+
+Ste, 11/11: «non voglio stravolgere l'app: se il lavoro è grosso mettiamo solo le parti estetiche a posto». Proposta completa in `docs/test-batteria-revisione-2026-11.md` (domanda sul livello, test in seduta, massimali dalle serie, fascia per la pliometria, pesi): non ancora nel codice.
+- `lib/testPerObiettivi.ts` (puro, 6 test): dagli obiettivi del setup i test da fare prima (sempre piegamenti e squat; gambe → bridge e affondi; parte alta → pull-up se c'è la sbarra e plank; salti → equilibrio e domande della fascia, salto in lungo; prevenzione → la fascia; velocità → 50 m; resistenza → navetta in stagione, 1 km fuori; tecnica → palleggi e muro; «Tutto» → la forza a corpo libero e i palleggi), con i minuti a casa e in campo.
+- **Hub**: «Fai i test · Prima di tutto · 5 test · ~13' a casa + 15' in campo» e i nomi dei test, al posto di «mezz'ora» per 47 test e «Serve la sbarra per le trazioni».
+- **Pagina dei test**: in cima «Per i tuoi obiettivi» con quei test (tocco → il test aperto), poi «Tutti i test» con tutti i blocchi di prima. Il «prossimo test» viene prima da lì. Nessun test tolto.
+- **Setup**: prima «Su cosa vuoi lavorare», poi «Dove e con cosa» divisa in «Dove ti alleni?» (palestra, campo) e «Che attrezzi hai?» (gli altri), poi stagione, infortuni e limitazioni, quando, il tuo corpo, la squadra. Stessi dati salvati.
+
+## 2026-11-11 — Gate storico, Carta Mente, esercizi ripetuti nella seduta
+
+Revisione di Ste dell'11/11, punti 5-7.
+- **Gate già passato** (`components/RispostaGateStorica.tsx`, usato nella pagina del Gate e in «Le tue risposte»): con la domanda certa domanda e risposta stanno insieme come prima. Con la domanda incerta (o di una versione precedente) la risposta sta in un riquadro a sé, «La tua risposta 2 · 4 novembre 2026», con la spiegazione sotto («Dopo la tua risposta il testo di questa domanda è stato cambiato…»); la domanda di oggi è un approfondimento chiuso («La domanda 2 com'è scritta oggi»). Prima la domanda di oggi stava sopra la vecchia risposta e sembravano legate.
+- **Carta, vista Mente**: via «Scala 0-100: 40 = intermedio · 60 = avanzato · 80 = PRO» (si leggeva come un livello della persona); al suo posto «Quello che hai fatto nelle ultime 4 settimane… Non è un voto su di te». Per ogni punta il valore misurato in evidenza (72 %, 6/10) con «in salita / stabile / in calo», non il punteggio. Corpo e A 360° restano con la scala.
+- **Seduta**: lo stesso esercizio scritto due volte di fila con la stessa dose (Everfit salva serie per serie, con il recupero più lungo dopo l'ultima) si legge come una riga sola, «Big Toe and Toes Alternating · 2 × 120" per lato · recupero 45"» (e «(3' dopo l'ultima)» quando il recupero finale è diverso). Solo nella lista: piano e player non cambiano, i recuperi restano quelli di Ste. Il numero degli esercizi e la numerazione contano le righe che si vedono.
+- **Serie facoltative**: la spiegazione comune (dal resoconto) compare una volta in cima («Serie in più, se vuoi (5 esercizi): …»), sugli esercizi resta solo il richiamo «Serie in più, se vuoi»; con il riquadro «Dal tuo resoconto» già presente non si ripete.
+
+## 2026-11-11 — La pratica mentale parte in un tocco
+
+Revisione di Ste dell'11/11, punto 3. Il percorso era Apertura → Continua → istruzioni lunghe → «Inizia la pratica» → le stesse istruzioni nel pannello → «Inizia la pratica». Ora sulla schermata della pratica ci sono i due avvii: «Inizia con l'audio · N min» (con l'audio della pratica) e «Inizia leggendo i passi»; senza audio un solo «Inizia la pratica · N min». Il tocco apre direttamente la pratica in corso (passi, cerchio del respiro, tempo), senza il foglio di preparazione. Il testo completo resta sopra, chiuso («Leggi la pratica prima di iniziare»). L'audio è un elemento della pagina fatto partire dentro il tocco (iPhone suona solo nel gesto) e passato a `PracticePopup` (`avvio`, `audioElement`); se il telefono non lo fa partire si va col timer con «Audio non disponibile». Le giornate (Reset breve) restano come sono.
+
+## 2026-11-11 — Il piano: una riga attuale per seduta spostata, la storia sotto
+
+Revisione di Ste dell'11/11, punto 2. La seduta stava giovedì, il testo del preparatore diceva venerdì e «Ho sistemato» mostrava venerdì → giovedì → martedì → giovedì.
+- `lib/spostamenti.ts`: la riga attuale dice dove è la seduta, dove era prevista e PERCHÉ ha lasciato quel giorno (il primo spostamento che il ragazzo ha visto, non l'ultimo rimbalzo): «È giovedì. Era prevista venerdì: spostata il 9/11 perché il venerdì ora è il giorno prima della partita.» (`origineSpostamento`, `notaSpostamento`); niente riga se la seduta è tornata al giorno di partenza.
+- `conSpostamentiDedotti`: i piani salvati prima del 10/11 non hanno `spostamenti`, la storia c'era solo nelle righe di «Ho sistemato»: `/api/training/state` la ricostruisce seguendo i passaggi in ordine (copia, niente scritture). Così anche il piano di Ste del 9/11 ha la riga attuale e la cronologia, e le righe degli spostamenti escono da «Ho sistemato».
+- Hub, scheda Settimana: «Spostata, era venerdì» sotto la seduta; nel riquadro prima le sedute spostate («Giovedì, era venerdì · …») con «Com'è cambiata la settimana» chiusa sotto; il messaggio del preparatore, se dopo sono cambiate delle sedute, si apre a parte («La proposta del preparatore del lunedì 9/11, scritta prima degli spostamenti»).
+- Pagina seduta: in cima la riga attuale; la spiegazione del preparatore sotto, chiusa («Cosa aveva scritto il preparatore, prima dello spostamento»).
+
+## 2026-11-11 — Squadra e partita: «i miei giorni abituali» o «niente squadra»
+
+Revisione di Ste dell'11/11, punto 1. Nel foglio «Squadra e partita» togliendo tutti i giorni compariva «Nessuno scelto: vale il tuo setup del Corpo (…)», ma una settimana salvata vuota vuol dire davvero niente squadra (dal 10/11): chi voleva dire «questa settimana la squadra non si allena» leggeva il contrario. Ora, quando il setup ha i giorni abituali, sotto ogni griglia ci sono due scelte esplicite: «I miei giorni abituali (Lunedì, Martedì, Giovedì)» riempie la griglia, «Niente squadra questa settimana» la svuota (lo stesso per la partita); la riga sotto dice quello che si salva («Questa settimana nessun allenamento con la squadra», «I tuoi giorni abituali», «3 allenamenti con la squadra»).
+
+## 2026-11-11 — La pagina di vendita: le quattro scene sui problemi principali
+
+Ste: «più efficaci in base ai problemi principali che possono avere i calciatori». `MOMENTI_CONOSCI` in `lib/scopri.ts`, una scena per problema: l'errore (il pallone semplice e i dieci minuti senza chiederlo), il giudizio del mister («Esco io»), la sera prima della partita che conta, la panchina («quando finalmente entri, non sei più tu»). Fonti nel commento: le paure scelte in registrazione dai ragazzi iscritti (errore e giudizio le prime due), i tre dolori del Brief Landing Page su Notion, gli studi sugli stressor dei giovani calciatori. Tolte la scena del nascondersi (dentro la prima) e «Potevo fare molto di più». Disegno nuovo `Panchina` in `components/scopri/Disegni.tsx`; il fischietto passa alla scena del mister.
+
+## 2026-11-11 — La pagina di vendita: cerchi disegnati, Under 18 di Serie C
+
+- I cerchi delle storie senza le foto di Ste (Ste: «nei cerchietti delle storie solo stilizzazioni, se no stonano»): «Dove ti porta» ha una bussola, «La mia storia» il pallone dei disegni della pagina, come le icone di Testa e Corpo. Le foto restano dentro la storia, nella griglia e nel profilo.
+- Storia: «al camp con la Nazionale Under 18 di Serie C».
+
 ## 2026-11-11 — La pagina di vendita resta spenta in produzione
 
 Ste: l'app va online, la pagina di vendita aspetta altre modifiche. `SCOPRI_ONLINE` in `lib/constants.ts` (`NEXT_PUBLIC_SCOPRI_ONLINE=1`): spento, in produzione `/scopri` risponde 404 e chi apre il sito senza essere entrato va al login come prima; nei Preview e in locale la pagina si apre lo stesso. Si accende mettendo la variabile su Vercel (Production) e rifacendo il deploy.

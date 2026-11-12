@@ -11,7 +11,7 @@ import { APERTURA_IDS, STATI_FASCIA, ZONE_FASCIA, tipoFeedbackBlocco, type Stato
 import TrainingSessionPlayer, { type PlayerProgress, type SetLogInput } from '@/components/TrainingSessionPlayer';
 import { isPausaTraSerie } from '@/lib/trainingResistenza';
 import { esercizioAny, unitaItem, unitaLabel } from '@/lib/trainingExercise';
-import { AlertTriangle, Calendar, Check, Info, Pause, Play, ShieldAlert, Wind } from 'lucide-react';
+import { AlertTriangle, Calendar, CalendarClock, Check, Info, Pause, Play, ShieldAlert, Wind } from 'lucide-react';
 import { useMeditation } from '@/components/MeditationContext';
 import { hasActiveAccess } from '@/lib/checkAccess';
 import { notaSpostamento, type Spostamento } from '@/lib/spostamenti';
@@ -302,15 +302,41 @@ export default function SessionePage() {
 
   // Preview seduta: header → avvisi → esercizi per blocco → CTA sticky in fondo
   const num = 'font-semibold tabular-nums';
-  const nEsercizi = sessione.items.filter((it) => esercizioAny(it.esercizio_id)).length;
   // Esercizi raggruppati per blocco (ordine del piano); senza blocco → gruppo "Esercizi"
-  const gruppi: { id: string; nome: string; durataMin?: number; items: { it: PlanItem; i: number }[] }[] = [];
+  // 11/11 (revisione di Ste, punto 7): lo stesso esercizio scritto due volte di fila con la stessa dose (Everfit lo salva
+  // serie per serie, con un recupero più lungo dopo l'ultima) si legge come UNA riga: «2 × 120" · recupero 45"». Solo nella
+  // lista: il piano e il player restano come sono, con i loro recuperi.
+  const stessaRiga = (a: PlanItem, b: PlanItem) => a.esercizio_id === b.esercizio_id && a.quantita === b.quantita
+    && (a.carico_kg ?? null) === (b.carico_kg ?? null) && !!a.per_lato === !!b.per_lato && a.schema !== 'emom' && b.schema !== 'emom'
+    && !a.test_in_seduta && !b.test_in_seduta && !a.lato_extra && !b.lato_extra && a.facoltativo === b.facoltativo
+    && a.adattamento === b.adattamento && (a.nota ?? '') === (b.nota ?? '') && !isPausaTraSerie(a.esercizio_id);
+  const gruppi: { id: string; nome: string; durataMin?: number; items: { it: PlanItem; i: number; serie?: number; recDopo?: number }[] }[] = [];
   sessione.items.forEach((it, i) => {
     const last = gruppi[gruppi.length - 1];
+    const prima = last?.items[last.items.length - 1];
+    if (last && last.id === (it.blocco_id ?? '') && prima && stessaRiga(prima.it, it)) {
+      prima.serie = (prima.serie ?? prima.it.serie) + it.serie;
+      prima.recDopo = it.recupero_sec;
+      return;
+    }
     if (last && last.id === (it.blocco_id ?? '')) { last.items.push({ it, i }); return; }
     const b = it.blocco_id ? sessione.blocchi?.find((x) => x.id === it.blocco_id) : undefined;
     gruppi.push({ id: it.blocco_id ?? '', nome: b ? nomeBloccoAtleta(b.nome) : 'Esercizi', durataMin: b?.durataMin, items: [{ it, i }] });
   });
+  // Numero della riga come si vede (dopo il raggruppamento) e quante righe in tutto
+  const numeroRiga = new Map<number, number>();
+  gruppi.forEach((g) => g.items.forEach((x) => { if (esercizioAny(x.it.esercizio_id)) numeroRiga.set(x.i, numeroRiga.size + 1); }));
+  const righeVisibili = numeroRiga.size;
+  // Le serie facoltative con la stessa spiegazione (dal resoconto): la spiegazione una volta, sugli esercizi solo il richiamo
+  const contaFacoltativi = new Map<string, { chiave: string; tipo: 'togli' | 'aggiungi'; motivo?: string; n: number }>();
+  for (const it of gruppi.flatMap((g) => g.items.map((x) => x.it))) {
+    if (!it.facoltativo) continue;
+    const chiave = `${it.facoltativo}|${it.facoltativo_motivo ?? ''}`;
+    const c = contaFacoltativi.get(chiave) ?? { chiave, tipo: it.facoltativo, motivo: it.facoltativo_motivo, n: 0 };
+    c.n++; contaFacoltativi.set(chiave, c);
+  }
+  const facoltativiComuni = [...contaFacoltativi.values()].filter((c) => c.n >= 2);
+  const facoltativiSpiegati = new Set(facoltativiComuni.map((c) => c.chiave));
   const spiegazioneLunga = (sessione.spiegazione?.length ?? 0) > 160;
   const bloccata = painHold && isFisica;
 
@@ -319,7 +345,7 @@ export default function SessionePage() {
       <div className="max-w-md mx-auto">
         <Testata indietro={{ onClick: () => router.push('/allenamento'), label: 'Allenamento' }}
           sopra={`${DAY_NAMES[giorno]} · ${TIPO_LABEL[sessione.tipo] ?? 'Seduta'}`} titolo={sessione.titolo} className="mb-1" />
-        <p className="text-body-sm text-muted tabular-nums mb-3">~{durataLabel(sessione.durata_min)} · {nEsercizi} esercizi{sessione.apertura_min ? ` · +${sessione.apertura_min}' di apertura, se hai tempo` : ''}</p>
+        <p className="text-body-sm text-muted tabular-nums mb-3">~{durataLabel(sessione.durata_min)} · {righeVisibili} esercizi{sessione.apertura_min ? ` · +${sessione.apertura_min}' di apertura, se hai tempo` : ''}</p>
         {!!sessione.proposte?.length && (
           <Card variant="accent" padding="sm" className="mb-4">
             <p className="text-label font-semibold text-forest-300 mb-1">Dal tuo resoconto</p>
@@ -328,11 +354,22 @@ export default function SessionePage() {
             </ul>
           </Card>
         )}
-        {/* Spostata (10/11): la nota sta sopra la spiegazione del preparatore, che resta com'è stata scritta */}
-        {notaSpostamento(sessione) && (
-          <p className="text-body-sm text-warning leading-snug mb-2">{notaSpostamento(sessione)}</p>
-        )}
-        {sessione.spiegazione && (
+        {/* Spostata (11/11): in primo piano dove è e perché; la spiegazione del preparatore resta com'è stata scritta,
+            sotto e chiusa, perché può nominare il giorno di prima */}
+        {notaSpostamento(sessione) ? (
+          <>
+            <p className="text-body text-app leading-snug mb-2 flex gap-2">
+              <CalendarClock size={18} className="text-forest-400 shrink-0 mt-0.5" aria-hidden />
+              <span>{notaSpostamento(sessione)}</span>
+            </p>
+            {sessione.spiegazione && (
+              <details className="mb-5">
+                <summary className="text-body-sm text-muted cursor-pointer tap flex items-center">Cosa aveva scritto il preparatore, prima dello spostamento</summary>
+                <p className="mt-1 text-body-sm text-muted leading-relaxed">{sessione.spiegazione}</p>
+              </details>
+            )}
+          </>
+        ) : sessione.spiegazione && (
           <div className="mb-5">
             <p className={`text-body text-muted leading-relaxed ${spiegazioneOpen ? '' : 'line-clamp-3'}`}>{sessione.spiegazione}</p>
             {spiegazioneLunga && !spiegazioneOpen && (
@@ -406,12 +443,22 @@ export default function SessionePage() {
           </Card>
         )}
 
+        {facoltativiComuni.length > 0 && !sessione.proposte?.length && (
+          <Card variant="accent" padding="sm" className="mb-3">
+            {facoltativiComuni.map((f) => (
+              <p key={f.chiave} className="text-body-sm text-app leading-snug">
+                <span className="font-semibold">{f.tipo === 'togli' ? 'Facoltativi' : 'Serie in più, se vuoi'}</span>
+                {` (${f.n} esercizi): `}{f.tipo === 'togli' ? 'puoi saltarli' : 'se te la senti, una serie in più'}{f.motivo ? `, ${f.motivo}` : ''}.
+              </p>
+            ))}
+          </Card>
+        )}
         <div className="space-y-3">
           {gruppi.map((g) => (
             <Card key={`${g.id}-${g.items[0].i}`} padding="sm">
               <SectionTitle as="h2" title={g.nome} subtitle={`${APERTURA_IDS.has(g.id) ? 'facoltativa, se hai tempo · ' : ''}${g.items.length} esercizi${g.durataMin ? ` · ~${g.durataMin}'` : ''}`} className="px-1 mb-1" />
               <div className="divide-y divide-divider">
-                {g.items.map(({ it, i }) => {
+                {g.items.map(({ it, i, serie: serieRiga, recDopo }) => {
                   const ex = esercizioAny(it.esercizio_id);
                   if (!ex) return null;
                   const isOpen = descOpen === i;
@@ -420,7 +467,7 @@ export default function SessionePage() {
                   return (
                     <div key={i} className="py-3 px-1">
                       <div className="flex items-start gap-3">
-                        <span className="w-7 h-7 rounded-lg bg-surface-2 text-muted text-caption font-bold flex items-center justify-center shrink-0 tabular-nums mt-0.5">{i + 1}</span>
+                        <span className="w-7 h-7 rounded-lg bg-surface-2 text-muted text-caption font-bold flex items-center justify-center shrink-0 tabular-nums mt-0.5">{numeroRiga.get(i) ?? i + 1}</span>
                         <div className="flex-1 min-w-0">
                           <p className="text-body font-semibold text-app leading-snug">{ex.nome}</p>
                           <p className="text-body-sm text-muted tabular-nums">
@@ -431,16 +478,20 @@ export default function SessionePage() {
                               : it.schema === 'emom'
                               ? <>EMOM · <span className={num}>{it.serie}</span> {it.serie === 1 ? 'giro' : 'giri'} · <span className={num}>{unitaLabel(unita, it.quantita)}</span> al minuto, poi riposo fino allo scadere</>
                               : <>
-                                  <span className={num}>{it.serie} × {unitaLabel(unita, it.quantita)}</span>
+                                  <span className={num}>{serieRiga ?? it.serie} × {unitaLabel(unita, it.quantita)}</span>
                                   {it.carico_kg ? <> · <span className={num}>{it.carico_kg} kg</span></> : null}
                                   {it.per_lato ? ' per lato' : ex.perLato ? ' (dx+sx)' : ''}
                                   {' · recupero '}<span className={num}>{it.recupero_sec}&quot;</span>
+                                  {recDopo != null && recDopo > 0 && recDopo !== it.recupero_sec ? <> ({recDopo}&quot; dopo l&apos;ultima)</> : null}
                                 </>}
                           </p>
                           {it.facoltativo && (
                             <div className="mt-1.5 flex items-start gap-2">
-                              <Badge tone={it.facoltativo === 'togli' ? 'warn' : 'accent'} className="shrink-0 mt-0.5">{it.facoltativo === 'togli' ? 'Facoltativo' : 'Serie in più'}</Badge>
-                              <p className="text-body-sm text-app leading-snug">{it.facoltativo === 'togli' ? 'Puoi saltarlo' : 'Se te la senti, una serie in più'}{it.facoltativo_motivo ? ` (${it.facoltativo_motivo})` : ''}.</p>
+                              <Badge tone={it.facoltativo === 'togli' ? 'warn' : 'accent'} className="shrink-0 mt-0.5">{it.facoltativo === 'togli' ? 'Facoltativo' : 'Serie in più, se vuoi'}</Badge>
+                              {/* La spiegazione comune sta una volta sola in cima (11/11); qui solo se è diversa */}
+                              {!facoltativiSpiegati.has(`${it.facoltativo}|${it.facoltativo_motivo ?? ''}`) && (
+                                <p className="text-body-sm text-app leading-snug">{it.facoltativo === 'togli' ? 'Puoi saltarlo' : 'Se te la senti, una serie in più'}{it.facoltativo_motivo ? ` (${it.facoltativo_motivo})` : ''}.</p>
+                              )}
                             </div>
                           )}
                           {it.nota && (

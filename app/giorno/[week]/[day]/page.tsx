@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { authFetch } from '@/lib/authFetch';
 import { cachedJson } from '@/lib/clientCache';
 import { useParams, useRouter } from 'next/navigation';
@@ -19,7 +19,7 @@ import { DAY_COMPLETED_KEY } from '@/components/MeditationPopup';
 import { requestTelegramLinkUrl } from '@/lib/telegramLink';
 import { trackOnboarding } from '@/lib/onboardingTrack';
 import { hasActiveAccess } from '@/lib/checkAccess';
-import { ArrowUp, Calendar, Check, ChevronLeft, ChevronRight, Clock, Dumbbell, Lightbulb, PenLine, Play, RotateCcw, Sun } from 'lucide-react';
+import { ArrowUp, Calendar, Check, ChevronLeft, ChevronRight, Clock, Dumbbell, Headphones, Lightbulb, PenLine, Play, RotateCcw, Sun } from 'lucide-react';
 import { AppLoader, Button, Card, Field, SectionTitle, Testata, Textarea } from '@/components/ui';
 
 export default function GiornoPage() {
@@ -49,6 +49,9 @@ export default function GiornoPage() {
   // Slide state
   const [currentSlide, setCurrentSlide] = useState(1);
   const [showPracticePopup, setShowPracticePopup] = useState(false);
+  // Avvio diretto della pratica (11/11): audio o testo scelto qui, il popup si apre sulla pratica in corso
+  const [avvioPratica, setAvvioPratica] = useState<'audio' | 'testo' | undefined>(undefined);
+  const audioPraticaRef = useRef<HTMLAudioElement | null>(null);
   // Pratica guidata completata in QUESTA sessione: finché non lo è, "Continua" resta secondario
   // (un solo primario per schermata: "Inizia la pratica").
   const [practiceDone, setPracticeDone] = useState(false);
@@ -210,6 +213,14 @@ export default function GiornoPage() {
   // o "Vai senza Reset"): niente "Continua" verso la domanda, niente "Ho fatto" senza avvio.
   // (Ste, 20/9: "deve iniziare da quando conclude la prima parte della pratica, quindi prima della riflessione")
   const giornataDaAvviare = giorno?.tipoPratica === 'giornata' && !completed && !started;
+
+  // L'audio parte DENTRO il tocco (iPhone): poi il popup si apre già sulla pratica in corso
+  const avvia = (modo: 'audio' | 'testo') => {
+    const a = audioPraticaRef.current;
+    if (modo === 'audio' && a) { try { a.currentTime = 0; } catch { /* metadati non ancora arrivati */ } a.play().catch(() => {}); }
+    setAvvioPratica(modo);
+    setShowPracticePopup(true);
+  };
 
   const totalSlides = slides.length;
   const effectiveSlide = jumpToReflection ? totalSlides : currentSlide;
@@ -566,9 +577,19 @@ export default function GiornoPage() {
               <p className="text-caption text-muted line-clamp-2 mb-3">Hai scritto: {prePraticaResponse}</p>
             )}
 
-            <p className="text-app text-body-lg leading-relaxed whitespace-pre-line">
-              {giorno.pratica}
-            </p>
+            {hasPracticeTimer && giorno.tipoPratica !== 'giornata' ? (
+              <details>
+                <summary className="text-body text-muted cursor-pointer tap flex items-center gap-1.5 list-none [&::-webkit-details-marker]:hidden">
+                  <ChevronRight size={18} className="shrink-0 transition-transform [details[open]_&]:rotate-90" aria-hidden />
+                  Leggi i passi prima di iniziare
+                </summary>
+                <p className="mt-2 text-app text-body-lg leading-relaxed whitespace-pre-line">{giorno.pratica}</p>
+              </details>
+            ) : (
+              <p className="text-app text-body-lg leading-relaxed whitespace-pre-line">
+                {giorno.pratica}
+              </p>
+            )}
 
             {/* Le risposte chiave richiamate dal testo ("le trovi qui sotto"): i giorni di W11 (lib/risposteChiave.ts) e i riquadri della Carta che Notion chiede con "Mostra Carta" (26/10) */}
             <RisposteChiaveBox week={weekNumber} day={dayNumber} mostraCarta={giorno.mostraCarta} className="mt-4" />
@@ -590,30 +611,31 @@ export default function GiornoPage() {
                 <p className="text-body-sm text-forest-300 flex items-center gap-2"><Sun size={16} aria-hidden /> Giornata avviata{riflessioneAlle && !riflessioneOk ? ` · la riflessione si apre alle ${riflessioneAlle}` : ''}</p>
               </Card>
             )}
-            {/* UN solo primario: la pratica guidata (non per le giornate: il loro Reset breve è sopra) */}
+            {/* UN solo primario: la pratica guidata (non per le giornate: il loro Reset breve è sopra). Dall'11/11 la scelta
+                fra audio e testo sta qui e porta dritto alla pratica in corso (prima: «Inizia la pratica», poi lo stesso
+                testo e lo stesso bottone nel pannello). Il testo completo resta sopra, chiuso, come approfondimento. */}
             {hasPracticeTimer && giorno.tipoPratica !== 'giornata' && (
               completed ? (
-                <Button
-                  variant="secondary"
-                  fullWidth
-                  className="mt-5"
-                  icon={<RotateCcw size={18} aria-hidden />}
-                  onClick={() => setShowPracticePopup(true)}
-                >
+                <Button variant="secondary" fullWidth className="mt-5" icon={<RotateCcw size={18} aria-hidden />} onClick={() => avvia('testo')}>
                   Rifai la pratica
                 </Button>
+              ) : giorno.audioUrl ? (
+                <div className="mt-5 flex flex-col gap-2">
+                  <Button variant="hero" size="lg" fullWidth icon={<Headphones size={20} aria-hidden />} onClick={() => avvia('audio')}>
+                    Inizia con l&apos;audio · {giorno.durataMinuti} min
+                  </Button>
+                  <Button variant="secondary" fullWidth icon={<Play size={18} aria-hidden />} onClick={() => avvia('testo')}>
+                    Inizia leggendo i passi
+                  </Button>
+                </div>
               ) : (
-                <Button
-                  variant="hero"
-                  size="lg"
-                  fullWidth
-                  className="mt-5"
-                  icon={<Play size={20} aria-hidden />}
-                  onClick={() => setShowPracticePopup(true)}
-                >
-                  Inizia la pratica
+                <Button variant="hero" size="lg" fullWidth className="mt-5" icon={<Play size={20} aria-hidden />} onClick={() => avvia('testo')}>
+                  Inizia la pratica · {giorno.durataMinuti} min
                 </Button>
               )
+            )}
+            {giorno.audioUrl && hasPracticeTimer && giorno.tipoPratica !== 'giornata' && (
+              <audio ref={audioPraticaRef} src={giorno.audioUrl} preload="metadata" />
             )}
 
             {/* Nota in campo: dopo il contenuto, mai prima */}
@@ -777,14 +799,16 @@ export default function GiornoPage() {
               </Button>
             )}
 
+            {/* Prima della pratica (review 12/11): niente secondo bottone grande accanto ai due «Inizia», solo un
+                «Salta la pratica» discreto; dopo la pratica torna «Continua» */}
             {!isLastSlide && !(giornataDaAvviare && currentSlideData?.type === 'pratica') && (
               <Button
-                variant={continueIsSecondary ? 'secondary' : 'primary'}
+                variant={continueIsSecondary ? 'ghost' : 'primary'}
                 className="flex-1"
-                iconRight={<ChevronRight size={18} aria-hidden />}
+                iconRight={continueIsSecondary ? undefined : <ChevronRight size={18} aria-hidden />}
                 onClick={() => setCurrentSlide(s => s + 1)}
               >
-                Continua
+                {continueIsSecondary ? 'Salta la pratica' : 'Continua'}
               </Button>
             )}
 
@@ -860,14 +884,18 @@ export default function GiornoPage() {
           durataEspira={giorno.durataEspira || undefined}
           tipoPratica={giorno.tipoPratica || 'respirazione'}
           audioUrl={giorno.audioUrl || undefined}
+          avvio={avvioPratica}
+          audioElement={avvioPratica ? audioPraticaRef.current : undefined}
           onComplete={() => {
             setShowPracticePopup(false);
+            setAvvioPratica(undefined);
             setPracticeDone(true);
             // Giornata: la parte iniziale finisce qui → avvio segnato, schermata di uscita
             if (giorno.tipoPratica === 'giornata' && !completed) { avviaGiornata(); setJustStarted(true); }
           }}
           onSkip={() => {
             setShowPracticePopup(false);
+            setAvvioPratica(undefined);
             // "Vai senza Reset" dal popup: la parte iniziale finisce comunque qui
             if (giorno.tipoPratica === 'giornata' && !completed) { avviaGiornata(); setJustStarted(true); }
           }}

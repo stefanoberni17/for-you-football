@@ -11,6 +11,7 @@ import { gruppoLontano } from '@/lib/trainingRitest';
 import TestIstruzioni from '@/components/TestIstruzioni';
 import { AppLoader, Badge, Button, Card, CardPlay, Chip, Input } from '@/components/ui';
 import { PalestraTestata } from '@/components/ParteSwitch';
+import { inCampo, minutiTest, minutiTesto, testPerObiettivi } from '@/lib/testPerObiettivi';
 
 interface TestInfo {
   id: string; nome: string; unita: string; protocollo: string;
@@ -101,6 +102,8 @@ export default function BatteriaTest() {
   // Ri-test integrato (26/10): cosa sta dentro le sedute questa settimana, e perché resistenza e velocità sono chiuse
   const [ritest, setRitest] = useState<{ settimanaRitest: boolean; inSeduta: { giorno: number; id: string; nome: string; tipo: string }[]; inAttesa: { id: string; nome: string }[]; lontano: Record<string, { ok: boolean; motivi: string[] }>; proposte: { giorno: number; tests: { id: string; nome: string }[] }[] } | null>(null);
   const [pesoCorporeo, setPesoCorporeo] = useState<number | null>(null);
+  // I test per i suoi obiettivi (11/11): stanno in cima, il resto della batteria sotto «Tutti i test»
+  const [profiloTest, setProfiloTest] = useState<{ focus: string[]; attrezzatura: string[]; fase: string | null }>({ focus: [], attrezzatura: [], fase: null });
   const [v2Current, setV2Current] = useState<string | null>(null); // test v2 aperto
   const [liftPeso, setLiftPeso] = useState('');
   const [liftReps, setLiftReps] = useState('');
@@ -131,6 +134,7 @@ export default function BatteriaTest() {
       setTestsV2(data.testsV2 || []);
       setRitest(data.ritest ?? null);
       setPesoCorporeo(data.setup?.pesoKg ?? null);
+      setProfiloTest({ focus: data.setup?.focus ?? [], attrezzatura: data.setup?.attrezzatura ?? [], fase: data.setup?.fase ?? null });
       romboBaseRef.current = data.romboBase || [];
     }
     setLoading(false);
@@ -261,15 +265,20 @@ export default function BatteriaTest() {
   const totaleFatti = fatti + testsV2.filter((t) => t.done).length;
   const totaleTest = tests.length + testsV2.length;
 
-  // Il prossimo test = il primo non fatto nell'ordine della batteria (v1 → v2 → AMRAP)
-  const candidati: { id: string; nome: string; blocco: number; categoria: string; kind: 'v1' | 'v2' | 'amrap' }[] = [
+  // Il prossimo test = il primo non fatto tra quelli dei suoi obiettivi, poi nell'ordine della batteria (v1 → v2 → AMRAP)
+  const tuttiCandidati: { id: string; nome: string; blocco: number; categoria: string; kind: 'v1' | 'v2' | 'amrap'; done: boolean }[] = [
     ...forzaV1.map((t) => ({ id: t.id, nome: t.nome, blocco: 1, categoria: 'Forza a corpo libero', kind: 'v1' as const, done: t.done })),
     ...tecnicaV1.map((t) => ({ id: t.id, nome: t.nome, blocco: 3, categoria: 'Tecnica con la palla', kind: 'v1' as const, done: t.done })),
     ...fasciaV1.map((t) => ({ id: t.id, nome: t.nome, blocco: 4, categoria: 'Fascia e piede', kind: 'v1' as const, done: t.done })),
     ...v2Cats.flatMap((cat, ci) => testsV2.filter((t) => t.categoria === cat).map((t) => ({ id: t.id, nome: t.nome, blocco: nBase + ci + 1, categoria: t.categoriaLabel, kind: 'v2' as const, done: t.done }))),
     ...(amrapTest ? [{ id: amrapTest.id, nome: amrapTest.nome, blocco: nAmrap, categoria: 'Il test finale', kind: 'amrap' as const, done: amrapTest.done }] : []),
-  ].filter((c) => !c.done);
+  ];
+  const idObiettivi = testPerObiettivi(profiloTest);
+  const perObiettivi = idObiettivi.map((id) => tuttiCandidati.find((c) => c.id === id)).filter((c): c is (typeof tuttiCandidati)[number] => !!c);
+  const candidati = [...perObiettivi, ...tuttiCandidati.filter((c) => !idObiettivi.includes(c.id))].filter((c) => !c.done);
   const prossimo = candidati[0] ?? null;
+  const obiettiviDaFare = perObiettivi.filter((c) => !c.done);
+  const minutiObiettivi = minutiTesto(minutiTest(obiettiviDaFare.map((c) => c.id)));
 
   const isOpen = (n: number) => openBlocks.has(n) || (openBlocks.size === 0 && prossimo?.blocco === n);
   const toggleBlocco = (n: number) => setOpenBlocks((prev) => {
@@ -284,14 +293,15 @@ export default function BatteriaTest() {
     setValore(t.lastValue != null && !t.lift ? String(t.lastValue) : '');
     setLiftPeso(t.dettaglio?.peso != null ? String(t.dettaglio.peso) : ''); setLiftReps(t.dettaglio?.reps != null ? String(t.dettaglio.reps) : '');
   };
-  const vaiAlProssimo = () => {
-    if (!prossimo) return;
-    setOpenBlocks(new Set([prossimo.blocco]));
-    if (prossimo.kind === 'v1') { const t = tests.find((x) => x.id === prossimo.id); if (t) apriV1(t); }
-    else if (prossimo.kind === 'v2') { const t = testsV2.find((x) => x.id === prossimo.id); if (t) apriV2(t); }
+  const vaiAlTest = (c: { id: string; blocco: number; kind: 'v1' | 'v2' | 'amrap' } | null) => {
+    if (!c) return;
+    setOpenBlocks(new Set([c.blocco]));
+    if (c.kind === 'v1') { const t = tests.find((x) => x.id === c.id); if (t) apriV1(t); }
+    else if (c.kind === 'v2') { const t = testsV2.find((x) => x.id === c.id); if (t) apriV2(t); }
     else { setCurrent('test-amrap'); setSkillCurrent(null); setV2Current(null); setValore(''); }
-    setTimeout(() => document.getElementById(`blocco-${prossimo.blocco}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
+    setTimeout(() => document.getElementById(`blocco-${c.blocco}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 50);
   };
+  const vaiAlProssimo = () => vaiAlTest(prossimo);
 
   const cardV1 = (t: TestInfo) => {
     const aperto = current === t.id;
@@ -346,6 +356,29 @@ export default function BatteriaTest() {
           </Card>
         )}
         <p className="mb-5 px-1 text-body-sm text-muted">Uno alla volta, anche in giorni diversi.</p>
+
+        {/* I test per i suoi obiettivi (11/11): i primi da fare; gli altri restano tutti sotto */}
+        {perObiettivi.length > 0 && (
+          <section className="mb-6">
+            <div className="flex items-baseline justify-between gap-3 mb-2 px-1">
+              <h2 className="text-title-3 font-bold text-app">Per i tuoi obiettivi</h2>
+              <span className="text-body-sm text-muted shrink-0">{obiettiviDaFare.length === 0 ? 'fatti' : minutiObiettivi}</span>
+            </div>
+            <div className="rounded-[20px] bg-surface divide-y divide-divider">
+              {perObiettivi.map((c) => (
+                <button key={c.id} type="button" onClick={() => vaiAlTest(c)} className="w-full min-h-[56px] flex items-center justify-between gap-3 px-4 py-2 text-left">
+                  <span className="min-w-0">
+                    <span className="block text-body font-semibold text-app">{c.nome}</span>
+                    <span className="block text-caption text-muted">{c.categoria}{inCampo(c.id) ? ' · in campo' : ''}</span>
+                  </span>
+                  {c.done ? <Badge tone="success">Fatto</Badge> : <ChevronRight size={18} className="text-muted shrink-0" aria-hidden />}
+                </button>
+              ))}
+            </div>
+            <p className="mt-2 px-1 text-body-sm text-muted">Scelti dagli obiettivi del tuo setup. Gli altri test servono a rendere il piano più preciso: falli quando vuoi.</p>
+          </section>
+        )}
+        <h2 className="mb-2 px-1 text-title-3 font-bold text-app">Tutti i test</h2>
 
         {/* Ri-test integrato (26/10): le serie test della settimana stanno dentro le sedute */}
         {ritest?.settimanaRitest && (ritest.inSeduta.length > 0 || ritest.proposte.length > 0) && (

@@ -13,9 +13,10 @@ import {
 } from '@/lib/palestraCatalog';
 import { useMeditation } from '@/components/MeditationContext';
 import { PalestraTestata, salvaCorpoAperto } from '@/components/ParteSwitch';
-import { livelloFisico, hasActiveAccess } from '@/lib/checkAccess';
+import { livelloFisico, hasActiveAccess, inProva } from '@/lib/checkAccess';
+import { dataLunga } from '@/lib/abbonamento';
 import PracticePopup from '@/components/PracticePopup';
-import { Play, Wind, Lock, Wrench, Eye, Ear, Shield, Waves, Flame, Backpack, Sparkles } from 'lucide-react';
+import { Check, Play, Wind, Lock, Wrench, Eye, Ear, Shield, Waves, Flame, Backpack, Sparkles } from 'lucide-react';
 import { AppLoader, Card, CardPlay, Elenco, GrigliaRiquadri, RigaElenco, Riquadro, Testata, TitoloGruppo } from '@/components/ui';
 
 /** Esercizio + capacità di appartenenza (per il "Riprendi" e per il player). */
@@ -121,6 +122,7 @@ export default function StrumentiPage() {
   const [showToolPractice, setShowToolPractice] = useState(false);
   const [trainingAccess, setTrainingAccess] = useState(false);
   const [mentaleAttivo, setMentaleAttivo] = useState(true); // Mente, Completo, beta o Season 1: altrimenti la card "Sblocca il Mente"
+  const [provaFino, setProvaFino] = useState<string | null>(null); // in prova (review 12/11): niente «Sblocca», la data di fine prova
   const [conFisico, setConFisico] = useState(false); // ha il Fisico da pacchetto: la card propone il Completo
 
   useEffect(() => {
@@ -140,6 +142,7 @@ export default function StrumentiPage() {
       // Il Campo: acceso a mano o con un pacchetto con il Fisico (3/11); il Mente: con il Mente o il Completo
       setTrainingAccess(!!livelloFisico(profile));
       setMentaleAttivo(hasActiveAccess(profile));
+      setProvaFino(inProva(profile) ? (dataLunga((profile as { trial_ends_at?: string | null } | null)?.trial_ends_at ?? null)?.toLowerCase() ?? 'la fine della settimana') : null);
       setConFisico(!!livelloFisico(profile) && !(profile as { training_access?: boolean } | null)?.training_access);
       salvaCorpoAperto(!!livelloFisico(profile));
       setLastId(readLast());
@@ -307,7 +310,12 @@ export default function StrumentiPage() {
         </GrigliaRiquadri>
 
         {/* Per chi non ha il Mente: la parte bloccata (la Carta è nel Profilo dall'8/11) */}
-        {!mentaleAttivo && (
+        {!mentaleAttivo && provaFino && (
+          <Elenco className="mt-3">
+            <RigaElenco href="/account" icona={<Check />} tono="verde" titolo={`In prova fino al ${provaFino}`} valore="Dettagli" />
+          </Elenco>
+        )}
+        {!mentaleAttivo && !provaFino && (
           <Elenco className="mt-3">
             <RigaElenco href={conFisico ? '/pricing?pacchetto=completo' : '/pricing?pacchetto=mentale'} icona={<Lock />} tono="verde"
               titolo={conFisico ? 'Aggiungi la testa: il Completo' : 'Il percorso completo'} valore="Sblocca" evidenza />

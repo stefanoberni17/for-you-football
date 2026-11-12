@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { authFetch } from '@/lib/authFetch';
-import { MIN_AGE, PLAYER_LEVELS, SPORTS, SPORT_ROLES } from '@/lib/constants';
+import { MIN_AGE, PLAYER_LEVELS, SPORT_ROLES } from '@/lib/constants';
 import { BETA_CODE_KEY } from '@/components/GoogleButton';
 import { Ticket } from 'lucide-react';
 import { AppLoader, Button, Card, Chip, Field, Input, Select, Textarea } from '@/components/ui';
@@ -30,7 +30,7 @@ export default function CompletaProfiloPage() {
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [healthAccepted, setHealthAccepted] = useState(false);
-  const [sport, setSport] = useState('calcio');
+  const [sport] = useState('calcio'); // dal 12/11 niente domanda: calciatori
   const [selectedRoles, setSelectedRoles] = useState<string[]>([]);
   const [level, setLevel] = useState('');
   const [situazione, setSituazione] = useState('');
@@ -137,10 +137,6 @@ export default function CompletaProfiloPage() {
             <div className="border-t border-divider pt-4">
               <h2 className="font-display text-title-3 font-bold text-app">Raccontaci di te</h2>
               <p className="text-body-sm text-muted mt-0.5 mb-3">Queste info rendono il percorso più tuo. Puoi completarle anche dopo da Profilo → Account.</p>
-              <p className="text-label font-semibold text-app mb-2">Che sport pratichi?</p>
-              <div className="flex flex-wrap gap-2 mb-4" role="group" aria-label="Sport">
-                {SPORTS.map((s) => <Chip key={s.value} selected={sport === s.value} onClick={() => { setSport(s.value); setSelectedRoles([]); }} icon={<span aria-hidden>{s.icon}</span>}>{s.label}</Chip>)}
-              </div>
               {(SPORT_ROLES[sport]?.length ?? 0) > 0 && (
                 <>
                   <p className="text-label font-semibold text-app mb-2">Che ruolo hai? <span className="text-muted font-normal">(anche più di uno)</span></p>

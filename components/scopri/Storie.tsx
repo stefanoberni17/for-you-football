@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import Link from 'next/link';
-import { ArrowRight, Bell, ChevronLeft, ChevronRight, Pause, Play, X } from 'lucide-react';
+import { ArrowRight, Bell, ChevronLeft, ChevronRight, Compass, Pause, Play, X } from 'lucide-react';
+import { Pallone } from '@/components/scopri/Disegni';
 import { bloccaScroll } from '@/lib/scrollLock';
 import IconaCorpo, { IconaMente } from '@/components/ui/IconaCorpo';
 import {
@@ -28,7 +29,7 @@ export type Schermata = {
   schermo?: { src: string; alt: string };
   stile?: 'citazione' | 'grande' | 'normale';
 };
-export type Gruppo = { id: string; nome: string; copertina: { src?: string; testo?: string; icona?: 'mente' | 'corpo' }; schermate: Schermata[]; fine: 'prova' | 'avviso' };
+export type Gruppo = { id: string; nome: string; copertina: { src?: string; testo?: string; icona?: 'mente' | 'corpo' | 'storia' | 'dove' }; schermate: Schermata[]; fine: 'prova' | 'avviso' };
 
 function daMomenti(momenti: MomentoApp[], parte: string): Schermata[] {
   return momenti.map((m, i) => ({
@@ -44,7 +45,7 @@ const maiuscola = (t: string) => t.charAt(0).toUpperCase() + t.slice(1);
 
 export const GRUPPI: Gruppo[] = [
   {
-    id: 'storia', nome: 'La mia storia', copertina: { src: STORIA.capitoli[0].foto?.src }, fine: 'prova',
+    id: 'storia', nome: 'La mia storia', copertina: { icona: 'storia' }, fine: 'prova',
     schermate: [
       { testo: STORIA.presentazione.testo, sotto: STORIA.presentazione.sotto, foto: STORIA.fotoCitazione, stile: 'citazione' },
       { testo: STORIA.citazione, sotto: STORIA.intro, stile: 'grande' },
@@ -55,7 +56,7 @@ export const GRUPPI: Gruppo[] = [
   { id: 'testa', nome: 'La Testa', copertina: { icona: 'mente' }, fine: 'prova', schermate: daMomenti(MOMENTI_TESTA, 'La Testa') },
   { id: 'fisico', nome: 'Il Corpo', copertina: { icona: 'corpo' }, fine: 'avviso', schermate: daMomenti(MOMENTI_FISICO, 'Il Corpo') },
   {
-    id: 'dove', nome: 'Dove ti porta', copertina: { src: '/scopri/storia/colpo-di-testa.webp' }, fine: 'prova',
+    id: 'dove', nome: 'Dove ti porta', copertina: { icona: 'dove' }, fine: 'prova',
     schermate: [
       { titolo: DOVE_PORTA.titolo, testo: DOVE_PORTA.intro, stile: 'grande' },
       ...DOVE_PORTA.punti.map((p): Schermata => ({ testo: maiuscola(p).replace(/;$/, '.'), stile: 'grande' })),
@@ -156,7 +157,12 @@ export function Cerchio({ gruppo, nome, sotto, grande = false, onClick, attivo }
     >
       <span className={`rounded-full p-[3px] transition-transform group-hover:scale-105 ${anello}`}>
         <span className="block rounded-full bg-app-bg p-[3px]">
-          {g.copertina.icona ? (
+          {g.copertina.icona === 'storia' || g.copertina.icona === 'dove' ? (
+            // 11/11, Ste: nei cerchi solo disegni, niente sue foto («stonano»)
+            <span className={`flex ${misura} items-center justify-center rounded-full bg-gradient-to-br from-forest-400 to-forest-700 text-white`}>
+              {g.copertina.icona === 'storia' ? <Pallone cuoio={false} className="h-[58%] w-[58%]" /> : <Compass className="h-[52%] w-[52%]" strokeWidth={1.8} aria-hidden />}
+            </span>
+          ) : g.copertina.icona ? (
             <IconaParte parte={g.copertina.icona} className={misura} />
           ) : g.copertina.src ? (
             // eslint-disable-next-line @next/next/no-img-element

@@ -367,6 +367,7 @@ export const VIETATI_MANAGED_PAYMENTS = [
   'saved_payment_method_options', 'customer_update', 'shipping_address_collection', 'shipping_options',
   'subscription_data.application_fee_percent', 'subscription_data.on_behalf_of', 'subscription_data.transfer_data',
   'subscription_data.invoice_settings',
+  'custom_text', // provato il 12/11: «You cannot use custom_text with Managed Payments»
 ] as const;
 
 /**

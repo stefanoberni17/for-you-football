@@ -12,6 +12,7 @@ import { chiaviPerGiorno } from '@/lib/risposteChiave';
 import { Check, Key, PenLine, Target } from 'lucide-react';
 import { AppLoader, Button, Card, Field, SectionTitle, Testata, Textarea } from '@/components/ui';
 import { dataLunga } from '@/lib/abbonamento';
+import RispostaGateStorica from '@/components/RispostaGateStorica';
 
 export default function GatePage() {
   const params = useParams();
@@ -26,6 +27,7 @@ export default function GatePage() {
   const [questions, setQuestions] = useState<string[]>([]);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   // Gate già passato (10/11): le risposte con la domanda a cui ha risposto davvero (o l'avviso), dal server
+  const [gateFattoIl, setGateFattoIl] = useState<string | null>(null);
   const [righe, setRighe] = useState<{ chiave: string; domanda: string | null; risposta: string; avviso?: string }[] | null>(null);
   const [completed, setCompleted] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -56,6 +58,7 @@ export default function GatePage() {
         startedAt: p.created_at || null,
       }));
 
+      setGateFattoIl(completedDays.find((d) => d.weekNumber === weekNumber && d.dayNumber === GATE_DAY)?.completedAt ?? null);
       if (!isDayUnlocked(weekNumber, GATE_DAY, completedDays)) {
         router.push(`/settimana/${weekNumber}`);
         return;
@@ -260,12 +263,8 @@ export default function GatePage() {
             subtitle={completed ? 'Le tue risposte' : `Rispondi a ${questions.length > 1 ? `tutte e ${questions.length}` : 'tutto'} per sbloccare la settimana successiva`}
           />
 
-          {completed && righe ? righe.map((r) => (
-            <div key={r.chiave} className="space-y-1.5">
-              {r.domanda && <p className="text-body font-medium leading-relaxed whitespace-pre-line text-app">{r.domanda}</p>}
-              {r.avviso && <p className="text-caption text-muted">{r.avviso}</p>}
-              <p className="text-body text-muted leading-relaxed whitespace-pre-line rounded-btn bg-surface-2 border border-divider px-3 py-2.5">{r.risposta}</p>
-            </div>
+          {completed && righe ? righe.map((r, i) => (
+            <RispostaGateStorica key={r.chiave} n={i + 1} domanda={r.domanda} risposta={r.risposta} avviso={r.avviso} data={gateFattoIl} />
           )) : null}
 
           {!(completed && righe) && questions.length === 0 && (

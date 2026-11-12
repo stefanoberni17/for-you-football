@@ -266,6 +266,14 @@ function PricingContent() {
 
   const etichettaPrezzo = (t: TipoPrezzo) => t === 'lancio' ? 'Prezzo di lancio' : t === 'codice' ? `Con il codice ${codice?.codice ?? ''}`.trim() : null;
 
+  /** Si può comprare adesso (review 12/11: un pacchetto con le iscrizioni chiuse va sotto, con «In arrivo»). */
+  const vendibileOra = (p: { id: Pacchetto; disponibile: boolean; puoAbbonarsi: boolean; motivo?: MotivoNo; cambio: { ok: boolean; motivo?: string } | null }) =>
+    attuale === p.id || (p.disponibile && (abbonato
+      ? !(p.cambio && !p.cambio.ok && p.cambio.motivo === 'iscrizioni_chiuse') // abbonato: chiuso solo se il cambio è chiuso per le iscrizioni
+      : p.puoAbbonarsi));
+
+  const giorniProva = abbonato ? 0 : Math.max(0, ...offerta.pacchetti.filter((p) => vendibileOra(p)).map((p) => p.provaGiorni ?? 0));
+
   /** Una scheda pacchetto: tap = la sceglie; la scelta mostra cosa include. */
   const scheda = (id: Pacchetto, extra?: React.ReactNode) => {
     const p = per.get(id);
@@ -282,8 +290,11 @@ function PricingContent() {
             <div className="flex items-center gap-2 flex-wrap">
               <span className="font-display text-title-3 font-bold text-app">{t.titolo}</span>
               {suo && <Badge tone="success">Il tuo</Badge>}
-              {!suo && id === 'completo' && <Badge tone="accent">Il più completo</Badge>}
-              {!suo && pr.tipo === 'lancio' && <Badge tone="info" icon={<Unlock size={12} aria-hidden />}>Lancio</Badge>}
+              {/* Iscrizioni chiuse (review 12/11): «In arrivo» sulla scheda, non dopo averla scelta */}
+              {!suo && !vendibileOra(p) ? <Badge tone="neutral">In arrivo</Badge> : <>
+                {!suo && id === 'completo' && <Badge tone="accent">Il più completo</Badge>}
+                {!suo && pr.tipo === 'lancio' && <Badge tone="info" icon={<Unlock size={12} aria-hidden />}>Lancio</Badge>}
+              </>}
             </div>
             <p className="text-body-sm text-muted mt-0.5">{t.sottotitolo}</p>
           </div>
@@ -339,6 +350,14 @@ function PricingContent() {
             <p className="text-body text-muted">La testa, il corpo, o tutti e due. Un prezzo al mese, disdici quando vuoi.</p>
           </div>
 
+          {/* La prova detta subito (review 12/11, Ste): la carta serve per attivare, i giorni gratis, la disdetta */}
+          {giorniProva > 0 && (
+            <Card variant="accent" padding="sm" className="text-body-sm text-app leading-relaxed">
+              Inserisci la carta per attivare l&apos;abbonamento: <span className="font-semibold">i primi {giorniProva} giorni sono gratis</span>.
+              Se non ti convince, disdici entro i {giorniProva} giorni e non paghi niente.
+            </Card>
+          )}
+
           {fromGate && (
             <Card variant="accent" padding="sm" className="flex items-start gap-3 text-body-sm text-app">
               <Key size={20} className="text-forest-400 shrink-0 mt-0.5" aria-hidden />
@@ -370,10 +389,8 @@ function PricingContent() {
             </Card>
           )}
 
-          <section className="space-y-3" aria-label="Pacchetti">
-            {scheda('completo')}
-            {scheda('mentale')}
-            {scheda(
+          <section className="flex flex-col gap-3" aria-label="Pacchetti">
+            {[{ id: 'completo' as Pacchetto, el: scheda('completo') }, { id: 'mentale' as Pacchetto, el: scheda('mentale') }, { id: PACCHETTO_FISICO[livello], el: scheda(
               PACCHETTO_FISICO[livello],
               (
                 <div className="flex gap-2 pt-1" role="radiogroup" aria-label="Livello del Fisico">
@@ -393,7 +410,11 @@ function PricingContent() {
                   })}
                 </div>
               ),
-            )}
+            ) }]
+              // Prima quelli che si possono comprare adesso, nello stesso ordine di prima
+              .map((x, i) => ({ ...x, i, ok: per.get(x.id) ? vendibileOra(per.get(x.id)!) : false }))
+              .sort((a, b) => Number(b.ok) - Number(a.ok) || a.i - b.i)
+              .map((x) => <div key={x.i}>{x.el}</div>)}
           </section>
 
           {scelto.startsWith('fisico_') || scelto === 'completo' ? (

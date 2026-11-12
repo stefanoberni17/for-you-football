@@ -25,7 +25,8 @@ import type { CampoOggi } from '@/lib/trainingOggi';
 import { dataDiGiorno, riassuntoResoconti, type Resoconto, type TipoResoconto } from '@/lib/trainingResoconto';
 import { focusLabel, statoSeduta, puoPosticipare, type FocusId, type RichiestaGuidata } from '@/lib/trainingRequest';
 import { nomeBloccoAtleta, durataLabel } from '@/lib/trainingLabels';
-import { dataConGiorno, isRigaSpostamento, riepilogoSpostamenti, seduteCambiateDopo, type Spostamento } from '@/lib/spostamenti';
+import { minutiTest, minutiTesto, testPerObiettivi } from '@/lib/testPerObiettivi';
+import { dataConGiorno, isRigaSpostamento, origineSpostamento, riepilogoSpostamenti, seduteCambiateDopo, type Spostamento } from '@/lib/spostamenti';
 import { CONSIGLIO_VISITA, PRESA_RESPONSABILITA, ZONE_DOLORE } from '@/lib/trainingDolore';
 import { AppLoader, Badge, Banner, Button, Card, CardPlay, Chip, Elenco, Field, RigaElenco, SectionTitle, Sheet, Textarea, TitoloGruppo } from '@/components/ui';
 import SetupCampo from '@/components/SetupCampo';
@@ -45,7 +46,7 @@ export interface TrainingState {
   rombo: RomboPoint[];
   romboBase?: RomboPoint[];
   tests: { id: string; nome: string; done: boolean; lastValue: number | null; lastLevel: string | null }[];
-  testsV2: { id: string; done: boolean }[];
+  testsV2: { id: string; nome?: string; done: boolean }[];
   plan: { id: string; week_start: string; plan: { sedute: PlanSession[]; messaggio?: string; nota?: string; violazioni?: string[]; aggiustamenti?: string[]; scritto_il?: string }; generato_da: string } | null;
   oggiDow: number;
   lunedi: string;
@@ -486,7 +487,7 @@ export default function AllenamentoHub() {
             )}
             {consensiErr && <p className="text-body-sm text-warning">{consensiErr}</p>}
             <Button size="lg" fullWidth disabled={!pronto} loading={consensiSending} onClick={() => inviaConsensi(docs)}>
-              Entra nel Campo
+              Entra
             </Button>
             <div>
               <p className="text-body-sm text-muted">Hai meno di 18 anni?</p>
@@ -511,7 +512,7 @@ export default function AllenamentoHub() {
   // Spostamenti (10/11): le righe che li ripetono escono da «Ho sistemato», il numero conta le righe che si vedono
   const spostamentiSett = riepilogoSpostamenti(sedute);
   const cambiateDopo = seduteCambiateDopo(sedute);
-  const altriAggiustamenti = (haPiano ? state.plan!.plan.aggiustamenti ?? [] : []).filter((a) => !(spostamentiSett.righe.length > 0 && isRigaSpostamento(a)));
+  const altriAggiustamenti = (haPiano ? state.plan!.plan.aggiustamenti ?? [] : []).filter((a) => !(spostamentiSett.storia.length > 0 && isRigaSpostamento(a)));
   const oggiDow = state.oggiDow || 1;
   const statoDi = (s: PlanSession) => statoSeduta(s.giorno, oggiDow, doneDays.has(s.giorno));
   // Prossima da fare: oggi, oppure quella di ieri ancora recuperabile, oppure la prima futura
@@ -543,10 +544,23 @@ export default function AllenamentoHub() {
   ) : null;
 
   // ── Pezzi riusati da più viste ─────────────────────────────────────────────
+  // Prima gli obiettivi, poi i test (review 12/11, Ste: ok): senza obiettivi né attrezzi il primo passo è il setup
+  const setupDaFare = (state.setup?.focus ?? []).length === 0 && (state.setup?.attrezzatura ?? []).length === 0;
+  const cardSetup = (
+    <div className="mb-5 space-y-2">
+      <CardPlay parte="corpo" onClick={() => cambiaVista('setup')} label="Fai il setup" icona={<Settings2 size={22} />}
+        sopra="Prima di tutto · 2 minuti" titolo="Il tuo setup" />
+      <p className="px-1 text-body-sm text-muted">Su cosa vuoi lavorare, dove ti alleni, la tua stagione. Da lì scegliamo i test che ti servono: niente test inutili.</p>
+    </div>
+  );
+  // I test per i suoi obiettivi (11/11): quanti e quanto tempo davvero, non più «mezz'ora» per 47 test
+  const idTestObiettivi = testPerObiettivi({ focus: state.setup?.focus ?? [], attrezzatura: state.setup?.attrezzatura ?? [], fase: state.setup?.fase ?? null });
+  const nomeTest = (id: string) => state.tests.find((t) => t.id === id)?.nome ?? (state.testsV2 || []).find((t) => t.id === id)?.nome ?? id;
   const cardTest = (
     <div className="mb-5 space-y-2">
-      <CardPlay parte="corpo" href="/allenamento/test" label="Fai i test" icona={<ClipboardList size={22} />} sopra="Prima di tutto · mezz'ora" titolo="Fai i test" />
-      <p className="px-1 text-body-sm text-muted">Da lì nascono la tua Card e la tua settimana. Serve la sbarra per le trazioni.</p>
+      <CardPlay parte="corpo" href="/allenamento/test" label="Fai i test" icona={<ClipboardList size={22} />}
+        sopra={`Prima di tutto · ${idTestObiettivi.length} test · ${minutiTesto(minutiTest(idTestObiettivi))}`} titolo="Fai i test" />
+      <p className="px-1 text-body-sm text-muted">Per i tuoi obiettivi: {idTestObiettivi.map(nomeTest).join(', ')}. Da lì nascono la tua Card e la tua settimana; gli altri test quando vuoi.</p>
     </div>
   );
 
@@ -572,7 +586,7 @@ export default function AllenamentoHub() {
 
   // ── Vista OGGI (9/11): la cosa di oggi, i resoconti e il dolore; il resto sta nelle altre schede ─────────
   const vistaOggi = () => {
-    if (batteriaVuota) return <>{cardResoconto}{cardTest}</>;
+    if (batteriaVuota) return <>{cardResoconto}{setupDaFare ? cardSetup : cardTest}</>;
     let hero: React.ReactNode;
     const proposteOggi = diOggi?.proposte ?? [];
     if (!haPiano) {
@@ -684,7 +698,7 @@ export default function AllenamentoHub() {
     : state.calendario!.trainingDays);
   const giorniPartita = new Set<number>(calendarioVuoto ? (state.partitaAbituale ? [state.partitaAbituale] : []) : state.calendario!.matchDays);
   const vistaSettimana = () => {
-    if (batteriaVuota) return <>{cardTest}</>;
+    if (batteriaVuota) return <>{setupDaFare ? cardSetup : cardTest}</>;
     const totale = sedute.reduce((a, s) => a + (s.durata_min || 0), 0);
     return (
       <>
@@ -744,7 +758,9 @@ export default function AllenamentoHub() {
                 const squadra = giorniSquadra.has(d);
                 const oggi = d === oggiDow;
                 const titolo = s ? s.titolo : partita ? 'Partita' : squadra ? 'Con la squadra' : 'Riposo';
+                const origine = s ? origineSpostamento(s) : null;
                 const sotto = [
+                  origine ? `Spostata, era ${DAY_NAMES_IT[origine.da].toLowerCase()}` : null,
                   s && partita ? 'Partita' : null,
                   s && squadra ? 'Squadra' : null,
                   s ? `~${durataLabel(s.durata_min)}` : null,
@@ -776,32 +792,13 @@ export default function AllenamentoHub() {
             {posticipoMsg && <p className="text-body-sm text-warning mb-3">{posticipoMsg}</p>}
 
             <Card padding="sm" className="mb-5">
-              {state.plan!.plan.messaggio && (
-                <div className="mb-3 flex gap-2">
-                  <MessageCircle size={16} className="text-forest-400 shrink-0 mt-0.5" aria-hidden />
-                  <div className="min-w-0">
-                    {/* Il testo del preparatore è un documento di quel giorno (10/11): non si riscrive, si data */}
-                    <p className="text-label font-semibold text-app mb-0.5">La proposta del preparatore{state.plan!.plan.scritto_il ? ` · ${dataConGiorno(state.plan!.plan.scritto_il)}` : ''}</p>
-                    {cambiateDopo > 0 && (
-                      <p className="text-body-sm text-warning mb-1">Da allora {cambiateDopo === 1 ? 'una seduta è cambiata' : `${cambiateDopo} sedute sono cambiate`}: il programma giusto è qui sopra.</p>
-                    )}
-                    <p className={`text-body-sm text-muted leading-relaxed ${msgAperto ? '' : 'line-clamp-3'}`}>{state.plan!.plan.messaggio}</p>
-                    <button type="button" onClick={() => setMsgAperto((v) => !v)} className="tap -ml-1 px-1 text-body-sm font-semibold text-forest-300">{msgAperto ? 'Meno' : 'Leggi tutto'}</button>
-                  </div>
-                </div>
-              )}
-            {state.plan!.plan.nota && (
-              <p className="text-body-sm text-muted leading-relaxed mb-3 flex gap-2">
-                <CalendarClock size={16} className="text-forest-400 shrink-0 mt-0.5" aria-hidden />
-                <span>{state.plan!.plan.nota}</span>
-              </p>
-            )}
-            {/* Sedute spostate (10/11): una riga per seduta, dal primo giorno all'ultimo; sotto la storia completa e datata */}
+            {/* 11/11 (Ste: «in primo piano una sola informazione attuale, la cronologia sotto»): prima dove sono le sedute
+                spostate e perché, poi la storia completa; il testo del preparatore resta com'è stato scritto, sotto */}
             {spostamentiSett.righe.length > 0 && (
               <div className="mb-3">
                 <p className="text-body-sm font-semibold text-app mb-1 flex items-center gap-2"><CalendarClock size={16} className="text-forest-400" aria-hidden /> {spostamentiSett.righe.length === 1 ? 'Una seduta spostata' : `${spostamentiSett.righe.length} sedute spostate`}</p>
                 <ul className="space-y-1">
-                  {spostamentiSett.righe.map((r, i) => <li key={i} className="text-body-sm text-muted leading-snug">· {r}</li>)}
+                  {spostamentiSett.righe.map((r, i) => <li key={i} className="text-body-sm text-app leading-snug">{r}</li>)}
                 </ul>
                 {spostamentiSett.storia.length > spostamentiSett.righe.length && (
                   <details className="mt-1">
@@ -812,6 +809,31 @@ export default function AllenamentoHub() {
                   </details>
                 )}
               </div>
+            )}
+              {state.plan!.plan.messaggio && (cambiateDopo > 0 ? (
+                <details className="mb-3">
+                  <summary className="text-body-sm text-muted cursor-pointer tap flex items-center gap-2">
+                    <MessageCircle size={16} className="text-forest-400 shrink-0" aria-hidden />
+                    La proposta del preparatore{state.plan!.plan.scritto_il ? ` del ${dataConGiorno(state.plan!.plan.scritto_il)}` : ''}, scritta prima degli spostamenti
+                  </summary>
+                  <p className="mt-1 text-body-sm text-muted leading-relaxed">{state.plan!.plan.messaggio}</p>
+                </details>
+              ) : (
+                <div className="mb-3 flex gap-2">
+                  <MessageCircle size={16} className="text-forest-400 shrink-0 mt-0.5" aria-hidden />
+                  <div className="min-w-0">
+                    {/* Il testo del preparatore è un documento di quel giorno (10/11): non si riscrive, si data */}
+                    <p className="text-label font-semibold text-app mb-0.5">La proposta del preparatore{state.plan!.plan.scritto_il ? ` · ${dataConGiorno(state.plan!.plan.scritto_il)}` : ''}</p>
+                    <p className={`text-body-sm text-muted leading-relaxed ${msgAperto ? '' : 'line-clamp-3'}`}>{state.plan!.plan.messaggio}</p>
+                    <button type="button" onClick={() => setMsgAperto((v) => !v)} className="tap -ml-1 px-1 text-body-sm font-semibold text-forest-300">{msgAperto ? 'Meno' : 'Leggi tutto'}</button>
+                  </div>
+                </div>
+              ))}
+            {state.plan!.plan.nota && (
+              <p className="text-body-sm text-muted leading-relaxed mb-3 flex gap-2">
+                <CalendarClock size={16} className="text-forest-400 shrink-0 mt-0.5" aria-hidden />
+                <span>{state.plan!.plan.nota}</span>
+              </p>
             )}
             {altriAggiustamenti.length > 0 && (
               <details className="mb-3">
@@ -1150,7 +1172,7 @@ export default function AllenamentoHub() {
         </div>
 
         {vista === 'oggi' ? vistaOggi() : vista === 'settimana' ? vistaSettimana() : vista === 'stats' ? vistaStats()
-          : <SetupCampo state={state} ricarica={load} conFascia={fasciaDaAggiungere} />}
+          : <SetupCampo state={state} ricarica={async () => { const primoSetup = setupDaFare && batteriaVuota; await load(); if (primoSetup) cambiaVista('oggi'); }} conFascia={fasciaDaAggiungere} />}
       </div>
 
       {/* Sheet "Hai un dolore?" — segnalazione strutturata (≥4/10 → pausa fisica) */}

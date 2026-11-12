@@ -35,12 +35,19 @@ export const APERTURA = {
   sotto: 'Allena la testa come alleni le gambe: pochi minuti al giorno per portare in partita il giocatore che sei in allenamento.',
 };
 
-/** Le scene. */
+/**
+ * Le scene (11/11, Ste: «più efficaci in base ai problemi principali dei calciatori»). Una per problema, in ordine di
+ * quanto pesa: la paura dell'errore e quello che fa dopo; il giudizio del mister; la pressione la sera prima; la panchina.
+ * Da dove: le paure scelte in registrazione dai ragazzi iscritti (errore 16, giudizio 9, pressione della partita 7,
+ * momento chiave 6, panchina 4), i «tre dolori» del Brief Landing Page su Notion (errore, pressione, panchina) e gli
+ * studi sugli stressor dei giovani calciatori (fare errori il più citato, poi critiche e selezione: Reeves 2009 e 2011;
+ * il sonno prima delle gare: Juliff 2015). Il disegno di ognuna sta in DISEGNI_SCENE nella pagina, stesso ordine.
+ */
 export const MOMENTI_CONOSCI: string[] = [
-  'Ti arriva un pallone semplice, e pensi già a non sbagliarlo.',
-  'Dopo un errore, invece di chiedere ancora palla, cominci a nasconderti.',
-  'La sera prima della partita la giochi dieci volte in testa.',
-  'Poi esci dal campo pensando: «Potevo fare molto di più».',
+  'Ti arriva un pallone semplice e pensi già a non sbagliarlo. Se lo sbagli, per dieci minuti non lo chiedi più.',
+  'Il mister si alza dalla panchina e tu pensi subito: «Esco io».',
+  'La sera prima della partita che conta la giochi dieci volte nel letto, invece di dormire.',
+  'Due partite in panchina e in allenamento ti spegni. Quando finalmente entri, non sei più tu.',
 ];
 export const CONOSCI_CHIUSURA = 'Il talento non c\'entra. Quello che manca è il modo di riportare la testa in campo... e si allena, come il piede debole.';
 
@@ -77,7 +84,7 @@ export const STORIA = {
   capitoli: [
     { testo: '17 anni, esordio in Serie C con la Reggiana. Avevo il terrore di sbagliare. Primo appoggio: palla corta, intercettata. Un passaggio fatto migliaia di volte.', foto: FOTO.reggiana },
     { testo: 'Da lì ho continuato a lottare su ogni pallone. Ma quando potevo ricevere, mi nascondevo. Per non rifare quell\'errore.', foto: FOTO.sguardo },
-    { testo: 'Evitavo le giocate semplici e cercavo quelle difficili: se sbagliavo lì, almeno ero giustificato. Anche al camp con la Nazionale Under 18 le qualità c\'erano, ma in partita la paura mi bloccava.', foto: FOTO.nazionale },
+    { testo: 'Evitavo le giocate semplici e cercavo quelle difficili: se sbagliavo lì, almeno ero giustificato. Anche al camp con la Nazionale Under 18 di Serie C le qualità c\'erano, ma in partita la paura mi bloccava.', foto: FOTO.nazionale },
     { testo: 'Senza accorgermene stavo smettendo di divertirmi. Ho iniziato a odiare ogni volta che andavo al campo.' },
     { testo: 'Per anni ho vomitato prima e durante le partite. Un anno dovevo uscire a fine primo tempo. Diete, nutrizionisti: niente. Poi uno psicologo. Lì è iniziato davvero il lavoro su di me.' },
     { testo: 'Anni dopo, al Modena. Poteva essere l\'anno buono. In preparazione mi faccio male in Coppa Italia. Ero così arrabbiato che non volevo parlare con nessuno.', foto: FOTO.modenaRitratto },

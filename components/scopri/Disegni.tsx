@@ -80,7 +80,7 @@ export function SeraPrima({ className, titolo }: P) {
   );
 }
 
-/** Il fischietto: il fischio finale. */
+/** Il fischietto: il mister (dall'11/11; prima il fischio finale). */
 export function Fischietto({ className, titolo }: P) {
   return (
     <Svg viewBox="0 0 120 80" className={className} titolo={titolo}>
@@ -91,6 +91,21 @@ export function Fischietto({ className, titolo }: P) {
       <circle cx="56" cy="52" r="8" strokeWidth="1.8" />
       <path d="M86 32V25M80 25H92" strokeWidth="2" />
       <path d="M102 30l8-5M103 40h9M102 50l8 5" strokeWidth="1.8" />
+    </Svg>
+  );
+}
+
+/** La panchina con la borraccia: «due partite in panchina e quando entri non sei più tu» (11/11). */
+export function Panchina({ className, titolo }: P) {
+  return (
+    <Svg viewBox="0 0 120 80" className={className} titolo={titolo}>
+      <path d="M14 30H106" strokeWidth="2.4" />
+      <path d="M22 30V46M98 30V46" strokeWidth="2.2" />
+      <path d="M10 46H110V52H10Z" fill="var(--scopri-cuoio)" strokeWidth="2.2" />
+      <path d="M18 52V70M102 52V70" strokeWidth="2.4" />
+      <path d="M70 32H80V46H70Z" fill="var(--scopri-cuoio)" fillOpacity=".7" strokeWidth="1.8" />
+      <path d="M72.5 32V28H77.5V32" strokeWidth="1.6" />
+      <path d="M6 74H114" strokeWidth="1.6" strokeDasharray="1 6" />
     </Svg>
   );
 }
