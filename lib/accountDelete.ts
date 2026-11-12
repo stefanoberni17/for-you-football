@@ -93,7 +93,7 @@ export async function riattivaAccount(userId: string): Promise<{ problemi: strin
       problemi.push(`rate Stripe non riprese (customer ${profile.stripe_customer_id}): ${msg.slice(0, 120)}`);
     }
   }
-  await telegramAlRagazzo(profile.telegram_id, 'Bentornato: il tuo account è di nuovo attivo, e qui ci sono. ⚽');
+  await telegramAlRagazzo(profile.telegram_id, 'Il tuo account è di nuovo attivo: riprendiamo da dove eri. ⚽');
   console.log(`account: riattivato ${userId}`);
   if (problemi.length) await notificaSte(`⚠️ ${profile.name || userId} ha riattivato l'account, ma:\n${problemi.join('\n')}`);
   return { problemi };

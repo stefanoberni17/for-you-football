@@ -39,6 +39,8 @@ export interface Mese {
   righe: RigaMese[];      // una per obiettivo (o per aspetto, con "Tutto")
   priorita: FocusId[];    // obiettivi riordinati per questa settimana (il primo resta primo)
   riordinato: boolean;    // true se l'ordine è cambiato rispetto al setup
+  /** Con "Tutto, in equilibrio": gli aspetti dai meno fatti nel mese ai più fatti (il piano base parte da qui). */
+  rotazione?: FocusId[];
   daChiedere: DomandaMese[];
 }
 
@@ -86,7 +88,12 @@ export function calcolaMese(input: { obiettivi: FocusId[]; settimane: SettimanaM
     priorita = [obiettivi[0], ...resto];
   }
   const riordinato = priorita.some((f, i) => f !== obiettivi[i]);
-  return { settimane: settimane.length, righe, priorita, riordinato, daChiedere };
+  // "Tutto, in equilibrio" (12/11, prove con persone: Elena faceva parte alta, gambe e pre partita per otto settimane):
+  // gli aspetti in ordine di quante settimane sono stati fatti nel mese, i meno fatti per primi; a parità l'ordine di base
+  const rotazione = tutto
+    ? righe.map((r, i) => ({ r, i })).sort((a, b) => a.r.fatte - b.r.fatte || a.r.pianificate - b.r.pianificate || a.i - b.i).map((x) => x.r.focus)
+    : undefined;
+  return { settimane: settimane.length, righe, priorita, riordinato, daChiedere, ...(rotazione ? { rotazione } : {}) };
 }
 
 /** Sezione del prompt del planner: i numeri del mese e le priorità della settimana. Vuota senza settimane. */

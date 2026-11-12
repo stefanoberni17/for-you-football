@@ -109,8 +109,8 @@ export function condizioneRiga(c: Pick<Condizione, 'stato' | 'fattore' | 'motivi
   if (c.stato === 'normale') return null;
   const pct = Math.round(Math.abs(c.fattore - 1) * 100);
   return c.stato === 'stanco'
-    ? `Sei stanco: il tuo tetto di carico scende del ${pct} % (${c.motivi.join('; ')}).`
-    : `Sei fresco: il tuo tetto di carico sale del ${pct} % (${c.motivi.join('; ')}).`;
+    ? `Stanchezza alta: il tuo tetto di carico scende del ${pct} % (${c.motivi.join('; ')}).`
+    : `Condizione buona: il tuo tetto di carico sale del ${pct} % (${c.motivi.join('; ')}).`;
 }
 
 // ─── Scarico dai dati ───────────────────────────────────────────────────────────
@@ -216,7 +216,7 @@ export function scaricoDaiDati(input: InputScarico): EsitoScarico {
   if (conSedute < SCARICO_SETTIMANE_MIN) return { isDeload: false, motivo: null, rinviato: 'nelle settimane prima hai fatto poche sedute: lo scarico serve dopo il carico', segnali };
   if (segnali.length) return { isDeload: true, motivo: segnali.join('; '), rinviato: null, segnali };
   // Solo la rete del calendario: si salta se l'atleta è fresco
-  if (input.condizione.stato === 'fresco') return { isDeload: false, motivo: null, rinviato: 'quarta settimana del ciclo, ma sei fresco e i dati non chiedono lo scarico: si lavora normale', segnali };
+  if (input.condizione.stato === 'fresco') return { isDeload: false, motivo: null, rinviato: 'quarta settimana del ciclo, ma la condizione è buona e i dati non chiedono lo scarico: si lavora normale', segnali };
   return { isDeload: true, motivo: 'quarta settimana del ciclo, con le settimane di lavoro alle spalle', rinviato: null, segnali };
 }
 

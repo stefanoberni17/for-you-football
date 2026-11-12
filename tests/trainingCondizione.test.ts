@@ -149,7 +149,7 @@ describe('scarico dai dati (M11)', () => {
     expect(poche.rinviato).toMatch(/poche sedute/);
     const fresco = scaricoDaiDati({ ...base, settimanaCalendario: 4, condizione: { stato: 'fresco' }, settimane: settimane([300, 310, 320, 0]), sedute: [] });
     expect(fresco.isDeload).toBe(false);
-    expect(fresco.rinviato).toMatch(/sei fresco/);
+    expect(fresco.rinviato).toMatch(/la condizione è buona/);
     // fresco ma con un segnale dai dati: lo scarico si fa
     const segnale = scaricoDaiDati({ ...base, settimanaCalendario: 4, condizione: { stato: 'fresco' }, settimane: settimane([100, 150, 200, 0]), sedute: [] });
     expect(segnale.isDeload).toBe(true);

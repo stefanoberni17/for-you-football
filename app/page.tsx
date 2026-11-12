@@ -571,7 +571,7 @@ export default function HomePage() {
             <span className="line-clamp-2 font-display text-title-1 font-bold leading-tight" style={{ textWrap: 'balance' }}>
               {nextDayInCorso && riflessioneOk ? "Com'è andata oggi?" : todayTitle || `Giorno ${nextDay.day}`}
             </span>
-            <span className="mt-0.5 text-body-sm text-forest-100">{comebackMode ? 'Bentornato · ' : ''}Settimana {nextDay.week} · Giorno {nextDay.day}{todayMinutes ? ` · ${todayMinutes} min` : ''}</span>
+            <span className="mt-0.5 text-body-sm text-forest-100">{comebackMode ? 'Di nuovo qui · ' : ''}Settimana {nextDay.week} · Giorno {nextDay.day}{todayMinutes ? ` · ${todayMinutes} min` : ''}</span>
           </span>
         </Link>
       )}

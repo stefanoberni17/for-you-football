@@ -47,6 +47,9 @@ export const FACILE_RPE_MAX = SERIE_FACILE_MAX;
 export const SEDUTE_FACILI_PER_SALIRE = 2;
 /** Da qui in su la seduta è "difficile": le reps in più non contano per il gradino (Ste, 18/10). È l'inizio della zona "dura" (25/10: 7; prima 8). */
 export const DIFFICILE_RPE_MIN = DURA_MIN;
+/** Ferma alla stessa dose per questo numero di sedute di fila tutte "giuste" (tutto fatto, voto sotto la zona dura):
+ * un passo avanti (12/11, prove con persone: Giorgio faceva 2×13 squat per otto settimane votando sempre "giusta"). */
+export const SEDUTE_GIUSTE_PER_SALIRE = 3;
 
 export interface RiepilogoEsercizio {
   esercizioId: string;
@@ -102,6 +105,13 @@ export function riepilogoEsercizi(logs: SetLogRow[]): RiepilogoEsercizio[] {
     const lastCarico = carichi(last);
     const lastCaricoPrevisto = last.map((r) => r.carico_previsto_kg).filter((x): x is number => x != null);
     // Seduta "facile" (18/10): tutte le serie fatte e voto medio ≤ FACILE_RPE_MAX; senza voto, basta metà delle serie sopra il previsto
+    const fermaAllaStessaDose = (ss: SetLogRow[][]) => {
+      const dosi = new Set(ss.map((x) => `${media(previste(x))}|${x[0]?.carico_previsto_kg ?? ''}`));
+      return dosi.size === 1 && ss.every((x) => {
+        const rp = rpes(x);
+        return rp.length > 0 && media(rp) < DIFFICILE_RPE_MIN && x.every((r) => (r.quantita_fatta ?? r.quantita_prevista) >= r.quantita_prevista);
+      });
+    };
     const facile = (sess: SetLogRow[]) => {
       const rp = rpes(sess);
       const tutteFatte = sess.every((r) => (r.quantita_fatta ?? r.quantita_prevista) >= r.quantita_prevista);
@@ -153,6 +163,9 @@ export function riepilogoEsercizi(logs: SetLogRow[]): RiepilogoEsercizio[] {
       // Ste, 18/10: si sale (passo in più) solo con 2 sedute facili DI FILA
       suggerimento = 'sali';
       motivo = `${SEDUTE_FACILI_PER_SALIRE} sedute di fila facili${rpeMedio2Sedute != null ? ` (RPE medio ${rpeMedio2Sedute})` : ''} con tutto fatto: si sale`;
+    } else if (sessions.length >= SEDUTE_GIUSTE_PER_SALIRE && fermaAllaStessaDose(sessions.slice(0, SEDUTE_GIUSTE_PER_SALIRE))) {
+      suggerimento = 'sali';
+      motivo = `${SEDUTE_GIUSTE_PER_SALIRE} sedute di fila alla stessa dose, tutte fatte e mai dure: un passo avanti`;
     } else if (metaSerieSopra && (ultimaSeduta.rpeMedio == null || ultimaSeduta.rpeMedio < DIFFICILE_RPE_MIN)) {
       // Ha fatto più del previsto UNA volta: la dose fatta è una misura e diventa la base, ma il passo in più aspetta la seconda seduta facile (Ste, 18/10)
       suggerimento = 'conferma';

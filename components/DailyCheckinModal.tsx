@@ -13,13 +13,13 @@ interface DailyCheckinModalProps {
 
 // Label per i punti chiave degli slider 0-10
 const PHYSICAL_LABELS: Record<number, string> = {
-  0: 'Esausto', 3: 'Stanco', 5: 'Nella media', 7: 'Bene', 10: 'Perfetto',
+  0: 'Senza energie', 3: 'Stanchezza', 5: 'Nella media', 7: 'Bene', 10: 'Al top',
 };
 const RECOVERY_LABELS: Record<number, string> = {
-  0: 'Esausto', 3: 'Stanco', 5: 'Normale', 7: 'In forma', 10: 'Fresco al 100%',
+  0: 'Senza energie', 3: 'Stanchezza', 5: 'Normale', 7: 'In forma', 10: 'Gambe nuove',
 };
 const MENTAL_LABELS: Record<number, string> = {
-  0: 'Testa altrove', 3: 'Un po\' giù', 5: 'Normale', 7: 'Concentrato', 10: 'Lucido e carico',
+  0: 'Testa altrove', 3: 'Un po\' giù', 5: 'Normale', 7: 'Concentrazione', 10: 'Lucidità piena',
 };
 // Presenza di ieri (Ste, 29/9): al posto del check del giorno prima nella pagina giorno
 const PRESENCE_LABELS: Record<number, string> = {

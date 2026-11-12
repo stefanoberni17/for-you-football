@@ -25,26 +25,8 @@ import type { LivelloFisico } from './listino';
 
 const anthropic = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
-/**
- * Ogni giorno della settimana rispetto alle partite, già contato ("Giovedì: +1 dalla partita, −3 alla prossima"):
- * nel replay del 27/10 il preparatore sbagliava i conti ("giovedì sei a −1 dalla domenica"). Vuoto senza partite.
- */
-export function asseSettimanaTesto(matchDays: number[]): string {
-  if (!matchDays.length) return '';
-  const righe = [1, 2, 3, 4, 5, 6, 7].map((g) => {
-    if (matchDays.includes(g)) return `${DAY_NAMES[g]}: PARTITA`;
-    const dopo = giorniDallaPartita(g, matchDays);
-    const prima = giorniAllaPartita(g, matchDays);
-    return `${DAY_NAMES[g]}: ${dopo != null ? `+${dopo} dalla partita` : ''}${dopo != null && prima != null ? ', ' : ''}${prima != null ? `−${prima} alla prossima` : ''}`;
-  });
-  // La resistenza ha la finestra più stretta (almeno 2 giorni dopo e 3 prima): il replay la metteva "giovedì, +1 dalla coppa"
-  const giorniRes = [1, 2, 3, 4, 5, 6, 7].filter((g) => !matchDays.includes(g)
-    && (giorniDallaPartita(g, matchDays) ?? 99) >= RE_DOPO_PARTITA && (giorniAllaPartita(g, matchDays) ?? 99) >= RE_FINESTRA_PRIMA);
-  const res = giorniRes.length
-    ? `Giorni in cui la resistenza può stare questa settimana: ${giorniRes.map((g) => DAY_NAMES[g]).join(', ')}.`
-    : 'Questa settimana la resistenza NON ha un giorno valido (serve almeno 2 giorni dopo una partita e 3 prima): se la chiede, diglielo così.';
-  return `\nLa settimana rispetto alle partite (già contata, usa QUESTI numeri): ${righe.join(' · ')}. ${res}`;
-}
+export { asseSettimanaTesto } from './trainingPlannerV2';
+import { asseSettimanaTesto } from './trainingPlannerV2';
 
 const UNITA_BREVE: Record<string, string> = { reps: '', secondi: '"', minuti: "'", metri: ' m' };
 

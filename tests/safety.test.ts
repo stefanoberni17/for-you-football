@@ -67,6 +67,9 @@ describe('checkSafety: due livelli, parafrasi, negazioni e falsi positivi (spec 
     ['voglio😭morire', 'blocco', 'suicidio'],
     ['💀 non voglio più vivere 💀', 'blocco', 'suicidio'],
     ['😂😂 ci hanno ammazzato 4-0', null, null],
+    // Prove con persone (12/11): un infortunato e un adulto stanco
+    ['fermo da 10 giorni per lo stiramento e non ce la faccio più a stare fermo 😤', null, null],
+    ['senza il calcio del sabato mi butto dalla finestra praticamente', 'alert', 'suicidio'],
     ['VOGLIO... FARLA... FINITA!!!', 'blocco', 'suicidio'],
   ];
 

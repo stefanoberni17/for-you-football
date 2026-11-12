@@ -147,3 +147,37 @@ describe('limitazioni del setup (punto 4, 26/10): riduzione cronica', () => {
     expect(limitazioniPerCoach(null)).toBeNull();
   });
 });
+
+describe('prove con persone (12/11): distretti, rientro alle gambe, limitazioni croniche', () => {
+  it('il distretto viene dalla qualità prima che dal nome', async () => {
+    const { distrettoEsercizio } = await import('@/lib/trainingSquilibri');
+    expect(distrettoEsercizio('risc-allungo-riscaldamento')).toBe('gambe');           // "Warm-Up Stride": arm
+    expect(distrettoEsercizio('plioi-single-leg-drop-e-spinta-laterale')).toBe('gambe'); // "Push-Off"
+    expect(distrettoEsercizio('push-1')).toBe('alto');
+    expect(distrettoEsercizio('squat-1')).toBe('gambe');
+  });
+  it('dolore alle cosce: escono sprint, salti intensivi e l\'allungo all\'80-90 %, gli altri si riducono', () => {
+    const p: WeekPlan = { sedute: [{ giorno: 3, titolo: 'Mer', tipo: 'fisica', durata_min: 40, items: [
+      { ...item('risc-allungo-riscaldamento', 2), nota: 'Allungo al 70 %: più ritmo.' },
+      { ...item('risc-allungo-riscaldamento', 2), nota: "Allungo all'80-90 %: quasi sprint." },
+      item('vel-rapidita-movimenti-attaccanti', 2), item('plioi-single-leg-drop-e-spinta-laterale', 3), item('squat-1', 3), item('push-1', 3),
+    ] }] };
+    const r = riduciPerDolore(p, { dolore: { zona: 'cosce dietro', fino: '2026-11-05' }, oggi: OGGI, oggiDow: 1 });
+    const ids = r.plan.sedute[0].items.map((x) => x.esercizio_id);
+    expect(ids).toEqual(['risc-allungo-riscaldamento', 'squat-1', 'push-1']);
+    expect(r.plan.sedute[0].items[0].serie).toBe(1);
+    expect(r.righe.join(' ')).toMatch(/niente sprint, salti intensivi e allunghi oltre il 70 %/);
+  });
+  it('un esercizio della zona che non può scendere resta segnato, così l\'aumento in settimana non lo tocca', () => {
+    const p: WeekPlan = { sedute: [{ giorno: 3, titolo: 'Mer', tipo: 'fisica', durata_min: 40, items: [item('squat-1', 1)] }] };
+    const it0 = riduciPerDolore(p, { dolore: { zona: 'ginocchio' }, oggi: OGGI, oggiDow: 1 }).plan.sedute[0].items[0];
+    expect(it0.serie).toBe(1);
+    expect(it0.adattamento).toBe('dolore');
+  });
+  it('limitazione cronica: mai sotto 2 serie, e la velocità resta (è il dolore che la toglie)', () => {
+    const p: WeekPlan = { sedute: [{ giorno: 3, titolo: 'Mer', tipo: 'fisica', durata_min: 40, items: [item('squat-1', 2), item('squat-1', 4), item('vel-rapidita-movimenti-attaccanti', 2)] }] };
+    const s = riduciPerDolore(p, { dolore: null, limitazioni: { zone: ['ginocchio'], nota: '' }, oggi: OGGI, oggiDow: 1 }).plan.sedute[0];
+    expect(s.items.map((x) => x.serie)).toEqual([2, 3, 2]);
+    expect(s.items.length).toBe(3);
+  });
+});
