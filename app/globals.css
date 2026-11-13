@@ -48,6 +48,10 @@
   --color-warning: #f0b429;
   --color-danger:  #ef6461;
   --color-info:    #5aa9e6;
+  /* Le due parti nei grafici (13/11, brand FYF: verde = Mente, blu acciaio = Corpo). Valori fissi: dentro
+     .parte-corpo non cambiano, così una linea «Mentale» resta verde anche in una pagina del Corpo */
+  --color-mente:   #2dd17a;
+  --color-corpo:   #6fa3d6;
 
   /* ─── Scala tipografica mobile (rapporto ~1.2). Minimo 12 px; 11 px SOLO overline uppercase. ─── */
   --text-display: 32px;  --text-display--line-height: 36px;  --text-display--letter-spacing: -0.02em;

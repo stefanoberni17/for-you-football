@@ -51,11 +51,11 @@ interface ActionsHistory {
 type Period = 7 | 30 | 90;
 type Trend = 'up' | 'down' | 'stable';
 
-// ─── Colori delle serie: solo token (+ il viola morbido, unico extra ammesso) ─
+// ─── Colori delle serie: solo token. Brand (13/11): Mentale verde come la Mente, Fisico blu come il Corpo ─
 const SERIES = {
-  fisico: { label: 'Fisico', color: 'var(--color-accent-glow)', Icon: Activity },
+  fisico: { label: 'Fisico', color: 'var(--color-corpo)', Icon: Activity },
   recupero: { label: 'Recupero', color: 'var(--color-warning)', Icon: Zap },
-  mentale: { label: 'Mentale', color: '#a78bfa', Icon: Brain },
+  mentale: { label: 'Mentale', color: 'var(--color-mente)', Icon: Brain },
   sonno: { label: 'Sonno', color: 'var(--color-info)', Icon: Moon },
 } as const;
 const GRID = 'var(--color-divider)';
