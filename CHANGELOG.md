@@ -8,6 +8,7 @@ Logo definitivo: «FYF» bianco con la seconda F specchiata, cerchio aperto sfum
 - **Icone**: `manifest.json` con icone `any` e `maskable` separate (prima «any maskable» sulla stessa icona) e `background_color` #0D1310 come lo sfondo dell'icona; `metadata.icons` con favicon 32/48 e apple 180; `app/favicon.ico` rigenerato (16, 32, 48) dal logo; notifiche push con l'icona nuova e senza badge (Android lo disegna come sagoma bianca). Tolte le vecchie `public/icons/icon-192x192.png` e `icon-512x512.png`. Il service worker non ha cache: nessuna versione da cambiare.
 - **Via il viola**: «Mentale» nei grafici dei check-in (`StatoRecente`, statistiche) da #a78bfa al verde della Mente (`--color-mente`); «Fisico», che era già verde, passa al blu del Corpo (`--color-corpo`) per restare distinguibile.
 - **Info argento**: `--color-info` da #5aa9e6 (differenza 4 dal blu del Corpo) a #c8cfca, 11,8:1 su #0d1310 e 10,7:1 su #161e19, distinto da Mente, Corpo e ambra anche con il daltonismo. Ste lo conferma sul Preview.
+- **Schermata di caricamento** (`AppLoader`): il logo nuovo. Il cerchio sfumato verde-blu gira, «FYF» resta fermo al centro, l'alone che respira è a metà tra il verde e il blu. Prima era un anello verde con «FYF» scritto in testo.
 - **Bottone principale**: gradiente un passo più scuro, testo bianco: Mente 4,71-5,51:1 (prima 3,14-3,77), Corpo 6,43-7,24:1. Il testo scuro avrebbe portato il Corpo a 3,49:1. Il bottone `hero` ha ancora il punto chiaro a 2,83:1 nel Mente: da decidere.
 
 ## 2026-11-12 — Correzioni dalle prove con sei persone finte
