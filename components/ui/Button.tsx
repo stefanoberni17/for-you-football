@@ -7,7 +7,8 @@ import type { ReactNode, ButtonHTMLAttributes } from 'react';
  * Bottone unico dell'app (review 16/9: prima 12 ricette diverse per il primario).
  *
  * variant
- * - primary   → azione principale della schermata (tinta piatta forest-500). UNA per schermata.
+ * - primary   → azione principale della schermata. UNA per schermata. Gradiente da forest-500/600 a forest-600 (13/11):
+ *               testo bianco ad almeno 4,7:1 nel Mente e 6,4:1 nel Corpo (prima 3,1-3,8:1 nel Mente).
  * - hero      → i "momenti": Inizia la seduta, Gate, fine settimana (gradiente + glow). Mai due insieme.
  * - secondary → "Modifica…", "Vedi…", annulla: superficie + bordo.
  * - ghost     → link-bottone: nessun fondo, ma altezza 44 px garantita (mai più testi cliccabili da 16 px).
@@ -34,7 +35,7 @@ interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'chi
 // Luce dall'alto (inset) + ombra sotto: i bottoni hanno corpo, non sono rettangoli piatti
 const LIT = 'shadow-[inset_0_1px_0_rgba(255,255,255,0.14),0_1px_2px_rgba(0,0,0,0.4)]';
 const VARIANT: Record<ButtonVariant, string> = {
-  primary: `bg-gradient-to-b from-[color-mix(in_srgb,var(--color-forest-400)_25%,var(--color-forest-500))] to-forest-500 text-white hover:from-forest-500 hover:to-forest-600 ${LIT}`,
+  primary: `bg-gradient-to-b from-[color-mix(in_srgb,var(--color-forest-500)_40%,var(--color-forest-600))] to-forest-600 text-white hover:from-forest-600 hover:to-forest-700 ${LIT}`,
   // dal 9/11 con i token (prima #22b873 e il glow verde scritti a mano): nel Corpo diventa blu come il resto
   hero: 'bg-gradient-to-br from-[color-mix(in_srgb,var(--color-forest-400)_40%,var(--color-forest-500))] via-forest-500 to-forest-600 text-white hover:to-forest-700 shadow-[inset_0_1px_0_rgba(255,255,255,0.18),0_0_28px_color-mix(in_srgb,var(--color-accent-glow)_32%,transparent)]',
   secondary: 'bg-surface-2 text-app border border-white/8 hover:bg-surface-3 hover:border-white/12 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]',

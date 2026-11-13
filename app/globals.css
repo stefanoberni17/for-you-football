@@ -47,7 +47,11 @@
   --color-success: #2dd17a;
   --color-warning: #f0b429;
   --color-danger:  #ef6461;
-  --color-info:    #5aa9e6;
+  --color-info:    #c8cfca;   /* 13/11: argento (prima #5aa9e6, quasi uguale al blu del Corpo). 11,8:1 su app-bg, 10,7:1 su surface; distinto da Mente e Corpo anche con daltonismo */
+  /* Le due parti nei grafici (13/11, brand FYF: verde = Mente, blu acciaio = Corpo). Valori fissi: dentro
+     .parte-corpo non cambiano, così una linea «Mentale» resta verde anche in una pagina del Corpo */
+  --color-mente:   #2dd17a;
+  --color-corpo:   #6fa3d6;
 
   /* ─── Scala tipografica mobile (rapporto ~1.2). Minimo 12 px; 11 px SOLO overline uppercase. ─── */
   --text-display: 32px;  --text-display--line-height: 36px;  --text-display--letter-spacing: -0.02em;
@@ -216,14 +220,16 @@ textarea::placeholder {
   animation: loaderIn 220ms ease-out 150ms both;
 }
 .app-loader-arc {
-  transform-origin: 50% 50%;
+  /* Il centro del cerchio del logo (13/11): 301,85 · 300 nel viewBox 600 del disegno */
+  transform-box: view-box;
+  transform-origin: 301.85px 300px;
   animation: loaderSpin 1.1s cubic-bezier(0.45, 0.1, 0.3, 0.9) infinite;
 }
 .app-loader-glow {
   position: absolute;
   inset: -18px;
   border-radius: 9999px;
-  background: radial-gradient(closest-side, rgba(45, 209, 122, 0.38), rgba(45, 209, 122, 0) 72%);
+  background: radial-gradient(closest-side, rgba(70, 157, 155, 0.34), rgba(70, 157, 155, 0) 72%); /* a metà tra il verde e il blu del logo */
   animation: loaderBreathe 2.4s ease-in-out infinite;
   pointer-events: none;
 }

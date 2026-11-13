@@ -1,35 +1,40 @@
+'use client';
+
+import { useId } from 'react';
+
 /**
  * Schermata di caricamento unica dell'app.
  *
- * Anello che gira col verde del brand e un alone che "respira" (il ritmo del
- * Reset), monogramma FYF al centro. Niente emoji: il brief del brand non le
- * vuole come decorazione. Appare con una dissolvenza dopo 150 ms, così i
- * passaggi veloci tra le pagine non sfarfallano; la scritta sotto compare solo
- * se l'attesa si allunga (dopo ~0,9 s), così non è mai la prima cosa che vedi.
+ * Dal 13/11 è il logo FYF: il cerchio aperto sfumato dal verde #1A9660 al blu #6FA3D6 gira, le lettere «FYF»
+ * (la seconda F specchiata) restano ferme al centro, e sotto c'è un alone che «respira» al ritmo del Reset.
+ * Disegno preso da public/brand/fyf-icona-completo-sfondo-scuro.svg, senza il fondo. Niente emoji: il brief del
+ * brand non le vuole come decorazione. Appare con una dissolvenza dopo 150 ms, così i passaggi veloci tra le pagine
+ * non sfarfallano; la scritta sotto compare solo se l'attesa si allunga (dopo ~0,9 s), così non è mai la prima cosa
+ * che vedi.
  */
+const ARCO = 'M 172.8 503.5 L 162.5 496.7 L 152.5 489.4 L 142.9 481.5 L 133.7 473.2 L 125.0 464.4 L 116.7 455.1 L 108.9 445.5 L 101.6 435.4 L 94.8 425.0 L 88.6 414.3 L 83.0 403.2 L 77.9 391.9 L 73.4 380.3 L 69.5 368.5 L 66.2 356.6 L 63.6 344.4 L 61.6 332.2 L 60.2 319.8 L 59.4 307.4 L 59.3 295.0 L 59.8 282.5 L 61.0 270.1 L 62.8 257.8 L 65.3 245.6 L 68.3 233.6 L 72.0 221.7 L 76.3 210.0 L 81.2 198.5 L 86.7 187.4 L 92.8 176.5 L 99.4 165.9 L 106.5 155.7 L 114.2 145.9 L 122.4 136.4 L 131.0 127.4 L 140.1 118.9 L 149.6 110.8 L 159.6 103.3 L 169.9 96.2 L 180.6 89.7 L 191.5 83.8 L 202.8 78.4 L 214.4 73.6 L 226.2 69.5 L 238.2 65.9 L 250.3 63.0 L 262.6 60.7 L 275.0 59.0 L 287.5 57.9 L 300.0 57.6 L 312.5 57.8 L 325.0 58.7 L 337.5 60.3 L 349.8 62.5 L 362.0 65.3 L 374.1 68.7 L 385.9 72.8 L 397.6 77.5 L 409.0 82.8 L 420.1 88.6 L 430.9 95.1 L 441.3 102.0 L 451.4 109.5 L 461.1 117.6 L 470.3 126.1 L 479.1 135.1 L 487.5 144.5 L 495.3 154.3 L 502.6 164.6 L 509.4 175.2 L 515.6 186.1 L 521.3 197.4 L 526.3 208.9 L 530.8 220.7 L 534.7 232.7 L 537.9 244.9 L 540.5 257.2 L 542.5 269.7 L 543.8 282.3 L 544.4 294.9 L 544.4 307.5 L 543.8 320.1 L 542.5 332.7 L 540.6 345.2 L 538.0 357.6 L 534.8 369.8 L 530.9 381.9 L 526.5 393.7 L 521.4 405.3 L 515.7 416.6 L 509.5 427.7 L 502.7 438.4 L 495.3 448.7 L 487.4 458.6 L 479.0 468.1 L 470.2 477.2 L 460.8 485.8 L 451.1 493.9 L 440.9 501.5 L 430.4 508.6 L 419.8 491.7 L 429.5 485.3 L 439.0 478.4 L 448.1 471.1 L 456.8 463.2 L 465.0 455.0 L 472.9 446.3 L 480.3 437.2 L 487.2 427.8 L 493.6 418.0 L 499.5 407.9 L 504.8 397.4 L 509.7 386.8 L 513.9 375.8 L 517.6 364.7 L 520.8 353.4 L 523.3 342.0 L 525.3 330.4 L 526.6 318.7 L 527.3 307.0 L 527.5 295.2 L 527.0 283.5 L 525.9 271.8 L 524.2 260.1 L 521.9 248.6 L 519.0 237.2 L 515.6 225.9 L 511.5 214.9 L 506.9 204.0 L 501.7 193.5 L 496.0 183.1 L 489.8 173.1 L 483.1 163.5 L 475.8 154.1 L 468.1 145.2 L 459.9 136.7 L 451.3 128.6 L 442.3 121.0 L 432.9 113.8 L 423.2 107.1 L 413.1 101.0 L 402.7 95.3 L 392.0 90.2 L 381.1 85.7 L 369.9 81.7 L 358.6 78.4 L 347.0 75.6 L 335.4 73.4 L 323.7 71.8 L 311.9 70.8 L 300.0 70.4 L 288.1 70.7 L 276.3 71.5 L 264.5 73.0 L 252.8 75.1 L 241.3 77.8 L 229.9 81.0 L 218.6 84.9 L 207.6 89.3 L 196.8 94.3 L 186.3 99.9 L 176.1 106.0 L 166.2 112.6 L 156.7 119.7 L 147.5 127.3 L 138.8 135.3 L 130.4 143.8 L 122.5 152.8 L 115.1 162.1 L 108.2 171.8 L 101.8 181.8 L 95.9 192.2 L 90.6 202.9 L 85.8 213.8 L 81.6 225.0 L 77.9 236.3 L 74.9 247.9 L 72.5 259.6 L 70.6 271.3 L 69.4 283.2 L 68.8 295.2 L 68.8 307.1 L 69.4 319.0 L 70.7 330.9 L 72.5 342.7 L 75.0 354.4 L 78.1 366.0 L 81.7 377.4 L 86.0 388.6 L 90.8 399.5 L 96.2 410.2 L 102.1 420.6 L 108.6 430.7 L 115.6 440.4 L 123.0 449.8 L 131.0 458.7 L 139.4 467.3 L 148.2 475.4 L 157.4 483.0 L 167.1 490.1 L 177.1 496.7 Z';
+const LETTERE: { t: string; d: string }[] = [
+  { t: 'translate(189.50 300.00) rotate(0.00) scale(0.17 -0.17) translate(-312.25 -353.0)', d: 'M67.5 0V706H225V0ZM188 276.5V412H541V276.5ZM188 570.5V706H557V570.5Z' },
+  { t: 'translate(300.00 300.00) rotate(0.00) scale(0.17 -0.17) translate(-343.25 -353.0)', d: 'M285 262.5 13 706H194.5L403.5 348H286.5L495.5 706H673.5L399.5 262.5ZM265.5 0V335H423V0Z' },
+  { t: 'translate(410.50 300.00) rotate(0.00) scale(-0.17 -0.17) translate(-312.25 -353.0)', d: 'M67.5 0V706H225V0ZM188 276.5V412H541V276.5ZM188 570.5V706H557V570.5Z' },
+];
+
 export default function AppLoader({ label, fullscreen = true }: { label?: string; fullscreen?: boolean }) {
+  const gid = `fyfLoader${useId().replace(/:/g, '')}`;
   const inner = (
     <div className="app-loader flex flex-col items-center gap-5" role="status" aria-live="polite" data-loader>
-      <div className="relative w-[76px] h-[76px]">
+      <div className="relative w-[84px] h-[84px]">
         <span className="app-loader-glow" aria-hidden />
-        <svg viewBox="0 0 76 76" className="w-full h-full" aria-hidden>
+        <svg viewBox="0 0 600 600" className="relative w-full h-full" aria-hidden>
           <defs>
-            <linearGradient id="fyfLoaderArc" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stopColor="#4fd394" />
-              <stop offset="1" stopColor="#2dd17a" />
+            <linearGradient id={gid} x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0.1" stopColor="#1A9660" />
+              <stop offset="0.9" stopColor="#6FA3D6" />
             </linearGradient>
           </defs>
-          <circle cx="38" cy="38" r="33" fill="none" stroke="var(--color-divider)" strokeWidth="3" />
-          <circle
-            cx="38" cy="38" r="33" fill="none"
-            stroke="url(#fyfLoaderArc)" strokeWidth="3" strokeLinecap="round"
-            strokeDasharray="62 146"
-            className="app-loader-arc"
-          />
+          <path d={ARCO} fill={`url(#${gid})`} className="app-loader-arc" />
+          {LETTERE.map((l, i) => <path key={i} fill="#ECEFEC" transform={l.t} d={l.d} />)}
         </svg>
-        <span className="absolute inset-0 flex items-center justify-center font-display font-bold text-label tracking-[0.22em] text-forest-300 pl-[0.22em]">
-          FYF
-        </span>
       </div>
       {label && <p className="app-loader-label text-body-sm text-muted">{label}</p>}
       <span className="sr-only">Caricamento</span>

@@ -31,10 +31,10 @@ export default function StatoRecente({ className = '' }: { className?: string })
     authFetch('/api/checkin/history?days=7').then((r) => (r.ok ? r.json() : null)).then((j) => { if (j?.checkins) setCheckins(j.checkins); }).catch(() => {});
   }, []);
   const righe = checkins.length >= 2 ? [
-    { Icon: Activity, label: 'Fisico', values: checkins.filter((c) => c.physical_state !== null).map((c) => c.physical_state as number), unit: '/10', color: 'var(--color-accent-glow)' },
+    { Icon: Activity, label: 'Fisico', values: checkins.filter((c) => c.physical_state !== null).map((c) => c.physical_state as number), unit: '/10', color: 'var(--color-corpo)' },
     { Icon: Moon, label: 'Sonno', values: checkins.filter((c) => c.sleep_hours !== null).map((c) => Number(c.sleep_hours)), unit: 'h', color: 'var(--color-info)' },
     { Icon: Zap, label: 'Recupero', values: checkins.filter((c) => c.recovery_quality !== null).map((c) => c.recovery_quality as number), unit: '/10', color: 'var(--color-warning)' },
-    { Icon: Brain, label: 'Mentale', values: checkins.filter((c) => c.mental_state !== null).map((c) => c.mental_state as number), unit: '/10', color: '#a78bfa' },
+    { Icon: Brain, label: 'Mentale', values: checkins.filter((c) => c.mental_state !== null).map((c) => c.mental_state as number), unit: '/10', color: 'var(--color-mente)' },
   ].map((r) => ({ ...r, avg: media(r.values) })).filter((r) => r.values.length >= 2) : [];
   if (!righe.length) return null;
   return (
