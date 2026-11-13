@@ -6,6 +6,7 @@
 import { createClient } from '@supabase/supabase-js';
 import { logEvent } from './events';
 import { MIN_AGE, PRIVACY_VERSION, TERMS_VERSION } from './constants';
+import { parseSesso, type Sesso } from './sesso';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -23,6 +24,7 @@ export interface CampiRegistrazione {
   dream: string | null;
   current_situation: string | null;
   referral_source: string;
+  sesso: Sesso | null; // 13/11, migration 042
 }
 
 /** Età compiuta da 'YYYY-MM-DD'; null se malformata. */
@@ -64,6 +66,7 @@ export function campiDalBody(body: Record<string, unknown>): Omit<CampiRegistraz
     dream: str(body.dream, 300),
     current_situation: str(body.current_situation, 500),
     referral_source: str(body.referral_source, 120) ?? '',
+    sesso: parseSesso(body.sesso),
   };
 }
 
@@ -100,6 +103,12 @@ export async function salvaProfiloRegistrazione(userId: string, campi: CampiRegi
   if (campi.referral_source) {
     const { error } = await supabaseAdmin.from('profiles').update({ referral_source: campi.referral_source }).eq('user_id', userId);
     if (error) console.error('⚠️ referral_source non salvato (migration 030?):', error.message);
+  }
+
+  // Ragazzo o ragazza (13/11, migration 042): update separato e fail-soft
+  if (campi.sesso) {
+    const { error } = await supabaseAdmin.from('profiles').update({ sesso: campi.sesso }).eq('user_id', userId);
+    if (error) console.error('⚠️ sesso non salvato (migration 042?):', error.message);
   }
 
   // Snapshot baseline T0 — immutabile (ON CONFLICT = già esiste: atteso)

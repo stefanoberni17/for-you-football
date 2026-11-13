@@ -1,6 +1,8 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import SessoScelta from '@/components/SessoScelta';
+import { parseSesso, type Sesso } from '@/lib/sesso';
 import { clearSavedChats } from '@/components/ChatBot';
 import { clearContentCache } from '@/lib/clientCache';
 import { authFetch } from '@/lib/authFetch';
@@ -72,7 +74,7 @@ function ChannelRow({
 // I campi del form che finiscono in `profiles` (per capire se è cambiato qualcosa)
 type FormSnapshot = {
   nome: string; eta: string; sport: string; roles: string; level: string; fears: string;
-  goals: string; dream: string; currentSituation: string;
+  goals: string; dream: string; currentSituation: string; sesso: string;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -105,6 +107,9 @@ export default function AccountPage() {
   const [goals, setGoals] = useState('');
   const [dream, setDream] = useState('');
   const [currentSituation, setCurrentSituation] = useState('');
+  // Ragazzo o ragazza (13/11, migration 042): visibile solo se la colonna c'è
+  const [sesso, setSesso] = useState<Sesso | null>(null);
+  const [sessoDisponibile, setSessoDisponibile] = useState(false);
 
   // Valori caricati (o salvati): il form è "sporco" se si discosta da questi
   const [snapshot, setSnapshot] = useState<FormSnapshot | null>(null);
@@ -118,7 +123,7 @@ export default function AccountPage() {
 
   const current: FormSnapshot = {
     nome, eta, sport, roles: selectedRoles.join(','), level, fears: selectedFears.join(','),
-    goals, dream, currentSituation,
+    goals, dream, currentSituation, sesso: sesso ?? '',
   };
   const dirty = !!snapshot && (Object.keys(current) as (keyof FormSnapshot)[]).some((k) => current[k] !== snapshot[k]);
 
@@ -149,13 +154,15 @@ export default function AccountPage() {
         setCurrentSituation(p.current_situation || '');
         setSelectedRoles(roles);
         setSelectedFears(fears);
+        setSessoDisponibile('sesso' in p);
+        setSesso(parseSesso(p.sesso));
         setSnapshot({
           nome: p.name || '', eta: p.age?.toString() || '', sport: p.sport || 'calcio',
           roles: roles.join(','), level: p.level || '', fears: fears.join(','),
-          goals: p.goals || '', dream: p.dream || '', currentSituation: p.current_situation || '',
+          goals: p.goals || '', dream: p.dream || '', currentSituation: p.current_situation || '', sesso: parseSesso(p.sesso) ?? '',
         });
       } else {
-        setSnapshot({ nome: '', eta: '', sport: 'calcio', roles: '', level: '', fears: '', goals: '', dream: '', currentSituation: '' });
+        setSnapshot({ nome: '', eta: '', sport: 'calcio', roles: '', level: '', fears: '', goals: '', dream: '', currentSituation: '', sesso: '' });
       }
 
       // Check push notification status
@@ -229,6 +236,11 @@ export default function AccountPage() {
         .eq('user_id', userId);
 
       if (updateError) throw updateError;
+      // Sesso a parte: senza la migration 042 il resto del profilo si salva lo stesso
+      if (sesso && sesso !== snapshot?.sesso) {
+        const { error: sessoErr } = await supabase.from('profiles').update({ sesso }).eq('user_id', userId);
+        if (sessoErr) throw sessoErr;
+      }
 
       setSnapshot(current);
       setJustSaved(true);
@@ -389,6 +401,8 @@ export default function AccountPage() {
               <ChipGroup options={SPORT_ROLES[sport] || []} selected={selectedRoles} onToggle={toggleRole} />
             </div>
           )}
+
+          {sessoDisponibile && <SessoScelta value={sesso} onChange={setSesso} />}
 
           <Field label="A che livello giochi?" htmlFor="profilo-livello">
             <Select id="profilo-livello" value={level} onChange={(e) => setLevel(e.target.value)}>

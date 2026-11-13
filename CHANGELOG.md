@@ -2,6 +2,15 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-13 — Ragazzo o ragazza: soglie dei test e carichi per le ragazze
+
+Ste, 13/11: «per le donne dovremmo mettere a posto almeno i carichi ecc. e chiedere sesso in registrazione». Dettagli e soglie in `docs/sesso-soglie-2026-11.md`.
+- **La domanda** «Sei un ragazzo o una ragazza?» (`components/SessoScelta.tsx`): obbligatoria nel primo passo della registrazione e in «Completa il profilo»; per chi c'è già nell'Account e nel setup del Corpo. Colonna `profiles.sesso` (migration 042, **da applicare**); senza la colonna o senza risposta tutto resta come prima (`loadSesso`, fail-soft).
+- **Soglie dei test per le ragazze** (`lib/sesso.ts`, `SOGLIE_F`): forza della parte alta, velocità, resistenza, salti e massimali in palestra; tenute, tecnica, fascia, scale e AMRAP uguali per tutti. Valgono al salvataggio di un test, nel rombo e nella Carta, nei livelli per qualità e negli squilibri; i risultati salvati prima si ricalcolano. Numeri a tavolino, da confermare.
+- **Carichi**: senza massimale il peso di partenza e i kg dei blocchi scendono al 65 % (kettlebell a 4 kg, bilanciere dalla barra da 15) e il tetto è 12 kg invece di 20; con il massimale vale il suo 1RM.
+- **Planner, preparatore e Coach** sanno che è una ragazza (il Coach le parla al femminile). `PLANNER_V2_PROMPT_VERSION = 'v2.53-ragazze'`.
+- 9 test in `tests/sesso.test.ts`; Elena nelle simulazioni (`scripts/persone-stagione.mts`) è una ragazza.
+
 ## 2026-11-12 — Correzioni dalle prove con sei persone finte
 
 Sei calciatori finti (18-32 anni, ruoli e problemi diversi) con il Coach vero e otto settimane di Corpo su un orologio finto (`scripts/persone-coach.mts`, `scripts/persone-stagione.mts`; resoconto a Ste il 12/11). Ste: «vanno messi tutti a posto».

@@ -18,6 +18,7 @@ import { testV2ById } from './trainingTestsV2';
 import { LIVELLO_ORDINE, type ExerciseV2 } from './trainingCatalogV2';
 import { bloccoById } from './trainingBlocks';
 import type { Spostamento } from './spostamenti';
+import { soglieTest, type Sesso } from './sesso';
 
 export interface TestResultRow {
   test_id: string; valore: number; livello_calcolato: string; punteggio_calcolato: number;
@@ -26,10 +27,11 @@ export interface TestResultRow {
 
 // ─── Scoring ─────────────────────────────────────────────────────────────────
 
-export function livelloFromValore(test: TrainingTest, valore: number): TestLivello {
-  if (valore >= test.soglie.pro) return 'pro';
-  if (valore >= test.soglie.avanzato) return 'avanzato';
-  if (valore >= test.soglie.intermedio) return 'intermedio';
+export function livelloFromValore(test: TrainingTest, valore: number, sesso?: Sesso | null): TestLivello {
+  const s = soglieTest(test.id, test.soglie, sesso); // 13/11: soglie per le ragazze (lib/sesso.ts)
+  if (valore >= s.pro) return 'pro';
+  if (valore >= s.avanzato) return 'avanzato';
+  if (valore >= s.intermedio) return 'intermedio';
   return 'base';
 }
 
@@ -38,14 +40,14 @@ export function livelloFromValore(test: TrainingTest, valore: number): TestLivel
  * 60 ad avanzato, 80 a PRO, 100 un gradino oltre. Il valore salvato in `punteggio_calcolato`
  * resta la storia; il rombo lo RICALCOLA dal valore con le regole correnti (buildRombo).
  */
-export function punteggioFromValore(test: TrainingTest, valore: number): number {
-  return punteggioLivelli(test.soglie, 'max', valore);
+export function punteggioFromValore(test: TrainingTest, valore: number, sesso?: Sesso | null): number {
+  return punteggioLivelli(soglieTest(test.id, test.soglie, sesso), 'max', valore);
 }
 
-export function scoreTest(testId: string, valore: number): { livello: TestLivello; punteggio: number } | null {
+export function scoreTest(testId: string, valore: number, sesso?: Sesso | null): { livello: TestLivello; punteggio: number } | null {
   const test = testById(testId);
   if (!test) return null;
-  return { livello: livelloFromValore(test, valore), punteggio: punteggioFromValore(test, valore) };
+  return { livello: livelloFromValore(test, valore, sesso), punteggio: punteggioFromValore(test, valore, sesso) };
 }
 
 // ─── Check-in giornaliero → adattamento carico ──────────────────────────────
@@ -264,9 +266,9 @@ export interface RomboGruppo extends Omit<RomboPunta, 'gruppo'> { punte: string[
  * (dal `dettaglio`, altrimenti valore/peso se noto). null = non valutabile (lift senza peso corporeo,
  * test sconosciuto, punto scala skill).
  */
-export function punteggioRisultato(r: TestResultRow): number | null {
+export function punteggioRisultato(r: TestResultRow, sesso?: Sesso | null): number | null {
   const v1 = testById(r.test_id);
-  if (v1) return punteggioLivelli(v1.soglie, 'max', Number(r.valore));
+  if (v1) return punteggioLivelli(soglieTest(v1.id, v1.soglie, sesso), 'max', Number(r.valore));
   const v2 = testV2ById(r.test_id);
   if (!v2) return null;
   if (v2.lift) {
@@ -276,9 +278,19 @@ export function punteggioRisultato(r: TestResultRow): number | null {
       const peso = Number(d.peso_corporeo);
       rapporto = Number.isFinite(peso) && peso > 0 ? Number(r.valore) / peso : NaN;
     }
-    return Number.isFinite(rapporto) && rapporto > 0 ? punteggioLivelli(v2.soglie, v2.verso, rapporto) : null;
+    return Number.isFinite(rapporto) && rapporto > 0 ? punteggioLivelli(soglieTest(v2.id, v2.soglie, sesso), v2.verso, rapporto) : null;
   }
-  return punteggioLivelli(v2.soglie, v2.verso, Number(r.valore));
+  return punteggioLivelli(soglieTest(v2.id, v2.soglie, sesso), v2.verso, Number(r.valore));
+}
+
+/**
+ * Livello di un risultato con le regole correnti (13/11): dal punteggio, che è ancorato alle soglie (40 intermedio,
+ * 60 avanzato, 80 PRO). null = non valutabile: chi chiama usa il livello salvato.
+ */
+export function livelloRisultato(r: TestResultRow, sesso?: Sesso | null): TestLivello | null {
+  const p = punteggioRisultato(r, sesso);
+  if (p === null || !Number.isFinite(p)) return null;
+  return p >= 80 ? 'pro' : p >= 60 ? 'avanzato' : p >= 40 ? 'intermedio' : 'base';
 }
 
 function firstResult(results: TestResultRow[], testId: string): TestResultRow | undefined {
@@ -291,7 +303,7 @@ const media = (xs: number[]) => xs.length ? Math.round(xs.reduce((a, b) => a + b
  * Rombo DETTAGLIATO (11 punte): per ogni punta la media dei punteggi (regole correnti) dell'ULTIMO
  * risultato di ogni test, e la stessa media sul PRIMO risultato (la partenza) per il confronto nel tempo.
  */
-export function buildRombo(results: TestResultRow[]): RomboPunta[] {
+export function buildRombo(results: TestResultRow[], sesso?: Sesso | null): RomboPunta[] {
   return ROMBO_PUNTE.map((p) => {
     const scores: number[] = [], iniziali: number[] = [];
     let fatti = 0, nonValutabili = 0;
@@ -299,11 +311,11 @@ export function buildRombo(results: TestResultRow[]): RomboPunta[] {
       const r = latestResult(results, tid);
       if (!r) continue;
       fatti++;
-      const sc = punteggioRisultato(r);
+      const sc = punteggioRisultato(r, sesso);
       if (sc === null) { nonValutabili++; continue; }
       scores.push(sc);
       const primo = firstResult(results, tid);
-      const sc0 = primo ? punteggioRisultato(primo) : null;
+      const sc0 = primo ? punteggioRisultato(primo, sesso) : null;
       iniziali.push(sc0 ?? sc); // primo risultato non valutabile (es. senza peso) → parte dall'attuale
     }
     const score = media(scores), scoreIniziale = media(iniziali);

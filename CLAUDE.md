@@ -146,6 +146,7 @@ for-you-football/
 │   ├── clientCache.ts                     # Cache sul dispositivo SOLO per i contenuti Notion (settimane, giorno, schede SOS): TTL 30', svuotata al logout, mai stato utente
 │   ├── events.ts                          # logEvent(userId, event, meta) → onboarding_events (server, fire-and-forget) + whitelist CLIENT_EVENTS
 │   ├── registrazione.ts / betaCode.ts     # Dopo l'auth: age gate (`controllaEta`), campi (`campiDalBody`), profilo + referral + snapshot + consensi (`salvaProfiloRegistrazione`) per email+password e Google; codici beta
+│   ├── sesso.ts / sessoServer.ts          # Ragazzo o ragazza (13/11, puro + loader fail-soft, 9 test): `SOGLIE_F` e `soglieTest` (soglie dei test per le ragazze: parte alta, velocità, resistenza, salti, massimali; il resto uguale), `pesoPerRagazza` (65 %, pesi che esistono), `KG_SENZA_MASSIMALE_MAX_F` 12, `sessoTesto` (planner e preparatore), `sessoPerCoach`; `loadSesso` legge `profiles.sesso` a parte. Usato da `/api/training/test`, `buildRombo`, `livelliPerQualita`, squilibri, `limaCarichi`, `pesoDiPartenza`, Coach. Domanda: `components/SessoScelta.tsx`
 │   ├── coachGratis.ts                     # Il Coach gratis (9/11, puro, 17 test): `accessoCoach(profilo, { usati })` → illimitato (accesso pieno), gratis con `rimasti` e `fino`, o chiuso con il motivo; periodo gratis A TEMPO, mai legato al percorso (la prova del Mente/Completo per chi passa dalla prova con la carta, `FREE_COACH_GIORNI` = 7 giorni dalla registrazione per gli altri), 20 messaggi in tutto tra app e Telegram; `testoCoachChiuso`; loader `accessoCoachUtente` in `lib/serverAccess.ts`, usato da `/api/chat` e `/api/telegram`
 │   ├── abbonamento.ts / appSettings.ts    # Il Mentale ad abbonamento (1/11, puro + loader, 8 test): prezzi 19/29, stati Stripe, `app_settings` (prezzo per chi entra, iscrizioni, tetto, prova), `esitoCheckout`, email di fine prova
 │   ├── emailServer.ts                     # `sendEmail` via Resend (promemoria di fine prova)
@@ -283,6 +284,7 @@ goals                    TEXT    -- obiettivi con il percorso (testo libero)
 dream                    TEXT    -- sogno da calciatore (testo libero)
 current_situation        TEXT    -- come sta vivendo il periodo nel calcio (testo libero)
 referral_source          TEXT    -- "Chi ti ha consigliato?" (migration 030, 8/10): facoltativa, scritta una volta da /api/register
+sesso                    TEXT    -- 'M' | 'F' (migration 042, 13/11, DA APPLICARE): obbligatoria in registrazione, poi in Account e setup del Corpo; null = come prima. Soglie dei test e carichi per le ragazze: lib/sesso.ts, docs/sesso-soglie-2026-11.md
 -- Percorso
 current_week             INT DEFAULT 1
 -- Telegram

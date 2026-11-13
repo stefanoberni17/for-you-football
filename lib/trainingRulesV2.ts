@@ -8,6 +8,7 @@
  * ESERCIZI_V2; il planner LLM li riceve nel prompt ma non può scavalcarli.
  */
 import { esercizioV2ById, LIVELLO_ORDINE, type AttrezzaturaV2, type ExerciseV2, type LivelloMinV2, type QualitaV2 } from './trainingCatalogV2';
+import { KG_SENZA_MASSIMALE_MAX_F, type Sesso } from './sesso';
 
 // ─── Bounds per qualità ──────────────────────────────────────────────────────
 //
@@ -215,6 +216,8 @@ export function caricoMaxPct(p: ProfiloCarico): number {
  * per QUESTO ragazzo. Oltre questo tetto il server lima (lib/trainingCarico) e il validatore rifiuta.
  */
 export const KG_SENZA_MASSIMALE_MAX = 20;
+/** Il tetto senza massimale per questa persona: 12 kg per le ragazze (13/11, lib/sesso.ts). */
+export const kgSenzaMassimaleMax = (sesso?: Sesso | null) => (sesso === 'F' ? KG_SENZA_MASSIMALE_MAX_F : KG_SENZA_MASSIMALE_MAX);
 
 /** Brzycki (foglio CALCOLO MASSIMALI del File_DB): 1RM = peso / (1.0278 − 0.0278 × reps) */
 export function stima1RM(peso: number, reps: number): number {
@@ -272,6 +275,7 @@ export interface ContestoV2 {
   eta: number | null;
   esperienzaPalestra: boolean;
   massimali?: Record<string, number>; // 1RM stimati per esercizio (id v2) — necessari per regime max/esplosiva
+  sesso?: Sesso | null;           // 13/11: ragazza → pesi di partenza più bassi e tetto senza massimale a 12 kg (lib/sesso.ts)
 }
 
 export interface ItemV2 {
@@ -390,8 +394,8 @@ export function validateItemV2(
   // supera KG_SENZA_MASSIMALE_MAX; con massimale il tetto è caricoMaxPct (età, esperienza, livello)
   if (it.carico_kg !== undefined && it.carico_kg > 0) {
     const oneRm = ctx.massimali?.[ex.id];
-    if (!(oneRm && oneRm > 0) && it.carico_kg > KG_SENZA_MASSIMALE_MAX)
-      errors.push(`${n}: ${it.carico_kg} kg senza massimale stimato (massimo ${KG_SENZA_MASSIMALE_MAX} kg finché non fa i test in palestra)`);
+    if (!(oneRm && oneRm > 0) && it.carico_kg > kgSenzaMassimaleMax(ctx.sesso))
+      errors.push(`${n}: ${it.carico_kg} kg senza massimale stimato (massimo ${kgSenzaMassimaleMax(ctx.sesso)} kg finché non fa i test in palestra)`);
   }
 
   // Finestra partita per qualità (un test usato come esercizio in un blocco di Ste segue il blocco, non la finestra "test")

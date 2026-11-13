@@ -8,6 +8,7 @@ import { candidatiCampo, candidatiForza, candidatiPalestra, GRUPPI_LONTANO, guar
 import { cicloDaiDati, condizioneAtleta, condizioneRiga } from '@/lib/trainingCondizione';
 import { doloreRiga, limitazioniRiga } from '@/lib/trainingDolore';
 import { loadDolore, loadLimitazioni } from '@/lib/trainingDoloreServer';
+import { loadSesso } from '@/lib/sessoServer';
 import { giorniSquadra } from '@/lib/trainingLoad';
 import { calendarioHash, conflittiCalendario, conflittoRiga } from '@/lib/trainingCalendario';
 import { validatePlan, type PlanSession, type WeekPlan } from '@/lib/trainingEngine';
@@ -71,7 +72,7 @@ export async function GET(request: NextRequest) {
     const [
       { data: profile }, resultsRes, { data: openSession }, { data: lastPlan }, { data: primaTestSession }, { data: ultimaTestSession },
       logsRes, { data: setupRow, error: setupErr }, { data: cOggi }, { data: checkins14 },
-      { data: calendar }, consensiSet, { squadra, partita: partitaAbituale }, focusSetup, preferenzeSetup, mese, resoconti, feedbackRecenti, dolore, limitazioni,
+      { data: calendar }, consensiSet, { squadra, partita: partitaAbituale }, focusSetup, preferenzeSetup, mese, resoconti, feedbackRecenti, dolore, limitazioni, sesso,
     ] = await Promise.all([
       supabaseAdmin.from('profiles').select('training_pain_hold, name, role').eq('user_id', userId).maybeSingle(),
       supabaseAdmin.from('training_test_results')
@@ -112,6 +113,8 @@ export async function GET(request: NextRequest) {
       loadDolore(userId),
       // Infortuni e limitazioni del setup (punto 4, migration 036): zone croniche da proteggere + nota
       loadLimitazioni(userId),
+      // Ragazzo o ragazza (13/11, migration 042): soglie dei test e carichi per le ragazze
+      loadSesso(userId),
     ]);
 
     // Migration 018 non ancora applicata → riquery senza la colonna dettaglio
@@ -183,7 +186,7 @@ export async function GET(request: NextRequest) {
       completions = (res.data || []) as unknown as typeof completions;
     }
 
-    const setup = mapSetup(setupErr ? null : setupRow);
+    const setup = { ...mapSetup(setupErr ? null : setupRow), sesso };
     const setupDisponibile = !setupErr;
     const checkinOggi = cOggi ? {
       fisico: cOggi.physical_state ?? null,
@@ -220,7 +223,7 @@ export async function GET(request: NextRequest) {
     // Livello per qualità (25/9) e ri-test mirato: le famiglie che hanno finito i codici del loro livello
     // (o sono in prova del livello sopra) dicono quali test rifare, non tutta la batteria
     const fascia = fasciaFromResults(rows);
-    const livelli = livelliPerQualita(rows, fascia);
+    const livelli = livelliPerQualita(rows, fascia, sesso);
     const memoria = calcolaMemoriaBlocchi(feedbackRecenti, {
       // i ruoli come nel planner (18/10): i blocchi P1 solo per i portieri, così la memoria e il ri-test mirato vedono la stessa libreria
       disponibili: blocchiDisponibili({ livello: fascia, attrezzatura: setup.attrezzatura, inCoppia: setup.compagno, livelloPerQualita: livelli, ruoli: String(profile?.role || '').split(',').map((r) => r.trim().toLowerCase()).filter(Boolean) }),
@@ -260,9 +263,9 @@ export async function GET(request: NextRequest) {
       matchDays: giorniPartita(calendar?.scorsa?.match_days || [], partitaAbituale, !!calendar?.scorsa),
     } });
 
-    const rombo = buildRombo(rows);
+    const rombo = buildRombo(rows, sesso);
     // Squilibri dai dati (dx/sx nei test e nei log, push vs pull, piede debole): l'hub li mostra, il planner li usa (regola 21)
-    const squilibri = calcolaSquilibri({ results: rows, logs: logsSerie });
+    const squilibri = calcolaSquilibri({ results: rows, logs: logsSerie, sesso });
     // Ri-test integrato (Ste, 26/10, lib/trainingRitest): nelle settimane di ri-test le serie test entrano nelle sedute
     // (una per seduta: forza sul gradino da sbloccare, palestra sul lift del piano; i test da campo per le famiglie a fine
     // codici solo in off season). In season si testa solo la forza: la tecnica avanza dalle sedute, resistenza e velocità
@@ -314,7 +317,7 @@ export async function GET(request: NextRequest) {
       const validateCtx = {
         fascia, matchDays: matchDaysEff, trainingDays: trainingDaysEff, painHold: profile?.training_pain_hold === true,
         hasSbarra: setup.attrezzatura.includes('sbarra') || rows.some((r) => r.test_id === 'test-pull'),
-        v2: { livello: fascia, livelloPerQualita: livelli, attrezzatura: setup.attrezzatura, inCoppia: setup.compagno, eta: null, esperienzaPalestra: setup.esperienzaPalestra, massimali, ruoli: String(profile?.role || '').split(',').map((r) => r.trim().toLowerCase()).filter(Boolean) },
+        v2: { livello: fascia, livelloPerQualita: livelli, attrezzatura: setup.attrezzatura, inCoppia: setup.compagno, eta: null, esperienzaPalestra: setup.esperienzaPalestra, massimali, sesso, ruoli: String(profile?.role || '').split(',').map((r) => r.trim().toLowerCase()).filter(Boolean) },
         maxSeduteFisiche: maxSeduteFisiche(setup.fase), trustBlocks: true, oggiDow: undefined,
       };
       const cal = { matchDays: matchDaysEff, trainingDays: trainingDaysEff, giorniAmmessi: !lastPlan?.richieste && preferenzeSetup?.giorni?.length ? preferenzeSetup.giorni : null };

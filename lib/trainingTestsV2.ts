@@ -16,6 +16,7 @@
  */
 import { punteggioLivelli, type TestLivello } from './trainingCatalog';
 import { stima1RM } from './trainingRulesV2';
+import { soglieTest, type Sesso } from './sesso';
 
 export type CategoriaTestV2 =
   | 'resistenza' | 'anaerobica' | 'forza-parte-bassa' | 'velocita' | 'forza-esplosiva' | 'tecnica' | 'palestra';
@@ -248,8 +249,8 @@ export const CATEGORIA_LABEL: Record<CategoriaTestV2, string> = {
 };
 
 /** Livello da valore, rispettando il verso del test. Per i lift `valore` è il rapporto 1RM/peso corporeo. */
-export function livelloV2(test: TestV2, valore: number): TestLivello {
-  const s = test.soglie;
+export function livelloV2(test: TestV2, valore: number, sesso?: Sesso | null): TestLivello {
+  const s = soglieTest(test.id, test.soglie, sesso); // 13/11: soglie per le ragazze
   if (test.verso === 'max') {
     if (valore >= s.pro) return 'pro';
     if (valore >= s.avanzato) return 'avanzato';
@@ -263,20 +264,20 @@ export function livelloV2(test: TestV2, valore: number): TestLivello {
 }
 
 /** Punteggio 0-100 ancorato ai livelli (40 intermedio · 60 avanzato · 80 PRO · 100 un gradino oltre), rispettando il verso. */
-export function punteggioV2(test: TestV2, valore: number): number {
-  return punteggioLivelli(test.soglie, test.verso, valore);
+export function punteggioV2(test: TestV2, valore: number, sesso?: Sesso | null): number {
+  return punteggioLivelli(soglieTest(test.id, test.soglie, sesso), test.verso, valore);
 }
 
 /**
  * Batteria palestra: da peso × reps (+ peso corporeo) a 1RM stimato, rapporto e livello.
  * Per il pull up zavorrato il carico è corpo + zavorra.
  */
-export function scoreLift(test: TestV2, peso: number, reps: number, pesoCorporeo: number | null): {
+export function scoreLift(test: TestV2, peso: number, reps: number, pesoCorporeo: number | null, sesso?: Sesso | null): {
   oneRm: number; rapporto: number | null; livello: TestLivello | null; punteggio: number | null;
 } {
   const carico = test.id === 't2-lift-pull-up' && pesoCorporeo ? pesoCorporeo + peso : peso;
   const oneRm = Math.round(stima1RM(carico, reps) * 10) / 10;
   if (!pesoCorporeo || !Number.isFinite(oneRm)) return { oneRm, rapporto: null, livello: null, punteggio: null };
   const rapporto = Math.round((oneRm / pesoCorporeo) * 100) / 100;
-  return { oneRm, rapporto, livello: livelloV2(test, rapporto), punteggio: punteggioV2(test, rapporto) };
+  return { oneRm, rapporto, livello: livelloV2(test, rapporto, sesso), punteggio: punteggioV2(test, rapporto, sesso) };
 }

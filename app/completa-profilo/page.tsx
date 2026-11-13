@@ -6,6 +6,8 @@ import { supabase } from '@/lib/supabase';
 import { authFetch } from '@/lib/authFetch';
 import { MIN_AGE, PLAYER_LEVELS, SPORT_ROLES, SPORT_FEARS } from '@/lib/constants';
 import { BETA_CODE_KEY } from '@/components/GoogleButton';
+import SessoScelta from '@/components/SessoScelta';
+import type { Sesso } from '@/lib/sesso';
 import { Ticket } from 'lucide-react';
 import { AppLoader, Button, Card, Chip, Field, Input, Select, Textarea } from '@/components/ui';
 
@@ -23,6 +25,7 @@ export default function CompletaProfiloPage() {
   const [ready, setReady] = useState(false);
   const [nome, setNome] = useState('');
   const [birthDate, setBirthDate] = useState('');
+  const [sesso, setSesso] = useState<Sesso | null>(null);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [healthAccepted, setHealthAccepted] = useState(false);
@@ -72,6 +75,7 @@ export default function CompletaProfiloPage() {
     if (!nome.trim()) { setError('Il nome è obbligatorio'); return; }
     const age = clientAge(birthDate);
     if (!birthDate || age === null || age < 0 || age > 100) { setError('Data di nascita non valida'); return; }
+    if (!sesso) { setError('Dicci se sei un ragazzo o una ragazza'); return; }
     if (age < MIN_AGE) { setError(`Per ora For You Football è per chi ha almeno ${MIN_AGE} anni. Stiamo lavorando per aprire anche ai più giovani: ti aspettiamo.`); return; }
     if (!privacyAccepted || !termsAccepted || !healthAccepted) { setError('Per continuare accetta la Privacy Policy, i Termini di servizio e il trattamento dei dati sulla salute'); return; }
     setLoading(true);
@@ -79,7 +83,7 @@ export default function CompletaProfiloPage() {
       const res = await authFetch('/api/register/complete', {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: nome.trim(), birth_date: birthDate, privacy_accepted: privacyAccepted, terms_accepted: termsAccepted, health_accepted: healthAccepted,
+          name: nome.trim(), birth_date: birthDate, sesso, privacy_accepted: privacyAccepted, terms_accepted: termsAccepted, health_accepted: healthAccepted,
           sport, role: selectedRoles.length ? selectedRoles.join(',') : null, level: level || null, biggest_fear: situazione || null,
           goals: goals.trim() || null, dream: dream.trim() || null, current_situation: currentSituation.trim() || null,
           referral_source: referralSource.trim() || null, beta_code: betaCode || null,
@@ -114,6 +118,7 @@ export default function CompletaProfiloPage() {
             <Field label="Data di nascita *" htmlFor="cp-birth" helper={`Obbligatoria: serve per adattare il percorso alla tua età e per requisiti di legge (per ora l'app è per chi ha almeno ${MIN_AGE} anni).`}>
               <Input id="cp-birth" type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} max={new Date().toISOString().slice(0, 10)} required />
             </Field>
+            <SessoScelta value={sesso} onChange={setSesso} obbligatoria />
 
             <div className="space-y-1">
               <label htmlFor="cp-privacy" className="flex items-start gap-3 min-h-[44px] py-2 text-body-sm text-app leading-relaxed cursor-pointer">

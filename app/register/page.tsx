@@ -7,6 +7,8 @@ import { MIN_AGE, PLAYER_LEVELS, SPORT_ROLES, SPORT_FEARS } from '@/lib/constant
 import { Check, ChevronLeft, ChevronRight, Mail, Ticket } from 'lucide-react';
 import { AppLoader, Button, Card, Chip, Field, Input, Select, Textarea } from '@/components/ui';
 import GoogleButton from '@/components/GoogleButton';
+import SessoScelta from '@/components/SessoScelta';
+import type { Sesso } from '@/lib/sesso';
 
 // ── Chip multi-select riusabile ───────────────────────────────────────────────
 function ChipGroup({
@@ -44,6 +46,7 @@ function RegisterContent() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [nome, setNome] = useState('');
   const [birthDate, setBirthDate] = useState('');
+  const [sesso, setSesso] = useState<Sesso | null>(null);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [healthAccepted, setHealthAccepted] = useState(false);
@@ -103,6 +106,7 @@ function RegisterContent() {
     if (!birthDate) { setError('La data di nascita è obbligatoria'); return; }
     const age = clientAge(birthDate);
     if (age === null || age < 0 || age > 100) { setError('Data di nascita non valida'); return; }
+    if (!sesso) { setError('Dicci se sei un ragazzo o una ragazza'); return; }
     if (age < MIN_AGE) {
       // ⚠️ TESTO DA RIVEDERE INSIEME PRIMA DEL DEPLOY — stesso messaggio del server
       setError(`Per ora For You Football è per chi ha almeno ${MIN_AGE} anni. Stiamo lavorando per aprire anche ai più giovani: ti aspettiamo.`);
@@ -133,6 +137,7 @@ function RegisterContent() {
           password,
           name: nome.trim(),
           birth_date: birthDate,
+          sesso,
           privacy_accepted: privacyAccepted,
           terms_accepted: termsAccepted,
           health_accepted: healthAccepted,
@@ -298,6 +303,8 @@ function RegisterContent() {
                   max={new Date().toISOString().slice(0, 10)}
                   required />
               </Field>
+
+              <SessoScelta value={sesso} onChange={setSesso} obbligatoria />
 
               {/* Consensi: checkbox separate, MAI pre-selezionate */}
               <div className="space-y-1 pt-1">

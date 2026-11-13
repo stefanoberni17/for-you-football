@@ -6,6 +6,7 @@
 
 import { DURATE, FOCUS_SETUP_MAX, SEDUTE_MAX, focusValidi, type FocusId } from './trainingRequest';
 import { parseLimitazioni, type Limitazioni } from './trainingDolore';
+import type { Sesso } from './sesso';
 
 /** Attrezzatura selezionabile (combacia con AttrezzaturaV2 del catalogo v2) */
 export const ATTREZZATURA_OPZIONI = ['palestra', 'kettlebell', 'sbarra', 'piccoli attrezzi', 'campo', 'muro', 'headball'] as const; // 'muro' dal 26/10 (tecnica composta: passaggi e palleggi al muro)
@@ -47,6 +48,8 @@ export const MAX_DURATA_PER_FASE: Record<(typeof FASI)[number], number> = { off_
 export const SETUP_SELECT = 'training_esperienza_palestra, training_attrezzatura, training_compagno, training_fase, training_peso_kg, training_squadra_durata_min';
 
 export interface TrainingSetup {
+  /** Ragazzo o ragazza (13/11, migration 042): dal profilo, si cambia anche qui; null = non l'ha detto. */
+  sesso?: Sesso | null;
   esperienzaPalestra: boolean;
   attrezzatura: string[];
   compagno: boolean;
