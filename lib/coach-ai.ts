@@ -1,3 +1,5 @@
+import { loadSesso } from './sessoServer';
+import { sessoPerCoach } from './sesso';
 import { calendarioDellaSettimana } from '@/lib/settimanaServer';
 import Anthropic from '@anthropic-ai/sdk';
 import { createClient } from '@supabase/supabase-js';
@@ -940,6 +942,7 @@ export async function buildUserContext(userId: string): Promise<string> {
   // prima erano ~10 query in fila, con il profilo letto tre volte lungo la richiesta).
   const todayStr = todayItaly();
   const sevenDaysAgo = daysAgoItaly(7);
+  const sessoP = loadSesso(userId); // 13/11, migration 042: query a parte, fail-soft
   const [
     { data: profile },
     { data: completedDays },
@@ -1157,6 +1160,7 @@ ${lines}
     timeZone: 'Europe/Rome',
   });
 
+  const sesso = await sessoP;
   return `
 📅 OGGI È: ${todayDate}
 ⚡ SETTIMANA CORRENTE: Settimana ${currentWeek}. Tutte le risposte devono rispettare le regole di questa settimana del percorso.
@@ -1169,6 +1173,7 @@ ${lines}
 **Ruolo/i:** ${profile?.role ? profile.role.split(',').join(' + ') : 'Non specificato'}
 **Livello:** ${profile?.level || 'Non specificato'}
 **Settimana corrente:** ${currentWeek}
+${sessoPerCoach(sesso) ?? ''}
 
 ## Sfide e situazione
 ${profile?.biggest_fear ? `**Paure:** ${profile.biggest_fear.split(',').map((f: string) => f.trim()).join(', ')}` : ''}

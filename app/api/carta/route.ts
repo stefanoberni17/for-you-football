@@ -11,6 +11,7 @@ import { zoneTeseRicorrenti } from '@/lib/trainingFascia';
 import { GATE_DAY } from '@/lib/constants';
 import { incroci } from '@/lib/incroci';
 import { seduteDaiFeedback } from '@/lib/cartaServer';
+import { loadSesso } from '@/lib/sessoServer';
 
 export const dynamic = 'force-dynamic';
 
@@ -66,11 +67,12 @@ export async function GET(request: NextRequest) {
     let sedute: ReturnType<typeof seduteDaiFeedback> = [];
     let settimaneCarico: CaricoInfo['settimane'] = [];
     if (campo) {
-      const [resultsRes, feedback, carico] = await Promise.all([
+      const [resultsRes, feedback, carico, sesso] = await Promise.all([
         supabaseAdmin.from('training_test_results').select('test_id, valore, livello_calcolato, punteggio_calcolato, dettaglio')
           .eq('user_id', userId).order('created_at', { ascending: false }).limit(400),
         loadFeedbackRecenti(userId, 80),
         loadCarico(userId, false).catch(() => null),
+        loadSesso(userId),
       ]);
       sedute = seduteDaiFeedback(feedback);
       settimaneCarico = carico?.settimane ?? [];
@@ -80,7 +82,7 @@ export async function GET(request: NextRequest) {
           .eq('user_id', userId).order('created_at', { ascending: false }).limit(400)).data as TestResultRow[] | null;
       }
       const rows: TestResultRow[] = (results || []).map((r) => ({ test_id: r.test_id, valore: Number(r.valore), livello_calcolato: r.livello_calcolato, punteggio_calcolato: Number(r.punteggio_calcolato), dettaglio: r.dettaglio ?? null }));
-      const dettaglio = buildRombo(rows);
+      const dettaglio = buildRombo(rows, sesso);
       corpo = { dettaglio, base: buildRomboBase(dettaglio), livello: fasciaFromResults(rows), testFatti: rows.length };
       fasciaScore = dettaglio.find((p) => p.key === 'fascia')?.score ?? null;
       zoneConFastidio = zoneTeseRicorrenti(feedback).filter((z) => z.fastidio >= 2).length;

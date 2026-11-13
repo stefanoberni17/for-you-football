@@ -1,6 +1,6 @@
 'use client';
 
-
+import SessoScelta from '@/components/SessoScelta';
 import { useState } from 'react';
 import { authFetch } from '@/lib/authFetch';
 import { DAY_SHORT_NAMES, DAY_NAMES } from '@/lib/constants';
@@ -300,6 +300,9 @@ export default function SetupCampo({ state, ricarica, conFascia = false }: {
           {/* Il tuo corpo */}
           <Card padding="sm">
             <SectionTitle title="Il tuo corpo" subtitle="Serve per i massimali in palestra." className="mb-3" />
+            <div className="mb-4">
+              <SessoScelta value={setupDraft.sesso ?? null} onChange={(s) => setSetupDraft({ ...setupDraft, sesso: s })} />
+            </div>
             <Field label="Peso corporeo (kg)" htmlFor="setup-peso">
               <Input id="setup-peso" type="text" inputMode="decimal" value={setupDraft.pesoKg ?? ''} placeholder="es. 62"
                 onChange={(e) => { const v = e.target.value.replace(',', '.').replace(/[^0-9.]/g, ''); setSetupDraft({ ...setupDraft, pesoKg: v === '' ? null : Number(v) }); }}

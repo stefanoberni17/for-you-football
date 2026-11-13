@@ -19,6 +19,7 @@
  * 10-15 % lieve, oltre il 15 % marcata.
  */
 import { buildRombo, type TestResultRow } from './trainingEngine';
+import type { Sesso } from './sesso';
 import type { SetLogRow } from './trainingAdapt';
 import { ESERCIZI } from './trainingCatalog';
 import { esercizioV2ById } from './trainingCatalogV2';
@@ -174,7 +175,7 @@ function squilibriDaSerie(logs: SetLogRow[]): SquilibrioSerie[] {
 }
 
 /** Calcola tutti gli squilibri. `results` ordinati dal più recente; `logs` = training_set_logs recenti (con `lato`). */
-export function calcolaSquilibri(input: { results: TestResultRow[]; logs: SetLogRow[] }): Squilibri {
+export function calcolaSquilibri(input: { results: TestResultRow[]; logs: SetLogRow[]; sesso?: Sesso | null }): Squilibri {
   const { lati, coppieFatte } = squilibriDaTest(input.results);
   const serie = squilibriDaSerie(input.logs);
 
@@ -190,7 +191,7 @@ export function calcolaSquilibri(input: { results: TestResultRow[]; logs: SetLog
   const latoDeboleAlto = voti('alto');
 
   // Push vs pull dal rombo (punteggi 0-100 ancorati ai livelli)
-  const rombo = buildRombo(input.results);
+  const rombo = buildRombo(input.results, input.sesso);
   const push = rombo.find((p) => p.key === 'push')?.score ?? null;
   const pull = rombo.find((p) => p.key === 'pull')?.score ?? null;
   const diff = push != null && pull != null ? push - pull : null;

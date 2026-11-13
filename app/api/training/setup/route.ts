@@ -1,3 +1,4 @@
+import { parseSesso } from '@/lib/sesso';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getAuthUser } from '@/lib/auth';
@@ -76,7 +77,16 @@ export async function POST(request: NextRequest) {
     const pref = prefGrezze && liv && prefGrezze.sedute ? { ...prefGrezze, sedute: sedutePerLivello(liv, prefGrezze.sedute) } : prefGrezze;
     // Infortuni e limitazioni (migration 036): zone valide + nota 300 caratteri; tutto vuoto = colonna a null
     const limitazioni = body.limitazioni !== undefined && body.limitazioni !== null && typeof body.limitazioni === 'object' ? parseLimitazioni(body.limitazioni) : null;
-    if (Object.keys(update).length === 0 && squadra === null && focus === null && pref === null && limitazioni === null) return NextResponse.json({ error: 'nessun campo' }, { status: 400 });
+    // Ragazzo o ragazza (13/11, migration 042): carichi e soglie dei test per le ragazze
+    const sesso = body.sesso !== undefined ? parseSesso(body.sesso) : null;
+    if (Object.keys(update).length === 0 && squadra === null && focus === null && pref === null && limitazioni === null && sesso === null) return NextResponse.json({ error: 'nessun campo' }, { status: 400 });
+
+    let sessoSalvato: boolean | null = null;
+    if (sesso !== null) {
+      const { error: sErr } = await supabaseAdmin.from('profiles').update({ sesso }).eq('user_id', userId);
+      sessoSalvato = !sErr;
+      if (sErr) console.error('training/setup sesso (serve la migration 042?):', sErr.message);
+    }
 
     let limitazioniSalvate: boolean | null = null;
     if (limitazioni !== null) {
@@ -110,7 +120,8 @@ export async function POST(request: NextRequest) {
       if (focus !== null && !focusSalvato) return NextResponse.json({ error: 'Non riesco a salvare gli obiettivi (manca la migration 024)' }, { status: 500 });
       if (pref !== null && !preferenzeSalvate) return NextResponse.json({ error: 'Non riesco a salvare giorni e tempo (manca la migration 025)' }, { status: 500 });
       if (limitazioni !== null && !limitazioniSalvate) return NextResponse.json({ error: 'Non riesco a salvare le limitazioni (manca la migration 036)' }, { status: 500 });
-      return NextResponse.json({ success: true, squadraSalvata, squadra, focusSalvato, focus, preferenzeSalvate, limitazioniSalvate });
+      if (sesso !== null && !sessoSalvato) return NextResponse.json({ error: 'Non riesco a salvarlo (manca la migration 042)' }, { status: 500 });
+      return NextResponse.json({ success: true, sessoSalvato, squadraSalvata, squadra, focusSalvato, focus, preferenzeSalvate, limitazioniSalvate });
     }
 
     const { data, error } = await supabaseAdmin.from('profiles').update(update).eq('user_id', userId).select(SELECT).maybeSingle();

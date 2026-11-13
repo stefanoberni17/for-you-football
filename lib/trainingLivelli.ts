@@ -14,7 +14,8 @@
  */
 import { AREE_GAMBE, ROMBO_PUNTE, testById } from './trainingCatalog';
 import { LIVELLO_ORDINE, type LivelloMinV2, type QualitaV2 } from './trainingCatalogV2';
-import { ladderForArea, type TestResultRow } from './trainingEngine';
+import { ladderForArea, livelloRisultato, type TestResultRow } from './trainingEngine';
+import type { Sesso } from './sesso';
 import { TESTS_V2 } from './trainingTestsV2';
 
 export type LivelliQualita = Partial<Record<QualitaV2, LivelloMinV2>>;
@@ -78,13 +79,15 @@ export function livelloScaleGambe(results: TestResultRow[]): { livello: LivelloM
 }
 
 /** Livello di una qualità: mediana bassa degli ultimi risultati dei suoi test; senza test → globale. */
-export function livelloQualita(results: TestResultRow[], q: QualitaV2, globale: LivelloMinV2): LivelloMinV2 {
+export function livelloQualita(results: TestResultRow[], q: QualitaV2, globale: LivelloMinV2, sesso?: Sesso | null): LivelloMinV2 {
   const ids = testIdsPerQualita(q);
   if (!ids.length) return globale;
   const voti: number[] = [];
   for (const id of ids) {
     const r = results.find((x) => x.test_id === id); // results dal più recente
-    const l = r ? LIVELLO_DA_TEST[r.livello_calcolato] : undefined;
+    // Ragazze (13/11): il livello si ricalcola con le loro soglie (i risultati salvati prima avevano quelle maschili)
+    const salvato = r ? (sesso === 'F' ? livelloRisultato(r, sesso) ?? r.livello_calcolato : r.livello_calcolato) : undefined;
+    const l = salvato ? LIVELLO_DA_TEST[salvato] : undefined;
     if (l) voti.push(LIVELLO_ORDINE[l]);
   }
   if (q === 'forza-parte-alta') voti.push(LIVELLO_ORDINE[globale]); // l'AMRAP conta come voto (Ste: "AMRAP più scale")
@@ -100,9 +103,9 @@ export function livelloQualita(results: TestResultRow[], q: QualitaV2, globale: 
 }
 
 /** Tutti i livelli per qualità (solo le qualità con test propri). */
-export function livelliPerQualita(results: TestResultRow[], globale: LivelloMinV2): LivelliQualita {
+export function livelliPerQualita(results: TestResultRow[], globale: LivelloMinV2, sesso?: Sesso | null): LivelliQualita {
   const out: LivelliQualita = {};
-  for (const q of Object.keys(QUALITA_PUNTE) as QualitaV2[]) out[q] = livelloQualita(results, q, globale);
+  for (const q of Object.keys(QUALITA_PUNTE) as QualitaV2[]) out[q] = livelloQualita(results, q, globale, sesso);
   return out;
 }
 

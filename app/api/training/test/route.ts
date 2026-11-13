@@ -5,6 +5,7 @@ import { puoScrivereCampo } from '@/lib/trainingAccess';
 import { scoreTest } from '@/lib/trainingEngine';
 import { esercizioById, testById } from '@/lib/trainingCatalog';
 import { livelloV2, punteggioV2, scoreLift, testV2ById } from '@/lib/trainingTestsV2';
+import { loadSesso } from '@/lib/sessoServer';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -82,6 +83,9 @@ export async function POST(request: NextRequest) {
       return r1;
     };
 
+    // Ragazzo o ragazza (13/11): le soglie del livello per le ragazze (lib/sesso.ts); null = come prima
+    const sesso = await loadSesso(userId);
+
     // Batteria v2 da campo o palestra
     if (testV2) {
       let valoreSalvato: number;
@@ -91,7 +95,7 @@ export async function POST(request: NextRequest) {
       if (testV2.lift) {
         const { data: prof } = await supabaseAdmin.from('profiles').select('training_peso_kg').eq('user_id', userId).maybeSingle();
         const pesoCorporeo = prof?.training_peso_kg != null ? Number(prof.training_peso_kg) : null;
-        const sc = scoreLift(testV2, peso, reps, pesoCorporeo);
+        const sc = scoreLift(testV2, peso, reps, pesoCorporeo, sesso);
         if (!Number.isFinite(sc.oneRm)) return NextResponse.json({ error: 'Non riesco a stimare il massimale: ripetizioni fuori range' }, { status: 400 });
         valoreSalvato = sc.oneRm;
         livello = sc.livello ?? 'base';
@@ -99,8 +103,8 @@ export async function POST(request: NextRequest) {
         dettaglio = { peso, reps, peso_corporeo: pesoCorporeo, rapporto: sc.rapporto, formula: 'brzycki', senza_peso_corporeo: pesoCorporeo === null };
       } else {
         valoreSalvato = num;
-        livello = livelloV2(testV2, num);
-        punteggio = punteggioV2(testV2, num);
+        livello = livelloV2(testV2, num, sesso);
+        punteggio = punteggioV2(testV2, num, sesso);
       }
       const { error: insertError } = await insertRow({
         user_id: userId, test_session_id: session.id, test_id: testV2.id,
@@ -124,7 +128,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ success: true, skill: true });
     }
 
-    const scored = scoreTest(test_id, num)!;
+    const scored = scoreTest(test_id, num, sesso)!;
     const { error: insertError } = await supabaseAdmin.from('training_test_results').insert({
       user_id: userId,
       test_session_id: session.id,

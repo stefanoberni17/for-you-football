@@ -114,7 +114,7 @@ export async function POST(req: NextRequest) {
     const userId = userData.user.id;
 
     // 2-4. Profilo, referral, snapshot T0, consensi (lib/registrazione.ts): niente blocca, l'utente auth esiste già
-    await salvaProfiloRegistrazione(userId, { ...campiDalBody({ name, sport, role, level, biggest_fear, goals, dream, current_situation, referral_source }), birth_date }, computedAge, { isBeta, via: 'password' });
+    await salvaProfiloRegistrazione(userId, { ...campiDalBody({ name, sport, role, level, biggest_fear, goals, dream, current_situation, referral_source, sesso: body.sesso }), birth_date }, computedAge, { isBeta, via: 'password' });
 
     return NextResponse.json({ success: true, beta_accepted: isBeta });
 

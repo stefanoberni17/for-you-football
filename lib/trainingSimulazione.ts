@@ -12,6 +12,7 @@ import { fasciaFromResults, livelloFromValore, placementFromResults, type Checki
 import { testById } from './trainingCatalog';
 import { testV2ById } from './trainingTestsV2';
 import { livelliPerQualita } from './trainingLivelli';
+import type { Sesso } from './sesso';
 import { calcolaSquilibri } from './trainingSquilibri';
 import { riepilogoEsercizi, type SetLogRow } from './trainingAdapt';
 import { calcolaCarico, caricoSquadraStimato, type CompletionRow, type PlanRow } from './trainingLoad';
@@ -34,6 +35,7 @@ export interface Atleta {
   attrezzatura: string[];
   esperienzaPalestra?: boolean;
   pesoKg?: number;
+  sesso?: Sesso;                 // 13/11: 'F' = soglie dei test e carichi per le ragazze
   results: TestResultRow[];
   trainingDays: number[];        // giorni con la squadra (calendario)
   matchDays: number[];
@@ -209,7 +211,7 @@ export function baseFinta(a: Atleta): PlannerContext {
   const storico = a.storico ?? { plans: [], completions: [] };
   const logs = a.logs ?? [];
   return {
-    fascia, livelli: livelliPerQualita(a.results, fascia), gradini: placementFromResults(a.results),
+    fascia, livelli: livelliPerQualita(a.results, fascia, a.sesso), sesso: a.sesso ?? null, gradini: placementFromResults(a.results),
     matchDays: a.matchDays, matchDaysDaAbitudine: false, trainingDays: a.trainingDays, resoconti: a.resoconti ?? [],
     painHold: !!a.painHold, hasSbarra: a.results.some((x) => x.test_id === 'test-pull'), results: a.results,
     feedbackRecenti: a.feedback ?? [], weekOfPath: 3, oggiDow: a.oggiDow ?? 1,
@@ -220,7 +222,7 @@ export function baseFinta(a: Atleta): PlannerContext {
     carico: calcolaCarico({ completions: storico.completions, setRpe: [], plans: storico.plans, oggi, lunedi, isDeload: ciclo.isDeload, squadraSettimanale, condizione: a.condizione }),
     dolore: a.dolore ?? null, limitazioni: a.limitazioni ?? null,
     squadra, fase: a.fase, focusSetup: a.focusSetup, preferenze: undefined, preferenzeSetup: a.preferenze ?? { giorni: [], sedute: null, durataMin: null },
-    squilibri: calcolaSquilibri({ results: a.results, logs }),
+    squilibri: calcolaSquilibri({ results: a.results, logs, sesso: a.sesso }),
   } as PlannerContext;
 }
 

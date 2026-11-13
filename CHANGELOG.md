@@ -2,6 +2,15 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-13 — Ragazzo o ragazza: soglie dei test e carichi per le ragazze
+
+Ste, 13/11: «per le donne dovremmo mettere a posto almeno i carichi ecc. e chiedere sesso in registrazione». Dettagli e soglie in `docs/sesso-soglie-2026-11.md`.
+- **La domanda** «Sei un ragazzo o una ragazza?» (`components/SessoScelta.tsx`): obbligatoria nel primo passo della registrazione e in «Completa il profilo»; per chi c'è già nell'Account e nel setup del Corpo. Colonna `profiles.sesso` (migration 042, applicata il 13/11); senza la colonna o senza risposta tutto resta come prima (`loadSesso`, fail-soft).
+- **Soglie dei test per le ragazze** (`lib/sesso.ts`, `SOGLIE_F`): forza della parte alta, velocità, resistenza, salti e massimali in palestra; tenute, tecnica, fascia, scale e AMRAP uguali per tutti. Valgono al salvataggio di un test, nel rombo e nella Carta, nei livelli per qualità e negli squilibri; i risultati salvati prima si ricalcolano. Numeri a tavolino, da confermare.
+- **Carichi**: senza massimale il peso di partenza e i kg dei blocchi scendono al 65 % (kettlebell a 4 kg, bilanciere dalla barra da 15) e il tetto è 12 kg invece di 20; con il massimale vale il suo 1RM.
+- **Planner, preparatore e Coach** sanno che è una ragazza (il Coach le parla al femminile). `PLANNER_V2_PROMPT_VERSION = 'v2.53-ragazze'`.
+- 9 test in `tests/sesso.test.ts`; Elena nelle simulazioni (`scripts/persone-stagione.mts`) è una ragazza.
+
 ## 2026-11-13 — Nuovo brand FYF: icone, via il viola, info argento, contrasto del bottone
 
 Logo definitivo: «FYF» bianco con la seconda F specchiata, cerchio aperto sfumato dal verde #1A9660 al blu #6FA3D6. Verde = Mente, blu acciaio = Corpo, sfumato = Completo; il viola non fa parte del brand. Asset in `public/brand/`.
@@ -10,6 +19,7 @@ Logo definitivo: «FYF» bianco con la seconda F specchiata, cerchio aperto sfum
 - **Info argento**: `--color-info` da #5aa9e6 (differenza 4 dal blu del Corpo) a #c8cfca, 11,8:1 su #0d1310 e 10,7:1 su #161e19, distinto da Mente, Corpo e ambra anche con il daltonismo. Ste lo conferma sul Preview.
 - **Schermata di caricamento** (`AppLoader`): il logo nuovo. Il cerchio sfumato verde-blu gira, «FYF» resta fermo al centro, l'alone che respira è a metà tra il verde e il blu. Prima era un anello verde con «FYF» scritto in testo.
 - **Bottone principale**: gradiente un passo più scuro, testo bianco: Mente 4,71-5,51:1 (prima 3,14-3,77), Corpo 6,43-7,24:1. Il testo scuro avrebbe portato il Corpo a 3,49:1. Il bottone `hero` ha ancora il punto chiaro a 2,83:1 nel Mente: da decidere.
+- **Bottone `hero`** (Inizia, Gate, fine settimana; dopo il merge, Ste: «vai»): lo stesso passo più scuro (da forest-500/600 a forest-600/700, il glow resta), testo bianco da 2,83:1 ad almeno 4,71:1 nel Mente e 6,43:1 nel Corpo.
 
 ## 2026-11-12 — Correzioni dalle prove con sei persone finte
 

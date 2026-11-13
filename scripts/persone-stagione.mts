@@ -186,12 +186,12 @@ const ATLETI: AtletaStagione[] = [
     attese: ['W1-W2: pausa, niente sedute fisiche', 'W3-W4: cosce dietro ridotte, niente sprint pieni subito?', 'sabato (−1): solo blocco pre partita', 'resistenza in season solo perché è tra gli obiettivi: 1 giornata, mai a −1/−2'] },
   { id: 'elena', carattere: ELENA_C,
     atleta: { nome: 'Elena (23, Serie C femminile)', descrizione: 'Centrocampista, 60 kg, palestra con esperienza, campo e sbarra, in season. Squadra lun/mer/gio, partita domenica. "Tutto, in equilibrio", mar/ven/sab, 3 giornate da 60\'. Esami W1-W3: sonno 5, voti 8, blocchi duri; poi bene.',
-      eta: 23, ruoli: 'centrocampista', fase: 'in_season', attrezzatura: ['palestra', 'sbarra', 'campo', 'piccoli attrezzi'], esperienzaPalestra: true, pesoKg: 60,
+      eta: 23, ruoli: 'centrocampista', fase: 'in_season', attrezzatura: ['palestra', 'sbarra', 'campo', 'piccoli attrezzi'], esperienzaPalestra: true, pesoKg: 60, sesso: 'F',
       results: [r('test-amrap', 7), r('test-push', 15), r('test-pull', 2), r('test-core', 55), r('test-squat', 30), r('test-affondi', 18), r('test-rdl', 22), r('test-bridge', 32), r('t2-lift-squat', 60, 60), r('t2-lift-hip-thrust', 80, 60), r('t2-50m', 7.6),
         skill('push-1', 15), skill('push-2', 8), skill('pull-1', 8), skill('squat-1', 30), skill('aff-1', 18), skill('rdl-1', 22), skill('bridge-1', 32)],
       trainingDays: [1, 3, 4], matchDays: [7], squadra: { 1: { rpe: 7, qualita: ['resistenza'] }, 3: { rpe: 7, qualita: ['forza'] }, 4: { rpe: 5, qualita: ['tattica'] } }, squadraDurataMin: 90,
       focusSetup: [FOCUS_TUTTO], preferenze: { giorni: [2, 5, 6], sedute: 3, durataMin: 60 } },
-    attese: ['stanca W1-W3 → tetto −15 %, scarico dai dati', 'sabato (−1): solo leggero', 'livelli: le soglie dei test sono uguali per uomini e donne?'] },
+    attese: ['stanca W1-W3 → tetto −15 %, scarico dai dati', 'sabato (−1): solo leggero', 'livelli e carichi con le soglie per le ragazze (13/11)'] },
 ];
 
 // ─── Contesto del lunedì (come loadPlannerContext + loadContextV2, dai dati in memoria) ──
@@ -259,7 +259,7 @@ function contesto(a: Atleta, db: Db, oggiDow: number): { ctx: ContextV2; l: Lett
   const avg = (k: 'physical_state' | 'sleep_hours' | 'recovery_quality' | 'mental_state') => c7.length ? Math.round((c7.reduce((s, c) => s + c[k], 0) / c7.length) * 10) / 10 : 0;
   const cOggi = db.checkins.find((c) => c.date === todayRome());
   const base = {
-    fascia, livelli: livelliPerQualita(rows, fascia), gradini: placementFromResults(rows),
+    fascia, livelli: livelliPerQualita(rows, fascia, a.sesso), sesso: a.sesso ?? null, gradini: placementFromResults(rows),
     matchDays: a.matchDays, matchDaysDaAbitudine: false, trainingDays: giorniSquadra(a.trainingDays, a.squadra ?? {}), resoconti: db.resoconti,
     painHold: db.painHold, dolore: db.dolore, limitazioni: db.limitazioni, hasSbarra: rows.some((x) => x.test_id === 'test-pull'), results: rows,
     feedbackRecenti: l.feedback, weekOfPath: 3, oggiDow, obiettivi: null, note: null,
@@ -268,7 +268,7 @@ function contesto(a: Atleta, db: Db, oggiDow: number): { ctx: ContextV2; l: Lett
     checkinMedia7: c7.length ? { fisico: avg('physical_state'), sonno: avg('sleep_hours'), recupero: avg('recovery_quality'), mentale: avg('mental_state'), giorni: c7.length } : null,
     ciclo: l.ciclo, storicoSerie: riepilogoEsercizi(l.logs28), logsSerie: l.logs28, carico: l.carico,
     squadra: a.squadra ?? {}, fase: a.fase, focusSetup: a.focusSetup, preferenzeSetup: a.preferenze ?? { giorni: [], sedute: null, durataMin: null },
-    squilibri: calcolaSquilibri({ results: rows, logs: l.logs28 }),
+    squilibri: calcolaSquilibri({ results: rows, logs: l.logs28, sesso: a.sesso }),
   };
   const profilo: Record<string, unknown> = {
     training_esperienza_palestra: !!a.esperienzaPalestra, training_attrezzatura: a.attrezzatura, training_compagno: false, training_fase: a.fase,

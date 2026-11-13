@@ -29,6 +29,8 @@ import { bloccoById } from './trainingBlocks';
 import { loadResoconti } from './trainingResocontoServer';
 import { giorniPartita, parsePartitaAbituale, parseSquadra, squadraTesto, type SquadraSettimana } from './trainingSquadra';
 import { livelliPerQualita, type LivelliQualita } from './trainingLivelli';
+import { loadSesso } from './sessoServer';
+import type { Sesso } from './sesso';
 import { FOCUS_SETUP_MAX, focusValidi, type FocusId } from './trainingRequest';
 
 export const PLANNER_PROMPT_VERSION = 'v0.6-testa-nel-campo';
@@ -136,6 +138,7 @@ function sanitize(text: string): string {
 // ─── Contesto utente per il planner ─────────────────────────────────────────
 
 export interface PlannerContext {
+  sesso?: Sesso | null; // 13/11: ragazza → soglie dei test e carichi per le ragazze (lib/sesso.ts); null = non l'ha detto
   fascia: FasciaLivello;
   livelli: LivelliQualita; // 25/9: livello per qualità dai test di quella qualità (lib/trainingLivelli)
   gradini: Record<string, number>;
@@ -252,7 +255,7 @@ export async function loadPlannerContext(userId: string, opzioni: { feedback?: b
   // Fisico Base e Medio (3/11): il feedback non rimodula il piano: niente tetto personale né scarico dai dati (resta il
   // ciclo a calendario, la quarta settimana di scarico)
   const conFeedback = opzioni.feedback !== false;
-  const [{ data: profile }, resultsRes, { data: calendar }, completions, { data: pianoRow }, { data: primaTestSession }, { data: ultimaTestSession }, { squadra, partita: partitaAbituale }, focusSetup, preferenzeSetup, resoconti, dolore, limitazioni] = await Promise.all([
+  const [{ data: profile }, resultsRes, { data: calendar }, completions, { data: pianoRow }, { data: primaTestSession }, { data: ultimaTestSession }, { squadra, partita: partitaAbituale }, focusSetup, preferenzeSetup, resoconti, dolore, limitazioni, sesso] = await Promise.all([
     supabaseAdmin.from('profiles').select('training_pain_hold, current_week, training_goals, training_notes, training_fase, training_squadra_durata_min').eq('user_id', userId).maybeSingle(),
     supabaseAdmin.from('training_test_results').select('test_id, valore, livello_calcolato, punteggio_calcolato, created_at, dettaglio')
       .eq('user_id', userId).order('created_at', { ascending: false }).limit(60),
@@ -275,6 +278,7 @@ export async function loadPlannerContext(userId: string, opzioni: { feedback?: b
     loadResoconti(userId),
     loadDolore(userId),
     loadLimitazioni(userId),
+    loadSesso(userId),
   ]);
   // Migration 018 non ancora applicata → riquery senza `dettaglio` (serve al rombo per i massimali)
   let results = resultsRes.data as { test_id: string; valore: number; livello_calcolato: string; punteggio_calcolato: number; created_at?: string; dettaglio?: Record<string, unknown> | null }[] | null;
@@ -375,14 +379,15 @@ export async function loadPlannerContext(userId: string, opzioni: { feedback?: b
     dettaglio: r.dettaglio ?? null,
   }));
   const gradini = placementFromResults(rows);
-  const squilibri = calcolaSquilibri({ results: rows, logs: logsSerie });
+  const squilibri = calcolaSquilibri({ results: rows, logs: logsSerie, sesso });
   // Sbarra: v0 — dedotta dal fatto che il test pull sia stato fatto con valore ≥ 0
   const hasSbarra = rows.some((r) => r.test_id === 'test-pull');
 
   const fascia = fasciaFromResults(rows);
   return {
     fascia,
-    livelli: livelliPerQualita(rows, fascia),
+    livelli: livelliPerQualita(rows, fascia, sesso),
+    sesso,
     gradini,
     matchDays,
     matchDaysDaAbitudine,
