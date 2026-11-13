@@ -11,8 +11,9 @@ self.addEventListener('push', (event) => {
   const title = data.title || 'For You Football';
   const options = {
     body: data.body || '',
-    icon: '/icons/icon-192x192.png',
-    badge: '/icons/icon-192x192.png',
+    // Logo FYF (13/11). Niente badge: Android lo disegna come sagoma bianca e un'icona piena diventa un quadrato;
+    // un badge vero va fatto a una tinta su sfondo trasparente.
+    icon: '/brand/app-icona-192.png',
     data: {
       url: data.url || '/',
     },
