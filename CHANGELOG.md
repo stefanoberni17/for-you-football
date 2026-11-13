@@ -19,6 +19,7 @@ Logo definitivo: «FYF» bianco con la seconda F specchiata, cerchio aperto sfum
 - **Info argento**: `--color-info` da #5aa9e6 (differenza 4 dal blu del Corpo) a #c8cfca, 11,8:1 su #0d1310 e 10,7:1 su #161e19, distinto da Mente, Corpo e ambra anche con il daltonismo. Ste lo conferma sul Preview.
 - **Schermata di caricamento** (`AppLoader`): il logo nuovo. Il cerchio sfumato verde-blu gira, «FYF» resta fermo al centro, l'alone che respira è a metà tra il verde e il blu. Prima era un anello verde con «FYF» scritto in testo.
 - **Bottone principale**: gradiente un passo più scuro, testo bianco: Mente 4,71-5,51:1 (prima 3,14-3,77), Corpo 6,43-7,24:1. Il testo scuro avrebbe portato il Corpo a 3,49:1. Il bottone `hero` ha ancora il punto chiaro a 2,83:1 nel Mente: da decidere.
+- **Bottone `hero`** (Inizia, Gate, fine settimana; dopo il merge, Ste: «vai»): lo stesso passo più scuro (da forest-500/600 a forest-600/700, il glow resta), testo bianco da 2,83:1 ad almeno 4,71:1 nel Mente e 6,43:1 nel Corpo.
 
 ## 2026-11-12 — Correzioni dalle prove con sei persone finte
 
