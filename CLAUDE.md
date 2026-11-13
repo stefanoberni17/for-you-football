@@ -284,7 +284,7 @@ goals                    TEXT    -- obiettivi con il percorso (testo libero)
 dream                    TEXT    -- sogno da calciatore (testo libero)
 current_situation        TEXT    -- come sta vivendo il periodo nel calcio (testo libero)
 referral_source          TEXT    -- "Chi ti ha consigliato?" (migration 030, 8/10): facoltativa, scritta una volta da /api/register
-sesso                    TEXT    -- 'M' | 'F' (migration 042, 13/11, DA APPLICARE): obbligatoria in registrazione, poi in Account e setup del Corpo; null = come prima. Soglie dei test e carichi per le ragazze: lib/sesso.ts, docs/sesso-soglie-2026-11.md
+sesso                    TEXT    -- 'M' | 'F' (migration 042, applicata il 13/11): obbligatoria in registrazione, poi in Account e setup del Corpo; null = come prima. Soglie dei test e carichi per le ragazze: lib/sesso.ts, docs/sesso-soglie-2026-11.md
 -- Percorso
 current_week             INT DEFAULT 1
 -- Telegram

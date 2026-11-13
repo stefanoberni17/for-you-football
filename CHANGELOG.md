@@ -5,7 +5,7 @@ Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review
 ## 2026-11-13 — Ragazzo o ragazza: soglie dei test e carichi per le ragazze
 
 Ste, 13/11: «per le donne dovremmo mettere a posto almeno i carichi ecc. e chiedere sesso in registrazione». Dettagli e soglie in `docs/sesso-soglie-2026-11.md`.
-- **La domanda** «Sei un ragazzo o una ragazza?» (`components/SessoScelta.tsx`): obbligatoria nel primo passo della registrazione e in «Completa il profilo»; per chi c'è già nell'Account e nel setup del Corpo. Colonna `profiles.sesso` (migration 042, **da applicare**); senza la colonna o senza risposta tutto resta come prima (`loadSesso`, fail-soft).
+- **La domanda** «Sei un ragazzo o una ragazza?» (`components/SessoScelta.tsx`): obbligatoria nel primo passo della registrazione e in «Completa il profilo»; per chi c'è già nell'Account e nel setup del Corpo. Colonna `profiles.sesso` (migration 042, applicata il 13/11); senza la colonna o senza risposta tutto resta come prima (`loadSesso`, fail-soft).
 - **Soglie dei test per le ragazze** (`lib/sesso.ts`, `SOGLIE_F`): forza della parte alta, velocità, resistenza, salti e massimali in palestra; tenute, tecnica, fascia, scale e AMRAP uguali per tutti. Valgono al salvataggio di un test, nel rombo e nella Carta, nei livelli per qualità e negli squilibri; i risultati salvati prima si ricalcolano. Numeri a tavolino, da confermare.
 - **Carichi**: senza massimale il peso di partenza e i kg dei blocchi scendono al 65 % (kettlebell a 4 kg, bilanciere dalla barra da 15) e il tetto è 12 kg invece di 20; con il massimale vale il suo 1RM.
 - **Planner, preparatore e Coach** sanno che è una ragazza (il Coach le parla al femminile). `PLANNER_V2_PROMPT_VERSION = 'v2.53-ragazze'`.
