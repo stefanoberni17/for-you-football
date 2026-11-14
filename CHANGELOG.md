@@ -2,6 +2,15 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-14 — Il giorno della partita: «Oggi giochi, arriva pronto» in Home
+
+Ste, 14/11: «il giorno della partita la home ti propone le pratiche da fare prima della partita in base al tuo stato? Un badge "oggi hai la partita: arriva pronto" con meno ansia, più concentrazione, meno pensieri ecc., con le varie pratiche».
+- **La card** (`components/PrePartitaCard.tsx`): in cima alla Home quando oggi c'è la partita (calendario della settimana o abitudine del setup), con il Mente aperto per la sua settimana e non in pausa. «Prima della partita» con il pallone verde (`prePartita` in `FUNZIONI`), badge «Oggi giochi», titolo «Arriva pronto», i bisogni come bottoni: Meno ansia, Più concentrazione, Meno pensieri, Corpo più sciolto e, dalla settimana 7, Testa fredda.
+- **Le pratiche** (`lib/prePartita.ts`, puro, 6 test): per ogni bisogno un elenco dalla più adatta, preso dalla Palestra e dagli strumenti (stessi testi). Valgono le regole della Palestra: solo quello che ha già incontrato nel percorso (settimana ≤ la sua), solo pratiche fino a 4 minuti, al massimo tre per bisogno. Meno ansia: il respiro che spegne, Protocollo Pressione, l'Ancora, il Reset, Body Check, fare spazio; più concentrazione: attenzione divisa, il conteggio, 5-4-3-2-1, dove senti il respiro; meno pensieri: «sto avendo il pensiero che…», l'Observer, Fatto vs Storia, il Rilascio, 5-4-3-2-1, il Reset; corpo più sciolto: tensione-rilascio, Body Check, il respiro che spegne, dove senti il respiro; testa fredda: l'Anticipo, cavalca l'impulso, il respiro che spegne. Il tocco apre un foglio con le pratiche, il play le avvia nel popup di sempre.
+- **Il suo stato**: il check-in del mattino suggerisce da dove partire (stato mentale ≤ 4 → meno pensieri, «stamattina hai detto che la testa era altrove»; fisico o recupero ≤ 4 → corpo più sciolto); l'ansia non la misura nessuno slider, la sceglie lui. Le pratiche fatte restano segnate sul dispositivo per quel giorno (`prePartita:<data>`) e la card dice «Fatta: … Ne vuoi un'altra?»; evento `pre_partita_pratica` (bisogno e pratica) per vedere cosa usano.
+- Nel foglio, se su Notion c'è la `Pratica Giorno Partita` della settimana, compare sotto come «Dal percorso, per il giorno della partita».
+- Il popup della pratica dice «1 minuto» (prima «1 minuti»).
+
 ## 2026-11-14 — Icone fisse: un'icona per ogni cosa, il colore per la parte
 
 Ste, 14/11: «dovremmo fare un'icona per le azioni, una per il percorso, una per gli allenamenti mentali ecc. e metterla sopra ogni bottone per renderle identificabili a colpo d'occhio»; sulla proposta: «più grandi le icone e i titoli rispetto alla spiegazione sotto, tipo Percorso Mente più grande».

@@ -40,6 +40,7 @@ export const FUNZIONI = {
   risposte: { parte: 'mente', nome: 'Le tue risposte', Icona: BookOpen },
   dati: { parte: 'mente', nome: 'I tuoi dati', Icona: ChartColumn },
   coach: { parte: 'mente', nome: 'Coach', Icona: MessageCircle },
+  prePartita: { parte: 'mente', nome: 'Prima della partita', Icona: IconaPallone }, // 14/11: «Oggi giochi: arriva pronto»
   // Corpo
   allenamentoCorpo: { parte: 'corpo', nome: 'Allenamento', Icona: Dumbbell },
   test: { parte: 'corpo', nome: 'Test', Icona: Timer },

@@ -27,6 +27,7 @@ import type { PropostaSettimana } from '@/lib/settimanaCalendario';
 import SettimanaVista, { GiornoSegno, riassuntoSettimana, type GiornoSettimana, type StatoSedutaVista } from '@/components/SettimanaVista';
 import PushPermission from '@/components/PushPermission';
 import EsercizioSettimanaCard from '@/components/EsercizioSettimanaCard';
+import PrePartitaCard from '@/components/PrePartitaCard';
 import InstallBanner from '@/components/InstallBanner';
 import type { DashboardAction } from '@/components/ActionsCard';
 import WeeklyActionsBanner, { weeklyBannerWantsToShow } from '@/components/WeeklyActionsBanner';
@@ -615,6 +616,10 @@ export default function HomePage() {
 
       <div className="max-w-2xl mx-auto space-y-3">
         {/* ─── Home a riquadri (8/11, stile B delle bozze): la pratica di oggi, poi i riquadri piccoli ─── */}
+        {/* Il giorno della partita (14/11): prima di tutto, arriva pronto. Solo con il Mente aperto per la sua settimana */}
+        {oggiPartita && profile && !inPausa(profile) && !(isPaywallActive() && !canAccessWeek(profile, currentWeek)) && (
+          <PrePartitaCard settimana={currentWeek} praticaSettimana={settimana?.praticaGiornoPartita || undefined} />
+        )}
         {bloccoMente}
         {griglia}
 

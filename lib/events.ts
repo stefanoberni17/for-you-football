@@ -49,6 +49,7 @@ export const CLIENT_EVENTS = [
   'reset_completed',
   'pricing_view',
   'app_open',
+  'pre_partita_pratica', // 14/11: una pratica fatta dalla card «Oggi giochi: arriva pronto» (meta: bisogno, pratica)
   'campo_interesse', // "Mi interessa" sulla pagina del Fisico bloccato (20/10): chi vuole il Campo prima che sia in vendita
 ] as const;
 

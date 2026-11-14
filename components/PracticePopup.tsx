@@ -384,7 +384,7 @@ export default function PracticePopup({
           /* TUTTI GLI ALTRI TIPI: timer normale */
           <p className="text-body-sm text-muted text-center inline-flex w-full items-center justify-center gap-1.5">
             <Timer size={16} aria-hidden />
-            Durata: <span className="font-bold text-forest-300">{durataMinuti} minuti</span>
+            Durata: <span className="font-bold text-forest-300">{durataMinuti} {durataMinuti === 1 ? 'minuto' : 'minuti'}</span>
           </p>
         )}
       </Sheet>
