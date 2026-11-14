@@ -12,6 +12,7 @@
  * poco recupero → corpo più sciolto); l'ansia non la misura nessuno slider: la sceglie lui.
  */
 import { CAPACITA, type TipoPratica } from './palestraCatalog';
+import type { FormaRespiro } from './respiroForme';
 import { TOOLS } from './toolsCatalog';
 
 export type Bisogno = 'ansia' | 'concentrazione' | 'pensieri' | 'corpo' | 'calma';
@@ -24,6 +25,7 @@ export interface PraticaPrePartita {
   durataMinuti: number;
   tipoPratica?: TipoPratica;
   principio: string; // per il PracticePopup (riga sotto il titolo)
+  respiro?: FormaRespiro;
   week: number;
 }
 
@@ -37,11 +39,11 @@ export const CORPO_BASSO_MAX = 4;
 export const BISOGNI: { id: Bisogno; etichetta: string; sotto: string; pratiche: string[]; daSettimana?: number }[] = [
   {
     id: 'ansia', etichetta: 'Meno ansia', sotto: 'Il cuore va, lo stomaco è chiuso',
-    pratiche: ['respiro-sigh', 'protocollo', 'ancora', 'reset', 'body-check', 'fare-spazio'],
+    pratiche: ['respiro-triangolo', 'respiro-sigh', 'protocollo', 'ancora', 'reset', 'body-check', 'fare-spazio'],
   },
   {
     id: 'concentrazione', etichetta: 'Più concentrazione', sotto: 'Vuoi essere dentro dal primo minuto',
-    pratiche: ['attenzione-divisa', 'conteggio', 'cinque-sensi', 'dove-senti-il-respiro'],
+    pratiche: ['respiro-quadrato', 'attenzione-divisa', 'conteggio', 'cinque-sensi', 'dove-senti-il-respiro'],
   },
   {
     id: 'pensieri', etichetta: 'Meno pensieri', sotto: 'La testa corre già alla partita',
@@ -64,7 +66,7 @@ function catalogo(): Map<string, PraticaPrePartita> {
     for (const e of c.esercizi) {
       m.set(e.id, {
         id: e.id, nome: e.nome, perche: e.cosaAllena, pratica: e.pratica, durataMinuti: e.durataMinuti,
-        tipoPratica: e.tipoPratica, principio: c.principio, week: e.week ?? c.week,
+        tipoPratica: e.tipoPratica, principio: c.principio, week: e.week ?? c.week, respiro: e.respiro,
       });
     }
   }

@@ -111,6 +111,7 @@ export default function PrePartitaCard({ settimana, praticaSettimana }: { settim
           durataMinuti={attiva.durataMinuti}
           tipoPratica={attiva.tipoPratica}
           weekTool={attiva.principio}
+          respiro={attiva.respiro}
           onComplete={() => fatta(attiva)}
           onSkip={() => setAttiva(null)}
         />

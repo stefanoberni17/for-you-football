@@ -5,6 +5,8 @@ import { Check, Headphones, Pause, Play, Sun, Target, Timer } from 'lucide-react
 import { markSessionActive } from '@/lib/activeSession';
 import { useWakeLock } from '@/lib/useWakeLock';
 import { Button, Card, Chip, Sheet } from '@/components/ui';
+import RespiroForma from '@/components/RespiroForma';
+import type { FormaRespiro } from '@/lib/respiroForme';
 
 type TipoPratica = 'respirazione' | 'visualizzazione' | 'riflessione' | 'giornata';
 
@@ -28,6 +30,8 @@ interface PracticePopupProps {
    */
   avvio?: 'audio' | 'testo';
   audioElement?: HTMLAudioElement | null;
+  /** Il respiro a quadrato o a triangolo (14/11): al posto del cerchio, la forma con la pallina sul perimetro. */
+  respiro?: FormaRespiro;
   onComplete: () => void;
   onSkip: () => void;
 }
@@ -43,6 +47,7 @@ export default function PracticePopup({
   audioUrl,
   avvio,
   audioElement,
+  respiro,
   onComplete,
   onSkip,
 }: PracticePopupProps) {
@@ -92,7 +97,7 @@ export default function PracticePopup({
   }, [phase, timerEnded, audioInProgress]);
 
   // Animazione respiro — per tipo "respirazione" e per il Reset breve delle giornate
-  const showBreathCircle = tipoPratica === 'respirazione' || isGiornata;
+  const showBreathCircle = !respiro && (tipoPratica === 'respirazione' || isGiornata);
 
   useEffect(() => {
     if (phase !== 'practicing' || !showBreathCircle) return;
@@ -409,7 +414,9 @@ export default function PracticePopup({
           </ol>
 
           <div className="flex-1 flex flex-col items-center justify-center gap-6 w-full">
-            {showBreathCircle ? (
+            {respiro ? (
+              <RespiroForma forma={respiro} />
+            ) : showBreathCircle ? (
               /* RESPIRAZIONE: cerchio che respira, dentro solo il verso */
               <div className="relative w-[220px] h-[220px] md:w-64 md:h-64">
                 <div

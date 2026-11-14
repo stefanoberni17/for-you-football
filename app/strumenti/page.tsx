@@ -174,6 +174,7 @@ export default function StrumentiPage() {
       durataMinuti={activePick.ex.durataMinuti}
       tipoPratica={activePick.ex.tipoPratica}
       weekTool={activePick.cap.principio}
+      respiro={activePick.ex.respiro}
       onComplete={() => setActivePick(null)}
       onSkip={() => setActivePick(null)}
     />
