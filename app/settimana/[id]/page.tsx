@@ -307,7 +307,7 @@ export default function SettimanaPage() {
         ) : nextDayUnlocked && nextDayNum !== null ? (
           <CardPlay href={nextDayNum === GATE_DAY ? `/gate/${weekNumber}` : `/giorno/${weekNumber}/${nextDayNum}`}
             label={nextDayNum === GATE_DAY ? 'Vai al Gate' : nextDayInCorso ? `Chiudi il Giorno ${nextDayNum}` : `Inizia il Giorno ${nextDayNum}`}
-            icona={nextDayNum === GATE_DAY ? <Key size={22} /> : nextDayInCorso ? <Sun size={22} /> : undefined}
+            funzione={nextDayNum === GATE_DAY ? 'gate' : 'percorso'} icona={nextDayInCorso && nextDayNum !== GATE_DAY ? <Sun size={22} /> : undefined}
             sopra={`Oggi · Giorno ${nextDayNum}${nextDayNum === GATE_DAY ? ' · Gate' : nextGiorno?.durataMinuti ? ` · ${nextGiorno.durataMinuti} min` : ''}`}
             titolo={nextDayTitle} />
         ) : (

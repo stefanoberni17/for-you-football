@@ -2,6 +2,14 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-14 — Icone fisse: un'icona per ogni cosa, il colore per la parte
+
+Ste, 14/11: «dovremmo fare un'icona per le azioni, una per il percorso, una per gli allenamenti mentali ecc. e metterla sopra ogni bottone per renderle identificabili a colpo d'occhio»; sulla proposta: «più grandi le icone e i titoli rispetto alla spiegazione sotto, tipo Percorso Mente più grande».
+- **Una mappa sola** (`components/ui/IconeFunzioni.tsx`, `FUNZIONI`): Mente = Percorso (sentiero), Allenamento mentale (respiro), Reset rapido (fulmine), Quando si fa dura (salvagente), Le tue azioni (lista con le spunte), Esercizio della settimana (occhio), Gate (chiave), Le tue risposte, I tuoi dati, Coach; Corpo = Allenamento (manubrio), Test (cronometro), Squadra e partita (pallone, `IconaPallone`), Dolore (cerotto), Setup, Storico, Settimane passate, Preparatore; di tutte e due = La tua settimana (calendario), La tua Carta. `Riquadro`, `CardPlay` e `RigaElenco` prendono `funzione` invece di un'icona a mano.
+- **L'icona non cambia con lo stato**: l'allenamento di oggi in Home è sempre il manubrio (prima coppa con la partita, spunta a seduta fatta, pausa col dolore); lo stato resta nella riga sotto. Il Reset è il fulmine anche negli Strumenti e nelle schede SOS (prima un'onda d'aria), i test il cronometro anche nel Corpo (prima una lavagnetta), il resoconto il pallone (prima il fumetto del Coach), il dolore il cerotto (prima il triangolo di avviso).
+- **Il segno della parte**: accanto all'etichetta dei riquadri (CORPO, DISCIPLINA, PRESENZA) la testa o il calciatore in piccolo (`SegnoParte`).
+- **Più grandi**: nei riquadri icona da 30 a 36 px, etichetta da 12 a 13 px, titolo da 19 a 20 px, altezza minima invece di fissa; nella card della pratica di oggi «Percorso Mente» con l'icona in alto a 18 px, e «Pratica di oggi · Settimana · Giorno · minuti» nella riga piccola sotto il titolo. La Home ha ora la card del Percorso come `CardPlay`.
+
 ## 2026-11-13 — Ragazzo o ragazza: soglie dei test e carichi per le ragazze
 
 Ste, 13/11: «per le donne dovremmo mettere a posto almeno i carichi ecc. e chiedere sesso in registrazione». Dettagli e soglie in `docs/sesso-soglie-2026-11.md`.
