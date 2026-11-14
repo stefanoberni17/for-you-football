@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Children, Fragment, type ReactNode } from 'react';
 import { ChevronRight, Lock } from 'lucide-react';
+import { IconaFunzione, type Funzione } from './IconeFunzioni';
 
 /**
  * L'elenco a righe (8/11, stile A delle bozze: per gli elenchi lunghi, come le Impostazioni dell'iPhone).
@@ -23,9 +24,9 @@ export function Elenco({ children, className = '' }: { children: ReactNode; clas
 }
 
 export function RigaElenco({
-  href, onClick, icona, titolo, valore, tono = 'scuro', bloccato = false, evidenza = false,
+  href, onClick, icona, funzione, titolo, valore, tono = 'scuro', bloccato = false, evidenza = false,
 }: {
-  href?: string; onClick?: () => void; icona: ReactNode; titolo: string; valore?: ReactNode;
+  href?: string; onClick?: () => void; icona?: ReactNode; funzione?: Funzione; titolo: string; valore?: ReactNode;
   tono?: 'verde' | 'scuro'; bloccato?: boolean; evidenza?: boolean;
 }) {
   const quadrato = tono === 'verde'
@@ -34,7 +35,7 @@ export function RigaElenco({
   const contenuto = (
     <>
       <span aria-hidden className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl [&>svg]:h-[22px] [&>svg]:w-[22px] ${bloccato ? 'bg-surface-2 text-faint' : quadrato}`}>
-        {bloccato ? <Lock /> : icona}
+        {bloccato ? <Lock /> : icona ?? (funzione ? <IconaFunzione f={funzione} /> : null)}
       </span>
       <span className={`min-w-0 flex-1 text-body-lg font-semibold ${bloccato ? 'text-muted' : 'text-app'}`}>{titolo}</span>
       {valore != null && <span className={`shrink-0 text-body ${evidenza ? 'font-semibold text-forest-300' : 'text-muted'}`}>{valore}</span>}

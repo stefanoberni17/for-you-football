@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Dumbbell, LifeBuoy, Route, Timer, Wind, Zap } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { authFetch } from '@/lib/authFetch';
 import { livelloFisico } from '@/lib/checkAccess';
@@ -55,20 +54,20 @@ export default function PalestraPage() {
 
         <TitoloGruppo grande parte="mente">Mente</TitoloGruppo>
         <GrigliaRiquadri>
-          <Riquadro href="/settimane" tono="verde" icona={<Route />} titolo="Percorso"
+          <Riquadro href="/settimane" tono="verde" funzione="percorso" titolo="Percorso"
             valore={<span className="text-body-sm font-semibold text-forest-100">{settimana > 12 ? 'Fatto' : `Sett. ${settimana}`}</span>} />
-          <Riquadro href="/strumenti" icona={<Wind />} titolo="Allenamento" />
-          <Riquadro href="/sos" icona={<LifeBuoy />} titolo="Quando si fa dura" />
-          <Riquadro onClick={openMeditation} icona={<Zap />} titolo="Reset rapido"
+          <Riquadro href="/strumenti" funzione="allenamentoMente" titolo="Allenamento" />
+          <Riquadro href="/sos" funzione="quandoDura" titolo="Quando si fa dura" />
+          <Riquadro onClick={openMeditation} funzione="reset" titolo="Reset rapido"
             valore={<span className="text-body-sm font-semibold text-muted">1&apos;</span>} />
         </GrigliaRiquadri>
 
         <TitoloGruppo grande parte="corpo" className="pt-6">Corpo</TitoloGruppo>
         <GrigliaRiquadri>
-          <Riquadro href="/allenamento" parte="corpo" tono={corpoAperto ? 'verde' : 'scuro'} bloccato={!corpoAperto} icona={<Dumbbell />} titolo="Allenamento"
+          <Riquadro href="/allenamento" funzione="allenamentoCorpo" tono={corpoAperto ? 'verde' : 'scuro'} bloccato={!corpoAperto} titolo="Allenamento"
             pallino={corpoAperto && pendente}
             valore={oggi ? <span className="text-body-sm font-semibold text-forest-100">{oggi}</span> : undefined} />
-          <Riquadro href={corpoAperto ? '/allenamento/test' : '/allenamento'} parte="corpo" bloccato={!corpoAperto} icona={<Timer />} titolo="Test" />
+          <Riquadro href={corpoAperto ? '/allenamento/test' : '/allenamento'} funzione="test" bloccato={!corpoAperto} titolo="Test" />
         </GrigliaRiquadri>
       </div>
     </main>

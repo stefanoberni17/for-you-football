@@ -348,7 +348,7 @@ export default function BatteriaTest() {
 
         {/* Il prossimo test: l'azione di adesso, sopra la piega */}
         {prossimo ? (
-          <CardPlay parte="corpo" onClick={vaiAlProssimo} label={`Fai il test: ${prossimo.nome}`} className="mb-2"
+          <CardPlay funzione="test" onClick={vaiAlProssimo} label={`Fai il test: ${prossimo.nome}`} className="mb-2"
             sopra={`Il prossimo test · ${totaleFatti}/${totaleTest} fatti`} titolo={prossimo.nome} />
         ) : (
           <Card variant="accent" className="mb-3">

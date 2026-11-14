@@ -188,7 +188,7 @@ export default function StrumentiPage() {
           <Testata indietro={{ onClick: () => setSelectedTool(null), label: selectedExercise ? selectedExercise.nome : 'Allenamento' }}
             sopra={`Strumento · Settimana ${selectedTool.week}`} titolo={selectedTool.nome} sotto={selectedTool.inUnaRiga} />
 
-          <CardPlay onClick={() => setShowToolPractice(true)} label={`Fai la pratica: ${selectedTool.nome}`}
+          <CardPlay funzione="allenamentoMente" onClick={() => setShowToolPractice(true)} label={`Fai la pratica: ${selectedTool.nome}`}
             sopra={`${selectedTool.durataMinuti} min`} titolo="Fai la pratica ora" />
 
           <TitoloGruppo className="pt-2">Quando usarlo</TitoloGruppo>
@@ -227,7 +227,7 @@ export default function StrumentiPage() {
         <div className="mx-auto max-w-xl space-y-4">
           <Testata indietro={{ onClick: () => setSelectedExercise(null), label: cap.principio }} titolo={ex.nome} />
 
-          <CardPlay onClick={() => startPractice({ cap, ex })} label={`Fai la pratica: ${ex.nome}`}
+          <CardPlay funzione="allenamentoMente" onClick={() => startPractice({ cap, ex })} label={`Fai la pratica: ${ex.nome}`}
             sopra={`${cap.principio} · ${ex.durataMinuti} min`} titolo="Fai la pratica ora" />
 
           <TitoloGruppo className="pt-2">Cosa allena</TitoloGruppo>
@@ -287,7 +287,7 @@ export default function StrumentiPage() {
 
       <div className="mx-auto mt-4 max-w-xl space-y-3 px-4">
         {pick && (
-          <CardPlay onClick={() => openExercise(pick.cap, pick.ex)} onPlay={() => startPractice(pick)}
+          <CardPlay funzione="allenamentoMente" onClick={() => openExercise(pick.cap, pick.ex)} onPlay={() => startPractice(pick)}
             label={`Come si fa: ${pick.ex.nome}`}
             sopra={`${resume ? 'Riprendi' : 'Questa settimana'} · ${pick.ex.durataMinuti} min`}
             titolo={pick.ex.nome} />
@@ -295,7 +295,7 @@ export default function StrumentiPage() {
 
         <TitoloGruppo className="pt-3">Le capacità</TitoloGruppo>
         <GrigliaRiquadri>
-          <Riquadro onClick={openMeditation} icona={<Wind />} titolo="Reset rapido"
+          <Riquadro onClick={openMeditation} funzione="reset" titolo="Reset rapido"
             valore={<span className="text-body-sm font-semibold text-muted">1&apos;</span>} />
           {CAPACITA.map(c => {
             const aperta = currentWeek >= c.week;

@@ -7,7 +7,7 @@ import { NUMERI_UTILI_RIGA } from '@/lib/constants';
 import { authFetch } from '@/lib/authFetch';
 import { readCache } from '@/lib/clientCache';
 import { useMeditation } from '@/components/MeditationContext';
-import { Wind, MessageCircle, Zap, Activity, RotateCcw, Armchair, Megaphone, LifeBuoy } from 'lucide-react';
+import { MessageCircle, Zap, Activity, RotateCcw, Armchair, Megaphone, LifeBuoy } from 'lucide-react';
 import { AppLoader, Badge, Button, Card, CardPlay, GrigliaRiquadri, Riquadro, SectionTitle, Testata, TitoloGruppo } from '@/components/ui';
 import { PalestraTestata } from '@/components/ParteSwitch';
 import EmptyState from '@/components/EmptyState';
@@ -117,7 +117,7 @@ function SosContent() {
           <Testata indietro={{ href: '/sos', label: 'Quando si fa dura' }} titolo={selected.difficolta} sotto={selected.sottotitolo || undefined} />
 
           {/* ── Fai questo, adesso: gli step e il Reset ── */}
-          <CardPlay onClick={openMeditation} icona={<Wind size={22} />} label="Fai il Reset ora" sopra="Adesso · 1 minuto" titolo="Fai il Reset ora" />
+          <CardPlay funzione="reset" onClick={openMeditation} label="Fai il Reset ora" sopra="Adesso · 1 minuto" titolo="Fai il Reset ora" />
           {now && now.pratica.length > 0 && (
             <>
               <TitoloGruppo className="pt-2">Fai questo{now.strumento ? ` · ${now.strumento}` : ''}</TitoloGruppo>
