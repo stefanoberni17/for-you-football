@@ -214,7 +214,7 @@ for-you-football/
 ├── vitest.config.mts                      # Alias `@`, env segnaposto per i moduli che creano i client all'import
 ├── .github/workflows/ci.yml               # CI su ogni PR e su main: typecheck · lint a cricchetto · test · build
 ├── .claude/settings.json                  # Permesso pre-approvato per `node scripts/everfit-assign.mjs` nelle sessioni Claude (tracciato con git add -f: .claude/ è in .gitignore)
-├── public/                                # brand/ = logo e icone FYF (13/11): app-icona-32/48/180/192/512, app-icona-maskable-192/512, SVG del logo; manifest.json (icone any e maskable separate, background #0D1310), sw.js (notifiche push con app-icona-192, senza badge); app/favicon.ico 16/32/48 dal logo
+├── public/                                # brand/ = logo e icone FYF (13/11): app-icona-32/48/180/192/512, app-icona-maskable-192/512, SVG del logo; manifest.json (icone any e maskable separate, background #0D1310), sw.js (notifiche push con app-icona-192, senza badge); app/favicon.ico 16/32/48 dal logo; `apple-touch-icon.png` e `apple-touch-icon-precomposed.png` alla radice (14/11, copie dell'icona 180 per gli iPhone che la cercano lì)
 ├── vercel.json                            # 5 cron Vercel: cleanup-telegram 03:00 UTC · daily-morning 06:00 UTC · daily-evening 16:00 UTC · esercizio mattino 07:30 UTC e sera 19:30 UTC
 └── docs/
     └── supabase-schema.sql                # Schema completo: 6 tabelle + RLS + indexes + trigger

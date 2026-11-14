@@ -9,6 +9,7 @@ Ste, 14/11: «dovremmo fare un'icona per le azioni, una per il percorso, una per
 - **L'icona non cambia con lo stato**: l'allenamento di oggi in Home è sempre il manubrio (prima coppa con la partita, spunta a seduta fatta, pausa col dolore); lo stato resta nella riga sotto. Il Reset è il fulmine anche negli Strumenti e nelle schede SOS (prima un'onda d'aria), i test il cronometro anche nel Corpo (prima una lavagnetta), il resoconto il pallone (prima il fumetto del Coach), il dolore il cerotto (prima il triangolo di avviso).
 - **Il segno della parte**: accanto all'etichetta dei riquadri (CORPO, DISCIPLINA, PRESENZA) la testa o il calciatore in piccolo (`SegnoParte`).
 - **Più grandi**: nei riquadri icona da 30 a 36 px, etichetta da 12 a 13 px, titolo da 19 a 20 px, altezza minima invece di fissa; nella card della pratica di oggi «Percorso Mente» con l'icona in alto a 18 px, e «Pratica di oggi · Settimana · Giorno · minuti» nella riga piccola sotto il titolo. La Home ha ora la card del Percorso come `CardPlay`.
+- **Icona dell'app sul telefono**: `public/apple-touch-icon.png` e `apple-touch-icon-precomposed.png` (copie di `brand/app-icona-180.png`): alcuni iPhone cercano l'icona lì e non nel link della pagina. Le icone del manifest e il link per iPhone avevano già il logo nuovo dal 13/11; sul telefono l'icona cambia reinstallando l'app.
 
 ## 2026-11-13 — Ragazzo o ragazza: soglie dei test e carichi per le ragazze
 
