@@ -18,3 +18,5 @@ export { Elenco, RigaElenco } from './Elenco';
 export { default as Testata } from './Testata';
 export { default as IconaCorpo, IconaMente } from './IconaCorpo';
 export { default as CardPlay } from './CardPlay';
+export { FUNZIONI, IconaFunzione, IconaPallone, SegnoParte, parteDi } from './IconeFunzioni';
+export type { Funzione } from './IconeFunzioni';

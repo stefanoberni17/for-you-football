@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { BarChart3, BookOpen, CalendarRange, History, IdCard, Settings } from 'lucide-react';
+import { Settings } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { livelloFisico } from '@/lib/checkAccess';
 import { PLAYER_LEVELS, PLAYER_ROLES, SPORT_ROLES } from '@/lib/constants';
@@ -67,21 +67,21 @@ export default function ProfiloPage() {
         <div className="space-y-3">
           {/* Una Carta sola (9/11): dentro si passa da Mente a Corpo a 360° */}
           <Elenco>
-            <RigaElenco href="/carta" tono="verde" icona={<IdCard />} titolo="La tua Carta" valore={corpoAperto ? 'Mente · Corpo' : 'Mente'} />
+            <RigaElenco href="/carta" tono="verde" funzione="carta" titolo="La tua Carta" valore={corpoAperto ? 'Mente · Corpo' : 'Mente'} />
           </Elenco>
 
           <TitoloGruppo grande parte="mente" className="pt-4">Mente</TitoloGruppo>
           <Elenco>
-            <RigaElenco href="/risposte" icona={<BookOpen />} titolo="Le tue risposte" />
-            <RigaElenco href="/statistiche" icona={<BarChart3 />} titolo="I tuoi dati" />
+            <RigaElenco href="/risposte" funzione="risposte" titolo="Le tue risposte" />
+            <RigaElenco href="/statistiche" funzione="dati" titolo="I tuoi dati" />
           </Elenco>
 
           <TitoloGruppo grande parte="corpo" className="pt-4">Corpo</TitoloGruppo>
           <div className="parte-corpo">
           {corpoAperto ? (
             <Elenco>
-              <RigaElenco href="/allenamento/storico" icona={<History />} titolo="Lo storico" />
-              <RigaElenco href="/allenamento/mese" icona={<CalendarRange />} titolo="Le settimane passate" />
+              <RigaElenco href="/allenamento/storico" funzione="storico" titolo="Lo storico" />
+              <RigaElenco href="/allenamento/mese" funzione="settimanePassate" titolo="Le settimane passate" />
             </Elenco>
           ) : (
             <Elenco>

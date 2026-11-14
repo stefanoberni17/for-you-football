@@ -12,7 +12,7 @@ import { DAY_SHORT_NAMES, DAY_NAMES as DAY_NAMES_IT } from '@/lib/constants';
 import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis,
 } from 'recharts';
-import { AlertTriangle, BatteryLow, CalendarClock, Check, ChevronRight, CircleDot, ClipboardList, IdCard, MessageCircle, RefreshCw, Scale, Settings2, ShieldAlert, Users } from 'lucide-react';
+import { AlertTriangle, BatteryLow, CalendarClock, Check, ChevronRight, CircleDot, ClipboardList, MessageCircle, RefreshCw, Scale, Settings2, ShieldAlert, Users } from 'lucide-react';
 import type { TecnicaMese } from '@/lib/trainingTecnicaComposta';
 import type { TrainingSetup } from '@/lib/trainingSetup';
 import type { SquadraSettimana } from '@/lib/trainingSquadra';
@@ -416,7 +416,7 @@ export default function AllenamentoHub() {
           )}
           {rLight && (
             <Elenco className="mb-3">
-              <RigaElenco onClick={() => setShowResoconto(true)} icona={<MessageCircle />} tono="verde" evidenza
+              <RigaElenco onClick={() => setShowResoconto(true)} funzione="squadraPartita" tono="verde" evidenza
                 titolo={rLight.tipo === 'partita' ? `Com'è andata la partita${rLight.data === oggiData ? '' : ' di ieri'}?` : `Com'è andata con la squadra${rLight.data === oggiData ? '' : ' ieri'}?`}
                 valore="30''" />
             </Elenco>
@@ -425,7 +425,7 @@ export default function AllenamentoHub() {
             <Card variant="danger" padding="sm" className="mb-3"><p className="text-body font-semibold text-danger">Allenamenti fisici in pausa</p><p className="text-body-sm text-muted mt-0.5">Hai segnalato un dolore. {CONSIGLIO_VISITA} Un attimo e trovi il bottone per riprendere.</p></Card>
           ) : o.consensiMancanti ? null /* "Prima di iniziare" arriva con lo stato completo: niente seduta prima di quello */ : s ? (
             <div className="mb-3 space-y-2">
-              <CardPlay parte="corpo" href={`/allenamento/sessione/${s.giorno}`} label={s.stato === 'recuperabile' ? 'Recupera la seduta' : 'Inizia la seduta'}
+              <CardPlay funzione="allenamentoCorpo" href={`/allenamento/sessione/${s.giorno}`} label={s.stato === 'recuperabile' ? 'Recupera la seduta' : 'Inizia la seduta'}
                 sopra={`${s.stato === 'oggi' ? `Oggi · ${DAY_NAMES_IT[dow]}` : `Da recuperare · era ${DAY_NAMES_IT[s.giorno]}`} · ~${durataLabel(s.durataMin)}`}
                 titolo={s.titolo} />
               {(s.recupero || s.proposte.length > 0) && (
@@ -537,7 +537,7 @@ export default function AllenamentoHub() {
   };
   const cardResoconto = resocontoDaChiedere ? (
     <Elenco className="mb-3">
-      <RigaElenco onClick={() => setShowResoconto(true)} icona={<MessageCircle />} tono="verde" evidenza
+      <RigaElenco onClick={() => setShowResoconto(true)} funzione="squadraPartita" tono="verde" evidenza
         titolo={resocontoDaChiedere.tipo === 'partita' ? `Com'è andata la partita${resocontoDaChiedere.data === oggiData ? '' : ' di ieri'}?` : `Com'è andata con la squadra${resocontoDaChiedere.data === oggiData ? '' : ' ieri'}?`}
         valore="30''" />
     </Elenco>
@@ -548,7 +548,7 @@ export default function AllenamentoHub() {
   const setupDaFare = (state.setup?.focus ?? []).length === 0 && (state.setup?.attrezzatura ?? []).length === 0;
   const cardSetup = (
     <div className="mb-5 space-y-2">
-      <CardPlay parte="corpo" onClick={() => cambiaVista('setup')} label="Fai il setup" icona={<Settings2 size={22} />}
+      <CardPlay funzione="setup" onClick={() => cambiaVista('setup')} label="Fai il setup"
         sopra="Prima di tutto · 2 minuti" titolo="Il tuo setup" />
       <p className="px-1 text-body-sm text-muted">Su cosa vuoi lavorare, dove ti alleni, la tua stagione. Da lì scegliamo i test che ti servono: niente test inutili.</p>
     </div>
@@ -558,7 +558,7 @@ export default function AllenamentoHub() {
   const nomeTest = (id: string) => state.tests.find((t) => t.id === id)?.nome ?? (state.testsV2 || []).find((t) => t.id === id)?.nome ?? id;
   const cardTest = (
     <div className="mb-5 space-y-2">
-      <CardPlay parte="corpo" href="/allenamento/test" label="Fai i test" icona={<ClipboardList size={22} />}
+      <CardPlay funzione="test" href="/allenamento/test" label="Fai i test"
         sopra={`Prima di tutto · ${idTestObiettivi.length} test · ${minutiTesto(minutiTest(idTestObiettivi))}`} titolo="Fai i test" />
       <p className="px-1 text-body-sm text-muted">Per i tuoi obiettivi: {idTestObiettivi.map(nomeTest).join(', ')}. Da lì nascono la tua Card e la tua settimana; gli altri test quando vuoi.</p>
     </div>
@@ -605,7 +605,7 @@ export default function AllenamentoHub() {
               <p className="mt-1 text-body-sm text-muted">In pausa finché il dolore non passa.</p>
             </Card>
           ) : (
-            <CardPlay parte="corpo" href={`/allenamento/sessione/${diOggi.giorno}`} label={stato === 'recuperabile' ? 'Recupera la seduta' : 'Inizia la seduta'}
+            <CardPlay funzione="allenamentoCorpo" href={`/allenamento/sessione/${diOggi.giorno}`} label={stato === 'recuperabile' ? 'Recupera la seduta' : 'Inizia la seduta'}
               sopra={`${stato === 'oggi' ? `Oggi · ${DAY_NAMES_IT[oggiDow]}` : `Da recuperare · era ${DAY_NAMES_IT[diOggi.giorno]}`} · ~${durataLabel(diOggi.durata_min)}`}
               titolo={diOggi.titolo} />
           )}
@@ -683,7 +683,7 @@ export default function AllenamentoHub() {
         )}
         {!state.painHold && (
           <Elenco className="mt-2">
-            <RigaElenco onClick={() => { setPainMsg(null); setShowPain(true); }} icona={<AlertTriangle />} titolo="Hai un dolore?" valore="Segnalalo" />
+            <RigaElenco onClick={() => { setPainMsg(null); setShowPain(true); }} funzione="dolore" titolo="Hai un dolore?" valore="Segnalalo" />
           </Elenco>
         )}
       </>
@@ -1081,8 +1081,8 @@ export default function AllenamentoHub() {
 
         <TitoloGruppo className="mb-2 pt-3">Livello e test</TitoloGruppo>
         <Elenco className="mb-3">
-          <RigaElenco href="/allenamento/test" icona={<ClipboardList />} titolo="I test" valore={`${testsFatti}/${testsTotali}`} />
-          <RigaElenco href="/carta?vista=corpo" icona={<IdCard />} titolo="La tua Carta" valore={`Livello ${state.fascia}`} />
+          <RigaElenco href="/allenamento/test" funzione="test" titolo="I test" valore={`${testsFatti}/${testsTotali}`} />
+          <RigaElenco href="/carta?vista=corpo" funzione="carta" titolo="La tua Carta" valore={`Livello ${state.fascia}`} />
         </Elenco>
         {livelliDiversi.length > 0 && <p className="mb-3 px-1 text-body-sm text-muted">Per qualità: {livelliDiversi.map((l) => `${l.label} ${l.livello}`).join(' · ')}.</p>}
         <Card padding="sm" className="mb-3">
