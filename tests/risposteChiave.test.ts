@@ -101,6 +101,8 @@ describe('«Il tuo momento» da W1-G2 (26/10)', () => {
     expect(chiaviPerGiorno(1, 5, ['Momento'])!.map((c) => `${c.week}-${c.day}`)).toEqual(['1-2']);
     expect(chiaviPerGiorno(1, 7, ['Mantra', 'Momento'])!.map((c) => `${c.week}-${c.day}`)).toEqual(['1-2', '1-3']);
     expect(campiDaNotion(['Momento'])).toEqual([]); // non è un riquadro della Carta
+    // W12-G4: le risposte pronte di W11-G2 prima, poi la pagina intera
+    expect(chiaviPerGiorno(12, 4, ['Protocollo For You', 'Risposte pronte'])!.map((c) => `${c.week}-${c.day}`)).toEqual(['11-2', '11-4']);
   });
 
   it('dalla risposta guidata si prende solo il momento', () => {

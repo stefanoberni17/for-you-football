@@ -2,6 +2,13 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-15 — W12-G4: le risposte pronte prima del Protocollo For You
+
+Ste, 15/11: «in W12 G4 c'è qualcosa che non torna tra la pratica e il protocollo che fa vedere». La pratica di W12-G4 fa scegliere UNA situazione (errore, pressione, rabbia) e riprendere la risposta pronta scritta in W11-G2 («la trovi qui sotto»); sotto c'era solo il Protocollo For You di W11-G4, cinque parti, con le risposte pronte nascoste dentro il DURANTE o assenti.
+- Nuova opzione **Risposte pronte** della property Notion `Mostra Carta` (DB Giorni) → W11-G2 (`MOSTRA_ALTRE_NOTION` in `lib/risposteChiave.ts`), mostrata prima dei riquadri della Carta.
+- W12-G4 su Notion: `Mostra Carta` = Risposte pronte + Protocollo For You. Testi e audio invariati.
+- Test in `tests/risposteChiave.test.ts`.
+
 ## 2026-11-14 — Il respiro a quadrato e a triangolo, con la pallina sulla forma
 
 Ste, 14/11: «box breathing (4-4-4-4): come immagine un quadrato con una pallina che percorre il perimetro scansionando le fasi (inspira, trattieni, espira, trattieni), con la possibilità di passare a 6-6-6-6 e 8-8-8-8. Oppure quella a triangolo: 4 inspira, 6 trattieni, 8 espira, stesso concetto».

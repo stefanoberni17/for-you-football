@@ -87,6 +87,10 @@ export const MOSTRA_CARTA_NOTION: Record<string, CampoCarta> = {
 /** Gli altri valori di "Mostra Carta": risposte chiave che non sono un riquadro della Carta (settimana, giorno). */
 export const MOSTRA_ALTRE_NOTION: Record<string, [number, number]> = {
   Momento: [1, 2],
+  // 15/11: W12-G4 fa ripassare la risposta pronta di UNA situazione (errore, pressione, rabbia): le tre righe di
+  // W11-G2. Con il solo Protocollo For You il ragazzo trovava la pagina intera (prima, durante, dopo…) e doveva
+  // cercarle dentro il DURANTE.
+  'Risposte pronte': [11, 2],
 };
 
 export interface RispostaChiave {
