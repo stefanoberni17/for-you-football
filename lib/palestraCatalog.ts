@@ -19,6 +19,7 @@
  */
 
 import { TOOLS } from './toolsCatalog';
+import type { FormaRespiro } from './respiroForme';
 
 export type TipoPratica = 'respirazione' | 'visualizzazione' | 'riflessione';
 
@@ -31,6 +32,7 @@ export interface PalestraExercise {
   tipoPratica?: TipoPratica;
   week?: number; // override sblocco del singolo esercizio (default = week della capacità)
   ancora?: boolean; // true = è lo strumento-àncora del percorso
+  respiro?: FormaRespiro; // 14/11: la pratica si guida con il quadrato o il triangolo (pallina sul perimetro)
 }
 
 export interface Capacita {
@@ -115,6 +117,37 @@ export const CAPACITA: Capacita[] = [
 5. Una cosa che senti in bocca.
 
 Sei tornato qui.`,
+      },
+      {
+        id: 'respiro-quadrato',
+        nome: 'Il respiro a quadrato',
+        cosaAllena:
+          'Quattro tempi uguali: inspira, trattieni, espira, trattieni. Il ritmo fisso dà alla testa una cosa sola da seguire e calma il corpo senza spegnerlo: lucido, non addormentato. Si parte da 4 secondi; quando 4 è facile, prova 6 e poi 8.',
+        durataMinuti: 3,
+        tipoPratica: 'respirazione',
+        respiro: 'quadrato',
+        pratica: `Seduto o in piedi, spalle giù. Segui la pallina sul quadrato.
+
+1. Sale: inspira dal naso.
+2. In alto: trattieni, senza stringere la gola.
+3. Scende: espira, lento.
+4. In basso: trattieni a polmoni vuoti. Poi riparte.
+5. Se ti gira la testa o ti manca l'aria, torna a respirare normale: va bene così.`,
+      },
+      {
+        id: 'respiro-triangolo',
+        nome: 'Il respiro a triangolo',
+        cosaAllena:
+          'Inspira 4, trattieni 6, espira 8. L’uscita più lunga dell’entrata è il freno del corpo: il cuore rallenta, le spalle scendono. Da usare quando sei agitato, prima di entrare o la sera prima della partita.',
+        durataMinuti: 3,
+        tipoPratica: 'respirazione',
+        respiro: 'triangolo',
+        pratica: `Seduto o in piedi, spalle giù. Segui la pallina sul triangolo.
+
+1. Sale: inspira dal naso per 4.
+2. In piano: trattieni per 6, senza stringere la gola.
+3. Scende: espira dalla bocca per 8, come se alitassi su un vetro.
+4. Se ti gira la testa o ti manca l'aria, torna a respirare normale: va bene così.`,
       },
     ],
   },
