@@ -2,6 +2,25 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-16 — Il dolore a fasce: si ferma quello che coinvolge la zona, si riparte a passi con l'ok
+
+Ste, 16/11: flessore a 9/10, l'app mette in pausa e consiglia il fisioterapista, ma propone foam rolling e tecnica leggera; «con dolore forte alle gambe l'unica cosa che farei è parte alta, e solo dopo l'ok». Le regole decise da Ste:
+- **1-3**: come prima, ci si allena con serie e kg ridotti sugli esercizi della zona.
+- **4-6**: fermi solo gli esercizi che coinvolgono la zona, anche di riflesso; consiglio del fisioterapista; ok «posso allenarmi normalmente» → ripresa graduale.
+- **7-8**: stop completo fino al primo ok («il fisio dice che posso allenare le altre parti», anche con isometrie ed elastici sulla zona), poi «posso ricominciare» → ripresa graduale.
+- **9-10**: stop completo, poi tre ok: altre parti → ripresa leggera della zona (corpo libero, isometrie, elastici) → ripresa completa → ripresa graduale.
+- **Ripresa graduale**: almeno una settimana, poi ogni settimana «sei pronto a tornare completo?». Serie e kg sulla zona al 70 % e poi 85 % (4-6), al 50 %, 70 %, 85 % (7-10); sprint e salti intensivi fuori la prima settimana, anche la seconda dopo un 7-10.
+- Ogni ok lo dà il ragazzo dall'hub con la presa di responsabilità; Ste lo sa su Telegram.
+
+Nel codice:
+- `lib/doloreFasi.ts` (puro, 22 test in `tests/doloreFasi.test.ts`): fasce, fasi, ok, ripresa graduale, `coinvolge` (gambe: corsa, salti, tecnica con la palla, foam e mobilità, core con anca e flessori; spalla: parte alta e plank; schiena tutto; «altro» niente), `applicaFaseDolore` (strato di lettura), testi per hub, preparatore e Coach.
+- Migration `docs/migrations/043_training_pain_stato.sql`: `profiles.training_pain_stato` JSONB, solo server. Senza la migration resta il comportamento di prima.
+- `POST /api/training/pain`: `{ ok, responsabilita }` e `{ graduale: 'completo' | 'non_ancora' }`. Una segnalazione più leggera non accorcia il percorso; una più forte riparte da capo.
+- Lettura (`pianoPerLettura`, home): stop = niente sedute; zona ferma o altre parti = via gli esercizi della zona, e le sedute rimaste senza niente escono.
+- Planner: in libreria solo i blocchi che non caricano la zona; obiettivi senza blocchi fuori (resta la parte alta); con le gambe ferme al massimo 3 giornate e le giornate chieste diventano un massimo. Nello stop `/api/training/plan` risponde 409 `dolore_stop` e l'hub non prepara la settimana.
+- Dopo un ok l'hub rifà la settimana (`dopoDolore`, una al giorno, fuori dal tetto e dalle riprogrammazioni).
+- Hub: card con la fase, gli ok e la domanda della settimana; chi era in pausa con il sistema di prima può rifare la segnalazione.
+
 ## 2026-11-15 — W12-G4: le risposte pronte prima del Protocollo For You
 
 Ste, 15/11: «in W12 G4 c'è qualcosa che non torna tra la pratica e il protocollo che fa vedere». La pratica di W12-G4 fa scegliere UNA situazione (errore, pressione, rabbia) e riprendere la risposta pronta scritta in W11-G2 («la trovi qui sotto»); sotto c'era solo il Protocollo For You di W11-G4, cinque parti, con le risposte pronte nascoste dentro il DURANTE o assenti.

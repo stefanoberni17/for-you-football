@@ -120,7 +120,8 @@ const ALLUNGO_FORTE_RE = /80[- ]?90|al massimo|quasi sprint/i;
  * seduta da 30' diventava una serie di squat per sempre (Giorgio, crociato operato). */
 export const LIMITAZIONE_SERIE_MIN = 2;
 
-function eIntenso(it: PlanItem): boolean {
+/** Sprint, velocità pura, pliometria intensiva e l'allungo all'80-90 %: fuori con un dolore alle gambe (anche lib/doloreFasi). */
+export function eIntenso(it: PlanItem): boolean {
   const q = esercizioV2ById(it.esercizio_id)?.qualita;
   if (q && QUALITA_INTENSE.has(q)) return true;
   return it.esercizio_id === 'risc-allungo-riscaldamento' && ALLUNGO_FORTE_RE.test(it.nota ?? '');

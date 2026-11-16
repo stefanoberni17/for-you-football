@@ -5,6 +5,8 @@ import { hasTrainingAccess } from '@/lib/trainingAccess';
 import { todayRome, updateTrainingMemory } from '@/lib/trainingPlanner';
 import { DOLORE_SOGLIA_PAUSA, finoAlRientro, isZonaDolore } from '@/lib/trainingDolore';
 import { notificaSte } from '@/lib/notifyOwner';
+import { loadStatoDolore } from '@/lib/trainingDoloreServer';
+import { applicaOk, faseRiga, nuovoStato, okPossibili, rispondiGraduale, unisciSegnalazione, OK_TESTI, type OkDolore, type StatoDolore } from '@/lib/doloreFasi';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -35,6 +37,11 @@ async function aggiornaProfilo(userId: string, base: Record<string, unknown>, zo
  * POST { resolved: true, responsabilita: true } → sblocco della pausa: serve la presa di responsabilità; la zona resta
  *   ridotta per due settimane (`training_pain_until`).
  * POST { zonaPassata: true } → il dolore è passato: via la zona e la riduzione.
+ *
+ * Dal 16/11, con la migration 043, da 4/10 in su vale il dolore a fasce (lib/doloreFasi):
+ * POST { ok: 'altre_parti' | …, responsabilita: true } → un passo avanti, solo quello che si può dare adesso (409 se no).
+ * POST { graduale: 'completo' | 'non_ancora', responsabilita? } → la domanda della settimana nella ripresa graduale.
+ * Senza la migration resta tutto come prima.
  */
 export async function POST(request: NextRequest) {
   try {
@@ -46,13 +53,44 @@ export async function POST(request: NextRequest) {
     const oggi = todayRome();
     const nome = async () => (await supabaseAdmin.from('profiles').select('name').eq('user_id', userId).maybeSingle()).data?.name || '—';
 
+    const stato = await loadStatoDolore(userId); // undefined = migration 043 assente
+    const salvaStato = async (nuovo: StatoDolore | null, extra: Record<string, unknown> = {}) => aggiornaProfilo(userId,
+      { training_pain_stato: nuovo, training_pain_hold: nuovo?.fase === 'stop' },
+      { training_pain_zone: nuovo?.zona ?? null, training_pain_since: nuovo ? nuovo.da : null, training_pain_until: null, ...extra });
+
+    if (typeof body?.ok === 'string') {
+      if (!stato) return NextResponse.json({ error: 'nessun_dolore' }, { status: 409 });
+      if (body?.responsabilita !== true) return NextResponse.json({ error: 'responsabilita_richiesta' }, { status: 400 });
+      const dopo = applicaOk(stato, body.ok as OkDolore, oggi);
+      if (!dopo) return NextResponse.json({ error: 'ok_non_disponibile', ok: okPossibili(stato) }, { status: 409 });
+      const r = await salvaStato(dopo);
+      if (r.error) return NextResponse.json({ error: r.error }, { status: 500 });
+      await notificaSte(`🩹 Campo: ${await nome()} ha dato l'ok per il dolore (${stato.zona ?? 'zona non indicata'}, ${stato.intensita}/10), sotto la sua responsabilità: "${OK_TESTI[body.ok as OkDolore]}".\nAdesso: ${faseRiga(dopo, oggi)}\nUser ID: ${userId}`);
+      return NextResponse.json({ success: true, stato: dopo });
+    }
+
+    if (body?.graduale === 'completo' || body?.graduale === 'non_ancora') {
+      if (!stato) return NextResponse.json({ error: 'nessun_dolore' }, { status: 409 });
+      if (body.graduale === 'completo' && body?.responsabilita !== true) return NextResponse.json({ error: 'responsabilita_richiesta' }, { status: 400 });
+      const dopo = rispondiGraduale(stato, body.graduale, oggi);
+      if (dopo === undefined) return NextResponse.json({ error: 'non_ancora_il_momento' }, { status: 409 });
+      const r = await salvaStato(dopo);
+      if (r.error) return NextResponse.json({ error: r.error }, { status: 500 });
+      await notificaSte(dopo
+        ? `🩹 Campo: ${await nome()}, ripresa graduale (${stato.zona ?? '—'}): "non ancora completo", un'altra settimana graduale.\nUser ID: ${userId}`
+        : `🩹 Campo: ${await nome()} è tornato ad allenarsi completo dopo il dolore (${stato.zona ?? '—'}, ${stato.intensita}/10), sotto la sua responsabilità.\nUser ID: ${userId}`);
+      return NextResponse.json({ success: true, stato: dopo });
+    }
+
     if (body?.zonaPassata === true) {
+      if (stato) return NextResponse.json({ error: 'usa_ok', ok: okPossibili(stato) }, { status: 409 });
       const r = await aggiornaProfilo(userId, {}, { training_pain_zone: null, training_pain_since: null, training_pain_until: null });
       if (r.error) return NextResponse.json({ error: r.error }, { status: 500 });
       return NextResponse.json({ success: true, ...(r.skipped ? { skipped: r.skipped } : {}) });
     }
 
     if (body?.resolved === true) {
+      if (stato) return NextResponse.json({ error: 'usa_ok', ok: okPossibili(stato) }, { status: 409 });
       // Lo sblocco è dichiarativo (un tap del ragazzo), ma dal 26/10 passa dalla presa di responsabilità e Ste lo viene a sapere
       if (body?.responsabilita !== true) return NextResponse.json({ error: 'responsabilita_richiesta' }, { status: 400 });
       const { data: prof } = await supabaseAdmin.from('profiles').select('training_pain_zone').eq('user_id', userId).maybeSingle();
@@ -70,6 +108,24 @@ export async function POST(request: NextRequest) {
     const zona = isZonaDolore(body?.zona) ? body.zona : null;
     if (!Number.isInteger(intensita) || intensita < 1 || intensita > 10 || !descrizione) {
       return NextResponse.json({ error: 'Segnalazione non valida' }, { status: 400 });
+    }
+
+    if (stato !== undefined) {
+      // Dolore a fasce (16/11): da 4 in su uno stato con la sua fase; sotto, la riduzione di prima sulla zona
+      const unito = unisciSegnalazione(stato, nuovoStato(intensita, zona, oggi), oggi, intensita, zona);
+      const r = unito
+        ? await salvaStato(unito)
+        : await aggiornaProfilo(userId, { training_pain_stato: null, training_pain_hold: false }, { training_pain_zone: zona, training_pain_since: zona ? oggi : null, training_pain_until: null });
+      if (r.error) return NextResponse.json({ error: r.error }, { status: 500 });
+      if (intensita >= DOLORE_SOGLIA_PAUSA) {
+        await notificaSte(`🩹 Campo: ${await nome()} ha segnalato un dolore ${intensita}/10${zona ? ` (${zona})` : ''}${durante ? ' durante l\'allenamento' : ''}: "${descrizione}".\n${unito ? faseRiga(unito, oggi) : ''}\nUser ID: ${userId}`);
+      }
+      await updateTrainingMemory(
+        userId,
+        `Dolore segnalato ${intensita}/10${zona ? ` (${zona})` : ''}${durante ? ' (lo sente durante l\'allenamento)' : ''}: ${descrizione}${unito ? ` — ${unito.fase === 'stop' ? 'stop completo fino all\'ok' : unito.fase === 'zona_ferma' ? 'fermi gli esercizi della zona fino all\'ok' : 'vale il percorso di prima'}` : zona && zona !== 'altro' ? ' — sotto soglia: serie ridotte sugli esercizi della zona' : ' — sotto soglia, monitorare'}`,
+        'segnalazione dolore'
+      );
+      return NextResponse.json({ success: true, painHold: unito?.fase === 'stop', zona, stato: unito });
     }
 
     const painHold = intensita >= DOLORE_SOGLIA_PAUSA;

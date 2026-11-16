@@ -412,7 +412,7 @@ export default function SessionePage() {
           <Card variant="danger" padding="sm" className="mb-4">
             <p className="text-body-sm text-danger flex gap-2">
               <AlertTriangle size={16} className="shrink-0 mt-0.5" aria-hidden />
-              <span>Hai segnalato un dolore: questa seduta è in pausa. L&apos;app non fa diagnosi: fatti vedere da un fisioterapista o da un medico se è forte o dura da giorni. Riparti da Palestra › Corpo, sotto la tua responsabilità.</span>
+              <span>Hai segnalato un dolore: questa seduta è in pausa. L&apos;app non fa diagnosi: fatti vedere da un fisioterapista o da un medico se è forte o dura da giorni. Si riparte da Palestra › Corpo con il tuo ok, sotto la tua responsabilità.</span>
             </p>
           </Card>
         )}

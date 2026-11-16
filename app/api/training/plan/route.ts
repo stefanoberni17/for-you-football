@@ -1,4 +1,6 @@
 import { conSpostamento } from '@/lib/spostamenti';
+import { loadStatoDolore } from '@/lib/trainingDoloreServer';
+import { stopCompleto } from '@/lib/doloreFasi';
 import { calendarioDellaSettimana } from '@/lib/settimanaServer';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
@@ -41,12 +43,18 @@ export async function POST(request: NextRequest) {
     // settimana, 1 in prova). M8: i piani salvati dall'adattamento al calendario (zero Claude) non contano.
     const { data: pianiRows } = await supabaseAdmin.from('training_plans').select('id, plan, created_at')
       .eq('user_id', userId).eq('week_start', lunedi).order('created_at', { ascending: false });
-    const pianiSettimana = (pianiRows || []).filter((p: { plan?: { adattato_calendario?: string } }) => !p.plan?.adattato_calendario).length;
+    const pianiSettimana = (pianiRows || []).filter((p: { plan?: { adattato_calendario?: string; dopo_dolore?: string } }) => !p.plan?.adattato_calendario && !p.plan?.dopo_dolore).length;
     const corpoVuoto = !body || (typeof body === 'object' && Object.keys(body).length === 0);
-    const automatico = corpoVuoto && pianiSettimana === 0;
+    // Dolore a fasce (16/11): dopo un ok la settimana si rifà sulla fase nuova (solo le altre parti, la ripresa…).
+    // Una al giorno, fuori dal tetto e dalle riprogrammazioni: non l'ha chiesta il ragazzo per cambiare programma
+    const statoDolore = await loadStatoDolore(userId);
+    const oggiIso = todayRome();
+    const dopoDolore = body?.dopoDolore === true && !!statoDolore && !stopCompleto(statoDolore)
+      && !(pianiRows || []).some((p: { plan?: { dopo_dolore?: string } }) => p.plan?.dopo_dolore === oggiIso);
+    const automatico = (corpoVuoto && pianiSettimana === 0) || dopoDolore;
     // 10/11: il piano automatico della settimana nasce solo dopo che il ragazzo ha detto squadra e partita di questa
     // settimana (lib/settimanaServer.ts): altrimenti si costruirebbe su giorni che forse non valgono più
-    if (automatico && !(await calendarioDellaSettimana(userId)).confermata) {
+    if (automatico && !dopoDolore && !(await calendarioDellaSettimana(userId)).confermata) {
       return NextResponse.json({ error: 'Prima dicci quando ti alleni con la squadra e quando giochi questa settimana.', reason: 'settimana_da_confermare' }, { status: 409 });
     }
 
@@ -95,7 +103,13 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    let richiesta = typeof body?.richiesta === 'string' ? body.richiesta.slice(0, 800) : undefined;
+    // Dolore a fasce (16/11): nello stop completo non si genera niente, nemmeno giornate leggere (Ste: con 9/10 al
+    // flessore l'app proponeva foam e tecnica). Si riparte dall'hub con l'ok.
+    if (stopCompleto(statoDolore)) {
+      return NextResponse.json({ error: 'dolore_stop', message: 'Con questo dolore gli allenamenti sono fermi finché non dai l\'ok dall\'hub.' }, { status: 409 });
+    }
+
+    let richiesta = typeof body?.richiesta === 'string' && !dopoDolore ? body.richiesta.slice(0, 800) : undefined;
     let vincoli: Vincoli = {};
     let pianoAttualeSedute: WeekPlan['sedute'] | null = null;
     const guidata = parseRichiesta(body);
@@ -153,6 +167,8 @@ export async function POST(request: NextRequest) {
     if (accesso.livello === 'base' && !accesso.manuale) {
       plan = { ...plan, blocco: { inizio: lunedi, settimana: 1, di: 4 }, messaggio: `${plan.messaggio ?? ''}${plan.messaggio ? ' ' : ''}Questo è il tuo blocco di 4 settimane: le prossime due salgono di un passo, la quarta è di scarico.`.trim() };
     }
+
+    if (dopoDolore) plan = { ...plan, dopo_dolore: oggiIso };
 
     const { data: saved, error } = await supabaseAdmin.from('training_plans').insert({
       user_id: userId,

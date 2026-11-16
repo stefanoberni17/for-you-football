@@ -7,7 +7,8 @@ import { giorniAllaPartita, giorniDallaPartita } from '@/lib/trainingRulesV2';
 import { candidatiCampo, candidatiForza, candidatiPalestra, GRUPPI_LONTANO, guardrailResistenzaVelocita, inserisciSerieTest, propostaOffSeason, type Guardrail, type GruppoLontano, type RisultatoConData } from '@/lib/trainingRitest';
 import { cicloDaiDati, condizioneAtleta, condizioneRiga } from '@/lib/trainingCondizione';
 import { doloreRiga, limitazioniRiga } from '@/lib/trainingDolore';
-import { loadDolore, loadLimitazioni } from '@/lib/trainingDoloreServer';
+import { loadDolore, loadLimitazioni, loadStatoDolore } from '@/lib/trainingDoloreServer';
+import { domandaGradualeDovuta, faseRiga, okPossibili } from '@/lib/doloreFasi';
 import { loadSesso } from '@/lib/sessoServer';
 import { giorniSquadra } from '@/lib/trainingLoad';
 import { calendarioHash, conflittiCalendario, conflittoRiga } from '@/lib/trainingCalendario';
@@ -72,7 +73,7 @@ export async function GET(request: NextRequest) {
     const [
       { data: profile }, resultsRes, { data: openSession }, { data: lastPlan }, { data: primaTestSession }, { data: ultimaTestSession },
       logsRes, { data: setupRow, error: setupErr }, { data: cOggi }, { data: checkins14 },
-      { data: calendar }, consensiSet, { squadra, partita: partitaAbituale }, focusSetup, preferenzeSetup, mese, resoconti, feedbackRecenti, dolore, limitazioni, sesso,
+      { data: calendar }, consensiSet, { squadra, partita: partitaAbituale }, focusSetup, preferenzeSetup, mese, resoconti, feedbackRecenti, dolore, limitazioni, sesso, statoDolore,
     ] = await Promise.all([
       supabaseAdmin.from('profiles').select('training_pain_hold, name, role').eq('user_id', userId).maybeSingle(),
       supabaseAdmin.from('training_test_results')
@@ -115,6 +116,8 @@ export async function GET(request: NextRequest) {
       loadLimitazioni(userId),
       // Ragazzo o ragazza (13/11, migration 042): soglie dei test e carichi per le ragazze
       loadSesso(userId),
+      // Dolore a fasce (16/11, migration 043): fase, ok dati, ripresa graduale; undefined senza la migration
+      loadStatoDolore(userId),
     ]);
 
     // Migration 018 non ancora applicata → riquery senza la colonna dettaglio
@@ -177,7 +180,7 @@ export async function GET(request: NextRequest) {
       const { data: piani } = await supabaseAdmin.from('training_plans').select('id, plan')
         .eq('user_id', userId).eq('week_start', lastPlan.week_start);
       // M8: i piani salvati dall'adattamento al calendario (zero Claude) non contano nel tetto delle rigenerazioni
-      if (lastPlan.week_start === mondayOfThisWeekRome()) pianiQuestaSettimana = (piani || []).filter((p: { plan?: { adattato_calendario?: string } }) => !p.plan?.adattato_calendario).length;
+      if (lastPlan.week_start === mondayOfThisWeekRome()) pianiQuestaSettimana = (piani || []).filter((p: { plan?: { adattato_calendario?: string; dopo_dolore?: string } }) => !p.plan?.adattato_calendario && !p.plan?.dopo_dolore).length;
       const ids = (piani || []).map((p: { id: string }) => p.id);
       // Con il voto della seduta (migration 026): serve a M5 (aumenti in settimana); se la colonna manca, senza
       const q = (cols: string) => supabaseAdmin.from('training_session_completions').select(cols).eq('user_id', userId).in('plan_id', ids.length ? ids : [lastPlan.id]);
@@ -283,7 +286,7 @@ export async function GET(request: NextRequest) {
     if (lastPlan?.plan && !planStaleFlag) {
       const letto = pianoPerLettura(lastPlan.plan, {
         weekStart: lastPlan.week_start, oggi, oggiDow: dowOggi, fatteGiorni: fattiGiorni,
-        resoconti, squadra, logs: logsSerie, votiSedute, dolore, limitazioni, feedback: conFeedback,
+        resoconti, squadra, logs: logsSerie, votiSedute, dolore, statoDolore, limitazioni, feedback: conFeedback,
         ritest: settimanaRitest ? {
           matchDays: matchDaysEff,
           candidati: {
@@ -338,7 +341,14 @@ export async function GET(request: NextRequest) {
       name: profile?.name || null,
       painHold: profile?.training_pain_hold === true,
       // Dolore per zona (M9): zona, date e la riga per l'hub (null senza segnalazione o a riduzione scaduta)
-      dolore: dolore ? { ...dolore, riga: doloreRiga(dolore, oggi) } : null,
+      dolore: dolore && !statoDolore ? { ...dolore, riga: doloreRiga(dolore, oggi) } : null,
+      // Dolore a fasce (16/11): la fase, la riga per l'hub, gli ok possibili e la domanda della ripresa graduale
+      doloreFase: statoDolore ? {
+        zona: statoDolore.zona, intensita: statoDolore.intensita, fascia: statoDolore.fascia, fase: statoDolore.fase, da: statoDolore.da,
+        riga: faseRiga(statoDolore, oggi), ok: okPossibili(statoDolore), domandaGraduale: domandaGradualeDovuta(statoDolore, oggi),
+      } : null,
+      // Pausa di prima (senza fase): il ragazzo può rifare la segnalazione e passare al percorso a fasi
+      doloreDaAggiornare: statoDolore === null && profile?.training_pain_hold === true,
       // Infortuni e limitazioni dal setup (punto 4): zone, nota e la riga per l'hub (null senza)
       limitazioni: limitazioni ? { ...limitazioni, riga: limitazioniRiga(limitazioni) } : null,
       fascia,

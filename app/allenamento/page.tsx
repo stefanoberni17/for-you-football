@@ -39,6 +39,9 @@ export interface TrainingState {
   painHold: boolean;
   // Dolore per zona (M9, 26/10): zona segnalata, da quando, fino a quando resta ridotta, la riga per l'atleta
   dolore?: { zona: string; da?: string | null; fino?: string | null; riga: string | null } | null;
+  // Dolore a fasce (16/11, lib/doloreFasi): la fase, la riga, gli ok che si possono dare, la domanda della ripresa graduale
+  doloreFase?: { zona: string | null; intensita: number; fascia: string; fase: 'zona_ferma' | 'stop' | 'altre_parti' | 'leggera' | 'graduale'; da: string; riga: string | null; ok: { id: string; testo: string }[]; domandaGraduale: boolean } | null;
+  doloreDaAggiornare?: boolean; // pausa di prima (senza fase): si può rifare la segnalazione
   limitazioni?: { zone: string[]; nota: string; riga: string | null } | null; // punto 4 (26/10): infortuni e limitazioni dal setup
   consensi?: { health_data: boolean; training_idoneita: boolean };
   fascia: string;
@@ -303,12 +306,12 @@ export default function AllenamentoHub() {
   // Nuova settimana: se il piano è di una settimana passata, l'app prepara da sola quello nuovo
   // (le sedute saltate della settimana scorsa vengono riproposte uguali dal planner)
   useEffect(() => {
-    if (state?.planStale && state.settimanaConfermata !== false && !state.abbonamento?.inPausa && !generating && !autoGen && !autoGenTried.current) {
+    if (state?.planStale && state.settimanaConfermata !== false && !state.abbonamento?.inPausa && state.doloreFase?.fase !== 'stop' && !generating && !autoGen && !autoGenTried.current) {
       autoGenTried.current = true;
       setAutoGen(true);
       generaPiano();
     }
-  }, [state?.planStale, state?.settimanaConfermata, generating, autoGen, generaPiano]);
+  }, [state?.planStale, state?.settimanaConfermata, state?.doloreFase?.fase, generating, autoGen, generaPiano]);
 
   // 10/11: la settimana con la squadra è obbligatoria. Finché il ragazzo non risponde, il foglio resta aperto e il piano
   // automatico aspetta; la proposta («Come la scorsa») arriva da /api/calendar solo quando serve
@@ -360,6 +363,22 @@ export default function AllenamentoHub() {
     setResponsabilita(false);
     await load();
   };
+  // Dolore a fasce (16/11): un ok (sotto la sua responsabilità) o la risposta della ripresa graduale
+  const [doloreBusy, setDoloreBusy] = useState<string | null>(null);
+  const [doloreErr, setDoloreErr] = useState<string | null>(null);
+  const passoDolore = async (chiave: string, body: Record<string, unknown>) => {
+    setDoloreBusy(chiave); setDoloreErr(null);
+    try {
+      const res = await authFetch('/api/training/pain', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+      if (!res.ok) { setDoloreErr('Non sono riuscito a salvarlo. Riprova tra un attimo.'); return; }
+      setResponsabilita(false);
+      // Dopo un ok la settimana si rifà sulla fase nuova (non conta come rigenerazione); senza piano basta ricaricare
+      if (typeof body.ok === 'string' && state?.plan && !state.planStale) {
+        await authFetch('/api/training/plan', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ dopoDolore: true }) }).catch(() => null);
+      }
+      await load();
+    } finally { setDoloreBusy(null); }
+  };
   // M9: "è passato" sulla zona ridotta → via la riduzione
   const passatoDolore = async () => {
     await authFetch('/api/training/pain', {
@@ -381,7 +400,7 @@ export default function AllenamentoHub() {
         const data = await res.json();
         const zonaRidotta = data.zona && data.zona !== 'altro';
         setPainDesc(''); setPainDurante(null); setPainInt(5); setPainZona(null);
-        if (data.painHold) {
+        if (data.painHold || data.stato) {
           setShowPain(false); setPainMsg(null);
           await load(); // il banner rosso prende il posto del form
         } else {
@@ -566,7 +585,12 @@ export default function AllenamentoHub() {
 
 
   // "La tua settimana non c'è ancora": senza piano (o se il piano automatico del lunedì non è riuscito)
-  const cardSenzaPiano = state.planStale && generating ? (
+  const cardSenzaPiano = state.doloreFase?.fase === 'stop' ? (
+    <Card variant="accent" className="mb-5">
+      <h2 className="font-display text-title-2 font-bold text-app mb-1">Allenamenti fermi</h2>
+      <p className="text-body text-muted leading-relaxed">Con questo dolore la settimana non si prepara. Quando il fisioterapista ti dà l&apos;ok, dallo qui sopra e la preparo sulle parti che puoi allenare.</p>
+    </Card>
+  ) : state.planStale && generating ? (
     <Card variant="accent" className="mb-5">
       <p className="text-body text-forest-300 flex items-center gap-2"><RefreshCw size={18} className="animate-spin shrink-0" aria-hidden /> Nuova settimana: sto preparando il piano…</p>
       <p className="text-body-sm text-muted mt-1">Le sedute saltate la settimana scorsa vengono riproposte.</p>
@@ -1139,7 +1163,47 @@ export default function AllenamentoHub() {
         )}
 
         {/* Avvisi in cima SOLO quando attivi: dolore, scarico, ri-test */}
-        {state.painHold && (
+        {/* Dolore a fasce (16/11): cosa vale adesso e il prossimo ok, uno per volta, sotto la sua responsabilità */}
+        {state.doloreFase && (
+          <Card variant={state.doloreFase.fase === 'stop' ? 'danger' : 'warn'} padding="sm" className="mb-4">
+            <div className="flex items-start gap-2.5">
+              <AlertTriangle size={18} className={`${state.doloreFase.fase === 'stop' ? 'text-danger' : 'text-warning'} shrink-0 mt-0.5`} aria-hidden />
+              <div className="min-w-0">
+                <p className={`text-body font-semibold ${state.doloreFase.fase === 'stop' ? 'text-danger' : 'text-warning'}`}>
+                  {state.doloreFase.fase === 'stop' ? 'Allenamenti fermi' : state.doloreFase.fase === 'graduale' ? 'Ripresa graduale' : state.doloreFase.fase === 'leggera' ? 'Ripresa leggera' : state.doloreFase.fase === 'altre_parti' ? 'Solo le altre parti' : 'Zona ferma'}
+                </p>
+                <p className="text-body-sm text-muted leading-relaxed mt-0.5">{state.doloreFase.riga} L&apos;app non fa diagnosi.</p>
+                {(state.doloreFase.ok.length > 0 || state.doloreFase.domandaGraduale) && (
+                  <label className="flex items-start gap-3 mt-3 min-h-[44px] cursor-pointer">
+                    <input type="checkbox" checked={responsabilita} onChange={(e) => setResponsabilita(e.target.checked)} className="mt-1 h-5 w-5 accent-[var(--color-accent-glow)]" />
+                    <span className="text-body-sm text-app leading-relaxed">{PRESA_RESPONSABILITA}</span>
+                  </label>
+                )}
+                {state.doloreFase.ok.length > 0 && (
+                  <div className="mt-2 space-y-2">
+                    {state.doloreFase.ok.map((o) => (
+                      <Button key={o.id} variant="secondary" size="sm" fullWidth disabled={!responsabilita} loading={doloreBusy === o.id}
+                        onClick={() => passoDolore(o.id, { ok: o.id, responsabilita: true })} className="!h-auto !py-2 text-left whitespace-normal">
+                        {o.testo}
+                      </Button>
+                    ))}
+                  </div>
+                )}
+                {state.doloreFase.domandaGraduale && (
+                  <div className="mt-2">
+                    <p className="text-body-sm font-semibold text-app">Sei pronto a tornare ad allenarti completo?</p>
+                    <div className="mt-2 grid grid-cols-2 gap-2">
+                      <Button variant="secondary" size="sm" disabled={!responsabilita} loading={doloreBusy === 'completo'} onClick={() => passoDolore('completo', { graduale: 'completo', responsabilita: true })}>Sì, completo</Button>
+                      <Button variant="ghost" size="sm" loading={doloreBusy === 'non_ancora'} onClick={() => passoDolore('non_ancora', { graduale: 'non_ancora' })}>Non ancora</Button>
+                    </div>
+                  </div>
+                )}
+                {doloreErr && <p className="text-body-sm text-danger mt-2">{doloreErr}</p>}
+              </div>
+            </div>
+          </Card>
+        )}
+        {state.painHold && !state.doloreFase && (
           <Card variant="danger" padding="sm" className="mb-4">
             <div className="flex items-start gap-2.5">
               <AlertTriangle size={18} className="text-danger shrink-0 mt-0.5" aria-hidden />
@@ -1158,6 +1222,11 @@ export default function AllenamentoHub() {
                 <Button variant="secondary" size="sm" onClick={sbloccaDolore} disabled={!responsabilita} className="mt-3">
                   Riparto
                 </Button>
+                {state.doloreDaAggiornare && (
+                  <Button variant="ghost" size="sm" onClick={() => { setPainMsg(null); setShowPain(true); }} className="mt-1 -ml-3">
+                    Dimmi di nuovo quanto fa male: riparti a passi
+                  </Button>
+                )}
               </div>
             </div>
           </Card>
@@ -1237,7 +1306,7 @@ export default function AllenamentoHub() {
             </Card>
           )}
           <p className="text-body-sm text-warning leading-relaxed">
-            Da 4/10 in su le sedute fisiche vanno in pausa: riparti tu, quando è passato, con una presa di responsabilità. Sotto, ti alleni con le serie ridotte sugli esercizi che toccano quella zona. {CONSIGLIO_VISITA}
+            Fino a 3/10 ti alleni con le serie ridotte sugli esercizi che toccano quella zona. Da 4 a 6 si fermano solo quelli, da 7 in su si ferma tutto finché non dai l&apos;ok: riparti a passi, ognuno sotto la tua responsabilità. {CONSIGLIO_VISITA}
           </p>
         </div>
       </Sheet>
