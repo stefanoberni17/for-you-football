@@ -82,17 +82,34 @@ export const BILANCIERE_F_MIN = 15;
 type PesoPer = 'bilanciere' | 'manubrio' | 'kettlebell' | 'zavorra' | 'macchina';
 
 /**
- * Il peso per una ragazza, arrotondato a quello che esiste davvero: kettlebell a 4 kg (minimo 4), manubri e zavorra
- * al kg (minimo 1), bilanciere e macchina a 2,5 kg (il bilanciere mai sotto la barra da 15 kg).
+ * Pesi di partenza in rapporto al peso corporeo (16/11, Ste: «ragionare per bw e alleggerire il fattore per i pesi»):
+ * quando il peso viene già dal SUO peso corporeo la differenza di massa è dentro il numero, quindi per le ragazze il
+ * fattore che resta è più leggero: × 0,8 gambe e tutto il resto, × 0,7 parte alta. [proposta, da tarare]
+ * Senza peso corporeo (o sui kg dei blocchi di Ste, prescrizioni per ragazzi) restano 0,65 / 0,55.
  */
-export function pesoPerRagazza(kg: number, per?: PesoPer | null, parteAlta = false): number {
-  const x = kg * (parteAlta ? FATTORE_PESO_F_ALTO : FATTORE_PESO_F);
+export const FATTORE_PESO_F_BW = 0.8;
+export const FATTORE_PESO_F_BW_ALTO = 0.7;
+
+/**
+ * Arrotonda al peso che esiste davvero: kettlebell a 4 kg (minimo 4), manubri e zavorra al kg (minimo 1), bilanciere e
+ * macchina a 2,5 kg (il bilanciere mai sotto `minBilanciere`: 20 kg la barra maschile, 15 quella femminile).
+ */
+export function arrotondaPeso(x: number, per?: PesoPer | null, minBilanciere = 20): number {
   switch (per) {
     case 'kettlebell': return Math.max(4, Math.round(x / 4) * 4);
-    case 'bilanciere': return Math.max(BILANCIERE_F_MIN, Math.round(x / 2.5) * 2.5);
+    case 'bilanciere': return Math.max(minBilanciere, Math.round(x / 2.5) * 2.5);
     case 'macchina': return Math.max(2.5, Math.round(x / 2.5) * 2.5);
     default: return Math.max(1, Math.round(x));
   }
+}
+
+/**
+ * Il peso per una ragazza, arrotondato a quello che esiste davvero (`arrotondaPeso`, bilanciere dalla barra da 15 kg).
+ * `daPesoCorporeo` = il kg è già stato calcolato dal suo peso corporeo: fattore più leggero (0,8 / 0,7).
+ */
+export function pesoPerRagazza(kg: number, per?: PesoPer | null, parteAlta = false, daPesoCorporeo = false): number {
+  const f = daPesoCorporeo ? (parteAlta ? FATTORE_PESO_F_BW_ALTO : FATTORE_PESO_F_BW) : (parteAlta ? FATTORE_PESO_F_ALTO : FATTORE_PESO_F);
+  return arrotondaPeso(kg * f, per, BILANCIERE_F_MIN);
 }
 
 /** Riga per i prompt del planner e della chat del preparatore. */

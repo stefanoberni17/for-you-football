@@ -2,6 +2,15 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-16 — Pesi di partenza dal peso corporeo, peso obbligatorio nel setup
+
+Ste, 16/11: «chiediamo il peso nel setup obbligatorio. Secondo me dobbiamo ragionare per bw e alleggerire il fattore per i pesi».
+- `pesoDiPartenza(id, sesso, pesoCorporeo)` in `lib/trainingBlocks.ts`: il peso del catalogo vale per chi pesa 70 kg (`PESO_RIFERIMENTO_KG`), gli altri lo hanno in proporzione, mai oltre il catalogo + 25 % (`PESO_BW_TETTO`), arrotondato al peso che esiste (`arrotondaPeso` in `lib/sesso.ts`). Il bilanciere fino a 20 kg è la barra e resta fisso. La frase sotto l'esercizio dice «dal tuo peso, N kg».
+- Ragazze con il peso corporeo: × 0,8 (gambe e resto) e × 0,7 (parte alta), `FATTORE_PESO_F_BW` / `_ALTO`; senza peso corporeo, e sui kg dei blocchi di Ste, restano 0,65 / 0,55.
+- `limaCarichi` personalizza solo il peso di partenza del catalogo (riconosciuto dalla frase); i kg scritti nei blocchi di Ste restano i suoi, dietro il tetto di 20 kg (12 per le ragazze) senza massimale. `ContestoV2.pesoCorporeo` dal setup. I blocchi kettlebell non portano più i kg propri: passano dal peso di partenza.
+- Peso obbligatorio: il setup non si salva senza (`/api/training/setup` rifiuta `pesoKg: null`, il bottone è spento con la riga che lo dice); `/api/training/plan` risponde 409 `peso_mancante`; nell'hub chi ha fatto il setup senza il peso trova in cima a «Oggi» la card «Quanto pesi?» e il piano automatico aspetta. `pesoCorporeoValido` in `lib/trainingSetup.ts`.
+- Test in `tests/pesoCorporeo.test.ts`. La tabella per esercizio da correggere resta `docs/pesi-peso-corporeo-2026-11.md`.
+
 ## 2026-11-16 — Ragazze: soglie dagli studi e parte alta più leggera
 
 Ste, 16/11: «vai» sulla ricerca (`docs/sesso-soglie-ricerca-2026-11.md`, 21 fonti).

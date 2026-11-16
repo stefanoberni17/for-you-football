@@ -275,6 +275,7 @@ export interface ContestoV2 {
   eta: number | null;
   esperienzaPalestra: boolean;
   massimali?: Record<string, number>; // 1RM stimati per esercizio (id v2) — necessari per regime max/esplosiva
+  pesoCorporeo?: number | null;   // 16/11: i pesi di partenza del catalogo in rapporto al peso corporeo (lib/trainingBlocks.ts)
   sesso?: Sesso | null;           // 13/11: ragazza → pesi di partenza più bassi e tetto senza massimale a 12 kg (lib/sesso.ts)
 }
 

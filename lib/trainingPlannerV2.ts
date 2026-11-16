@@ -206,7 +206,7 @@ export function costruisciContextV2(sorgenti: SorgentiContextV2): ContextV2 {
   const ruoli = String(prof?.role || '').split(',').map((r) => r.trim().toLowerCase()).filter(Boolean);
   const v2: ContestoV2 = {
     livello: base.fascia, livelloPerQualita: base.livelli, attrezzatura: setup.attrezzatura, inCoppia: setup.compagno,
-    eta, esperienzaPalestra: setup.esperienzaPalestra, massimali, ruoli, sesso: base.sesso ?? null,
+    eta, esperienzaPalestra: setup.esperienzaPalestra, massimali, ruoli, sesso: base.sesso ?? null, pesoCorporeo: setup.pesoKg,
   };
   const ctx: ContextV2 = {
     base, setup, eta, ruoli, v2, blocchi: blocchiDisponibili(v2),

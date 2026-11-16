@@ -56,9 +56,11 @@ export async function POST(request: NextRequest) {
       update.training_fase = body.fase;
     }
     if (body.pesoKg !== undefined) {
+      // 16/11 (Ste): obbligatorio, non si toglie; serve per i pesi di partenza e i massimali
       const p = body.pesoKg === null ? null : Number(body.pesoKg);
-      if (p !== null && (!Number.isFinite(p) || p < 30 || p > 150)) return NextResponse.json({ error: 'peso non valido (30-150 kg)' }, { status: 400 });
-      update.training_peso_kg = p;
+      if (p === null) return NextResponse.json({ error: 'Scrivi il tuo peso: serve per i pesi di partenza.', reason: 'peso_mancante' }, { status: 400 });
+      if (!Number.isFinite(p) || p < 30 || p > 150) return NextResponse.json({ error: 'peso non valido (30-150 kg)' }, { status: 400 });
+      update.training_peso_kg = Math.round(p * 10) / 10;
     }
     if (body.squadraDurataMin !== undefined) {
       const d = body.squadraDurataMin === null ? null : Number(body.squadraDurataMin);
