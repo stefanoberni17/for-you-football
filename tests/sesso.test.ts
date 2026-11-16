@@ -71,6 +71,20 @@ describe('ragazzo o ragazza (13/11)', () => {
     expect(pesoPerRagazza(1, 'manubrio')).toBe(1);
   });
 
+  it('parte alta più leggera: × 0,55 invece di × 0,65 (16/11)', () => {
+    expect(pesoPerRagazza(20, 'manubrio', true)).toBe(11);
+    expect(pesoPerRagazza(20, 'manubrio')).toBe(13);
+    expect(pesoDiPartenza('fpa-incline-dumbbell-flyes', 'F')!.kg).toBe(4); // 8 × 0,55
+    expect(pesoDiPartenza('fpa-gorilla-row', 'F')!.kg).toBe(8);            // kettlebell 12 × 0,55 = 6,6 → 8
+    expect(pesoDiPartenza('fpb-goblet-squat', 'F')!.kg).toBe(12);          // gambe: resta × 0,65
+  });
+
+  it('le soglie del 16/11 dagli studi', () => {
+    expect(SOGLIE_F['t2-50m']).toMatchObject({ intermedio: 10.1, avanzato: 9.0, pro: 7.8 });
+    expect(SOGLIE_F['test-pull']).toMatchObject({ intermedio: 1, avanzato: 4, pro: 6 });
+    expect(SOGLIE_F['t2-lift-shoulder-press']).toMatchObject({ intermedio: 0.25, avanzato: 0.35, pro: 0.45 });
+  });
+
   it('peso di partenza e frase cambiano per le ragazze', () => {
     const m = pesoDiPartenza('fpb-goblet-squat')!;
     const f = pesoDiPartenza('fpb-goblet-squat', 'F')!;

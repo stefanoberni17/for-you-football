@@ -2,6 +2,13 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-16 — Ragazze: soglie dagli studi e parte alta più leggera
+
+Ste, 16/11: «vai» sulla ricerca (`docs/sesso-soglie-ricerca-2026-11.md`, 21 fonti).
+- `SOGLIE_F` in `lib/sesso.ts` con i rapporti donne/uomini degli studi: cambiano trazioni (1/4/6), 50 m (10,1/9,0/7,8), T sprint (15,7/13,4/11,2), broad jump (136/160/200 e per gamba 120/150/190), squat, stacco rumeno, hip thrust, panca, shoulder press, trazione zavorrata. Le altre restano.
+- Pesi senza massimale per le ragazze: × 0,55 sugli esercizi di parte alta (`FATTORE_PESO_F_ALTO`, Miller 1993: 52 %), × 0,65 sul resto come prima. `pesoPerRagazza(kg, per, parteAlta)`, usato da `pesoDiPartenza` e `limaCarichi`.
+- Test in `tests/sesso.test.ts`.
+
 ## 2026-11-16 — Il dolore a fasce: si ferma quello che coinvolge la zona, si riparte a passi con l'ok
 
 Ste, 16/11: flessore a 9/10, l'app mette in pausa e consiglia il fisioterapista, ma propone foam rolling e tecnica leggera; «con dolore forte alle gambe l'unica cosa che farei è parte alta, e solo dopo l'ok». Le regole decise da Ste:
