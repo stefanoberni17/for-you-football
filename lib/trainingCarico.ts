@@ -9,13 +9,13 @@
  *  - massimale stimato per l'esercizio (batteria palestra) → il carico non supera
  *    caricoMaxPct(età, esperienza, livello) × 1RM;
  *  - senza massimale → il carico non supera KG_SENZA_MASSIMALE_MAX (20 kg; 12 per le ragazze, che partono anche da
- *    pesi più bassi, 13/11): la tecnica prima del
- *    peso, il carico vero arriva dopo i test.
+ *    pesi più bassi, 13/11): la tecnica prima del peso, il carico vero arriva dopo i test. Kettlebell e manubri, che
+ *    un test del massimale non ce l'hanno, dal 16/11 arrivano al doppio del peso di partenza (`tettoKgSenzaMassimale`).
  * L'item limato porta una `nota` che il player mostra.
  */
 import type { PlanItem } from './trainingEngine';
 import { esercizioV2ById } from './trainingCatalogV2';
-import { caricoMaxPct, kgSenzaMassimaleMax, type ContestoV2 } from './trainingRulesV2';
+import { caricoMaxPct, isPesoLibero, PESO_LIBERO_TETTO, tettoKgSenzaMassimale, type ContestoV2 } from './trainingRulesV2';
 import { pesoDiPartenza } from './trainingBlocks';
 import { pesoPerRagazza } from './sesso';
 
@@ -49,7 +49,6 @@ function pesoRagazza(it: PlanItem): PlanItem {
 export function limaCarichi(items: PlanItem[], ctx: ContestoV2): { items: PlanItem[]; limati: number } {
   let limati = 0;
   const maxPct = caricoMaxPct({ eta: ctx.eta, esperienzaPalestra: ctx.esperienzaPalestra, livello: ctx.livello });
-  const tettoSenza = kgSenzaMassimaleMax(ctx.sesso);
   const out = items.map((it0) => {
     if (!it0.carico_kg || it0.carico_kg <= 0) return it0;
     const ex = esercizioV2ById(it0.esercizio_id);
@@ -62,9 +61,12 @@ export function limaCarichi(items: PlanItem[], ctx: ContestoV2): { items: PlanIt
       return { ...it0, carico_kg: tetto, nota: conNota(it0.nota, `carico limato a ${tetto} kg: ${maxPct} % del tuo massimale stimato (${oneRm} kg); programma ${it0.carico_kg} kg`) };
     }
     const it = pesoPartenzaPersonale(it0, ctx) ?? (ctx.sesso === 'F' ? pesoRagazza(it0) : it0);
+    const tettoSenza = tettoKgSenzaMassimale(ex, ctx);
     if (it.carico_kg! <= tettoSenza) return it;
     limati++;
-    return { ...it, carico_kg: tettoSenza, nota: conNota(it.nota, `senza massimale il carico resta a ${tettoSenza} kg (programma ${it0.carico_kg} kg): fai i test in palestra per il carico vero, prima la tecnica`) };
+    return { ...it, carico_kg: tettoSenza, nota: conNota(it.nota, isPesoLibero(ex)
+      ? `carico a ${tettoSenza} kg (programma ${it0.carico_kg} kg): al massimo ${PESO_LIBERO_TETTO} volte il tuo peso di partenza, poi si sale dai tuoi kg`
+      : `senza massimale il carico resta a ${tettoSenza} kg (programma ${it0.carico_kg} kg): fai i test in palestra per il carico vero, prima la tecnica`) };
   });
   return { items: out, limati };
 }

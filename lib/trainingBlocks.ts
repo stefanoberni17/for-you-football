@@ -17,9 +17,8 @@ import { esercizioById } from './trainingCatalog';
 import { esercizioV2ById, LIVELLO_ORDINE } from './trainingCatalogV2';
 import type { PlanItem } from './trainingEngine';
 import { FAMIGLIA_FASCIA_FORZA, fasciaMarker } from './trainingFascia';
-import { KG_SENZA_MASSIMALE_MAX } from './trainingRulesV2';
-import { arrotondaPeso, pesoPerRagazza, type Sesso } from './sesso';
-import { pesoCorporeoValido } from './trainingSetup';
+import { KG_SENZA_MASSIMALE_MAX, pesoPartenzaKg } from './trainingRulesV2';
+import type { Sesso } from './sesso';
 
 export type Variante = 'full' | 'short';
 
@@ -152,10 +151,7 @@ const PESO_PER_TESTO: Record<PesoPer, (kg: number) => string> = {
   macchina: (kg) => `${kg} kg sulla macchina (i pesi cambiano da macchina a macchina)`,
 };
 
-/** Il peso corporeo a cui il peso di partenza del catalogo è "giusto" (16/11): la tabella di docs/pesi-peso-corporeo-2026-11.md. */
-export const PESO_RIFERIMENTO_KG = 70;
-/** Il peso dal peso corporeo non supera quello del catalogo di più del 25 % (chi pesa tanto non parte da pesi da esperto). [proposta] */
-export const PESO_BW_TETTO = 1.25;
+export { PESO_RIFERIMENTO_KG, PESO_BW_TETTO } from './trainingRulesV2';
 
 /**
  * Il peso da usare quando il blocco non lo dice (10/11, Ste: «Gorilla row bisogna mettere il peso da usare, controlla che
@@ -168,20 +164,11 @@ export const PESO_BW_TETTO = 1.25;
  */
 export function pesoDiPartenza(id: string, sesso?: Sesso | null, pesoCorporeo?: number | null): { kg: number; nota: string } | null {
   const e = esercizioV2ById(id);
-  if (!e?.pesoKg) return null;
-  const parteAlta = e.qualita === 'forza-parte-alta';
-  const soloBarra = e.pesoPer === 'bilanciere' && e.pesoKg <= 20;
-  const conBw = pesoCorporeoValido(pesoCorporeo) && !soloBarra;
-  let kg: number;
-  if (conBw) {
-    const x = Math.min(e.pesoKg * (pesoCorporeo / PESO_RIFERIMENTO_KG), e.pesoKg * PESO_BW_TETTO);
-    kg = sesso === 'F' ? pesoPerRagazza(x, e.pesoPer ?? null, parteAlta, true) : arrotondaPeso(x, e.pesoPer ?? null);
-  } else {
-    kg = sesso === 'F' ? Math.min(e.pesoKg, pesoPerRagazza(e.pesoKg, e.pesoPer ?? null, parteAlta)) : e.pesoKg; // 13/11: ragazze, lib/sesso.ts
-  }
-  const quanto = e.pesoPer ? PESO_PER_TESTO[e.pesoPer](kg) : `${kg} kg`;
-  const perTe = conBw ? ` (dal tuo peso, ${pesoCorporeo} kg)` : '';
-  return { kg, nota: `Peso di partenza: ${quanto}${perTe}. Giusto se chiudi le ripetizioni con 2-3 in riserva; se è troppo facile o troppo pesante cambialo e scrivi nel campo Carico quello che hai usato.` };
+  const p = pesoPartenzaKg(e, sesso, pesoCorporeo);
+  if (!e || !p) return null;
+  const quanto = e.pesoPer ? PESO_PER_TESTO[e.pesoPer](p.kg) : `${p.kg} kg`;
+  const perTe = p.conBw ? ` (dal tuo peso, ${pesoCorporeo} kg)` : '';
+  return { kg: p.kg, nota: `Peso di partenza: ${quanto}${perTe}. Giusto se chiudi le ripetizioni con 2-3 in riserva; se è troppo facile o troppo pesante cambialo e scrivi nel campo Carico quello che hai usato.` };
 }
 
 /** Espande un blocco negli items del piano (esercizio_id, serie, quantità, recupero, carico, schema). */

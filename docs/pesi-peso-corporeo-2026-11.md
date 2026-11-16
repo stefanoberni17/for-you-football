@@ -4,7 +4,7 @@ Ste, 16/11: «per i pesi magari dovremmo rapportarli con il bw?». Oggi il peso 
 
 **Come ho fatto la proposta:** ho preso il peso di oggi come giusto per un ragazzo di 70 kg e l'ho diviso per 70. Quindi a 70 kg non cambia niente; sotto scende, sopra sale. È un punto di partenza da correggere, non una regola degli studi.
 
-**Nel codice dal 16/11** (Ste: «chiediamo il peso nel setup obbligatorio. Ragioniamo per bw e alleggeriamo il fattore per i pesi»): la regola sopra (peso del catalogo × peso corporeo / 70), con il tetto al catalogo + 25 % e il bilanciere da 20 kg fisso. Le ragazze con il peso corporeo hanno × 0,8 (× 0,7 sulla parte alta). Le correzioni che scrivi qui sotto diventano percentuali per esercizio nel catalogo.
+**Nel codice dal 16/11** (Ste: «chiediamo il peso nel setup obbligatorio. Ragioniamo per bw e alleggeriamo il fattore per i pesi»): la regola sopra (peso del catalogo × peso corporeo / 70), con il tetto al catalogo + 25 % e il bilanciere da 20 kg fisso. Le ragazze con il peso corporeo hanno × 0,8 (× 0,6 sulla parte alta, dagli studi). Kettlebell e manubri salgono con la dose fino al doppio del peso di partenza; bilanciere e macchine restano a 20 kg (12 per le ragazze) finché non c'è il massimale. Le correzioni che scrivi qui sotto diventano percentuali per esercizio nel catalogo.
 
 **Come leggerla:** colonna «Proposta %» = percentuale del peso corporeo. Le tre colonne dopo sono gli esempi a 60, 70 e 85 kg, già arrotondati (kettlebell ogni 4 kg, manubri al kg, bilanciere ogni 2,5 kg e mai sotto la barra da 20). **Scrivi nella colonna «Correzione»** la percentuale giusta, oppure «fisso» se per quell'esercizio deve restare un peso fisso, oppure un tetto («max 16»).
 

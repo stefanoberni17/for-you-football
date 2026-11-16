@@ -95,8 +95,7 @@ export function mapSetup(row: Record<string, unknown> | null | undefined): Train
   };
 }
 
-/** Peso corporeo valido, 30-150 kg (16/11: obbligatorio nel setup, i pesi di partenza si calcolano da lì). */
-export const pesoCorporeoValido = (p: number | null | undefined): p is number => typeof p === 'number' && Number.isFinite(p) && p >= 30 && p <= 150;
+export { pesoCorporeoValido } from './sesso'; // 16/11: obbligatorio nel setup
 
 /** Il setup è "completo" quando l'atleta ha risposto almeno su attrezzatura e fase. */
 export function setupCompleto(s: TrainingSetup, hasRow: boolean): boolean {

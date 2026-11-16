@@ -37,15 +37,18 @@ describe('prossimaDose: una lettura sola dei log', () => {
     expect(riga).not.toMatch(/2\.5/);
     expect(doseRegoleTesto()).toMatch(new RegExp(`kettlebell \\+${KB_PASSO_KG} kg`));
   });
-  it('kettlebell SCENDI: −4 kg; mai sotto 4 kg; mai oltre il tetto del programma', () => {
+  it('kettlebell SCENDI: −4 kg; mai sotto 4 kg; mai oltre il doppio del peso di partenza', () => {
     const duro = riepilogoEsercizi(seduta('s1', 3, WINDMILL, 5, [5, 3], 10, { previsto: 16 }))[0];
     expect(duro.suggerimento).toBe('scendi');
     expect(prossimaDose(item(WINDMILL, 5, 16), duro).caricoKg).toBe(12);
-    // al tetto: programma 12, già a 16 (12 × 1.3 = 15.6 + 2 = 17.6 → 16): non sale a 20
+    // 16/11: kettlebell e manubri salgono fino al DOPPIO del peso di partenza (prima +30 %: da 12 non si passava 16)
     const facili = riepilogoEsercizi([...seduta('s2', 3, WINDMILL, 5, [5, 5], 4, { previsto: 16 }), ...seduta('s1', 10, WINDMILL, 5, [5, 5], 4, { previsto: 16 })])[0];
     const d = prossimaDose(item(WINDMILL, 5, 12), facili);
-    expect(d.caricoKg).toBe(16);
-    expect(d.cambiata).toBe(true); // 16 ≠ programma 12
+    expect(d.caricoKg).toBe(20);
+    expect(d.cambiata).toBe(true);
+    // al tetto: programma 12, già a 24 facile → resta 24, non 28
+    const alTetto = riepilogoEsercizi([...seduta('s2', 3, WINDMILL, 5, [5, 5], 4, { previsto: 24 }), ...seduta('s1', 10, WINDMILL, 5, [5, 5], 4, { previsto: 24 })])[0];
+    expect(prossimaDose(item(WINDMILL, 5, 12), alTetto).caricoKg).toBe(24);
     expect(PROGRESSIONE_MAX_DRIFT).toBe(0.3);
   });
   it('corpo libero: conferma riparte da quanto fatto, sali aggiunge un passo, tieni lascia il programma', () => {

@@ -8,7 +8,7 @@
  * ESERCIZI_V2; il planner LLM li riceve nel prompt ma non può scavalcarli.
  */
 import { esercizioV2ById, LIVELLO_ORDINE, type AttrezzaturaV2, type ExerciseV2, type LivelloMinV2, type QualitaV2 } from './trainingCatalogV2';
-import { KG_SENZA_MASSIMALE_MAX_F, type Sesso } from './sesso';
+import { arrotondaPeso, KG_SENZA_MASSIMALE_MAX_F, pesoCorporeoValido, pesoPerRagazza, type Sesso } from './sesso';
 
 // ─── Bounds per qualità ──────────────────────────────────────────────────────
 //
@@ -219,6 +219,43 @@ export const KG_SENZA_MASSIMALE_MAX = 20;
 /** Il tetto senza massimale per questa persona: 12 kg per le ragazze (13/11, lib/sesso.ts). */
 export const kgSenzaMassimaleMax = (sesso?: Sesso | null) => (sesso === 'F' ? KG_SENZA_MASSIMALE_MAX_F : KG_SENZA_MASSIMALE_MAX);
 
+/** Il peso corporeo a cui il peso di partenza del catalogo è "giusto" (16/11): la tabella di docs/pesi-peso-corporeo-2026-11.md. */
+export const PESO_RIFERIMENTO_KG = 70;
+/** Il peso dal peso corporeo non supera quello del catalogo di più del 25 % (il primo giorno, poi decide la dose). [proposta] */
+export const PESO_BW_TETTO = 1.25;
+/**
+ * Kettlebell e manubri (16/11, Ste: «ok vai»): non hanno un test del massimale, quindi il tetto fisso di 20 kg (12 per le
+ * ragazze) li fermava per sempre. Ora salgono con la dose (kettlebell +4 kg dopo due sedute facili di fila) fino al
+ * DOPPIO del peso di partenza; il tetto fisso resta su bilanciere, macchine e zavorra, che il test ce l'hanno.
+ */
+export const PESO_LIBERO_TETTO = 2;
+export const isPesoLibero = (ex?: Pick<ExerciseV2, 'pesoPer'> | null) => ex?.pesoPer === 'kettlebell' || ex?.pesoPer === 'manubrio';
+
+/**
+ * Il peso di partenza di un esercizio per questa persona: il catalogo (per chi pesa 70 kg) in proporzione al peso
+ * corporeo, mai oltre +25 %, arrotondato al peso che esiste; il bilanciere da 20 kg è la barra e resta fisso.
+ * Ragazze: × 0,8 / 0,6 se il peso viene dal peso corporeo, × 0,65 / 0,55 altrimenti (lib/sesso.ts). null = senza pesi.
+ */
+export function pesoPartenzaKg(e: Pick<ExerciseV2, 'pesoKg' | 'pesoPer' | 'qualita'> | undefined, sesso?: Sesso | null, pesoCorporeo?: number | null): { kg: number; conBw: boolean } | null {
+  if (!e?.pesoKg) return null;
+  const parteAlta = e.qualita === 'forza-parte-alta';
+  const conBw = pesoCorporeoValido(pesoCorporeo) && !(e.pesoPer === 'bilanciere' && e.pesoKg <= 20);
+  if (conBw) {
+    const x = Math.min(e.pesoKg * (pesoCorporeo! / PESO_RIFERIMENTO_KG), e.pesoKg * PESO_BW_TETTO);
+    return { kg: sesso === 'F' ? pesoPerRagazza(x, e.pesoPer ?? null, parteAlta, true) : arrotondaPeso(x, e.pesoPer ?? null), conBw };
+  }
+  return { kg: sesso === 'F' ? Math.min(e.pesoKg, pesoPerRagazza(e.pesoKg, e.pesoPer ?? null, parteAlta)) : e.pesoKg, conBw };
+}
+
+/** Il tetto in kg senza massimale per questo esercizio: kettlebell e manubri il doppio del peso di partenza, il resto 20 kg (12 per le ragazze). */
+export function tettoKgSenzaMassimale(ex: ExerciseV2 | undefined, ctx: { sesso?: Sesso | null; pesoCorporeo?: number | null }): number {
+  if (isPesoLibero(ex)) {
+    const p = pesoPartenzaKg(ex, ctx.sesso, ctx.pesoCorporeo);
+    if (p) return p.kg * PESO_LIBERO_TETTO;
+  }
+  return kgSenzaMassimaleMax(ctx.sesso);
+}
+
 /** Brzycki (foglio CALCOLO MASSIMALI del File_DB): 1RM = peso / (1.0278 − 0.0278 × reps) */
 export function stima1RM(peso: number, reps: number): number {
   if (reps < 1 || reps > 12) return NaN; // fuori dal range in cui la formula è affidabile
@@ -392,11 +429,14 @@ export function validateItemV2(
       errors.push(`${n}: regime ${regime} richiede il massimale stimato (batteria palestra non fatta)`);
   }
   // Rete di sicurezza sui kg (vale ANCHE per gli item fidati dei blocchi): senza massimale non si
-  // supera KG_SENZA_MASSIMALE_MAX; con massimale il tetto è caricoMaxPct (età, esperienza, livello)
+  // supera KG_SENZA_MASSIMALE_MAX (kettlebell e manubri: il doppio del peso di partenza, 16/11); con massimale il tetto è caricoMaxPct (età, esperienza, livello)
   if (it.carico_kg !== undefined && it.carico_kg > 0) {
     const oneRm = ctx.massimali?.[ex.id];
-    if (!(oneRm && oneRm > 0) && it.carico_kg > kgSenzaMassimaleMax(ctx.sesso))
-      errors.push(`${n}: ${it.carico_kg} kg senza massimale stimato (massimo ${kgSenzaMassimaleMax(ctx.sesso)} kg finché non fa i test in palestra)`);
+    const tetto = tettoKgSenzaMassimale(ex, ctx);
+    if (!(oneRm && oneRm > 0) && it.carico_kg > tetto)
+      errors.push(isPesoLibero(ex)
+        ? `${n}: ${it.carico_kg} kg, oltre il doppio del peso di partenza (massimo ${tetto} kg)`
+        : `${n}: ${it.carico_kg} kg senza massimale stimato (massimo ${tetto} kg finché non fa i test in palestra)`);
   }
 
   // Finestra partita per qualità (un test usato come esercizio in un blocco di Ste segue il blocco, non la finestra "test")

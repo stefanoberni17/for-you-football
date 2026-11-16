@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { limaCarichi } from '@/lib/trainingCarico';
-import { validateItemV2, KG_SENZA_MASSIMALE_MAX } from '@/lib/trainingRulesV2';
+import { validateItemV2, KG_SENZA_MASSIMALE_MAX, isPesoLibero, tettoKgSenzaMassimale } from '@/lib/trainingRulesV2';
+import { esercizioV2ById } from '@/lib/trainingCatalogV2';
 import { bloccoById, blocchiDisponibili, expandBlocco } from '@/lib/trainingBlocks';
 
 const fm = bloccoById('forza-parte-bassa-forza-max')!;
@@ -31,7 +32,9 @@ describe('limaCarichi: i kg stanno dietro il tetto', () => {
     const r = limaCarichi(items, ctx14);
     expect(r.limati).toBeGreaterThan(0);
     expect(erroriKg(r.items, ctx14)).toBe(0);
-    for (const it of r.items) if (it.carico_kg) expect(it.carico_kg).toBeLessThanOrEqual(KG_SENZA_MASSIMALE_MAX);
+    // bilanciere e macchine al massimo 20 kg; kettlebell e manubri al doppio del peso di partenza (16/11)
+    for (const it of r.items) if (it.carico_kg) expect(it.carico_kg).toBeLessThanOrEqual(tettoKgSenzaMassimale(esercizioV2ById(it.esercizio_id), { sesso: null }));
+    for (const it of r.items) if (it.carico_kg && !isPesoLibero(esercizioV2ById(it.esercizio_id))) expect(it.carico_kg).toBeLessThanOrEqual(KG_SENZA_MASSIMALE_MAX);
   });
 
   it('a 22 anni A con massimale squat 100 restano 80 e 90, il 95 scende', () => {

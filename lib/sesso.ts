@@ -84,11 +84,13 @@ type PesoPer = 'bilanciere' | 'manubrio' | 'kettlebell' | 'zavorra' | 'macchina'
 /**
  * Pesi di partenza in rapporto al peso corporeo (16/11, Ste: «ragionare per bw e alleggerire il fattore per i pesi»):
  * quando il peso viene già dal SUO peso corporeo la differenza di massa è dentro il numero, quindi per le ragazze il
- * fattore che resta è più leggero: × 0,8 gambe e tutto il resto, × 0,7 parte alta. [proposta, da tarare]
+ * fattore che resta è più leggero. Dagli studi sulla forza per kg di peso corporeo (16/11): gambe ~80 % (squat 1,4 contro
+ * 1,7 volte il peso nei sollevatori allenati; record di powerlifting 66-77 %), parte alta ~60 % (panca 0,8 contro 1,3;
+ * record 61-71 %): × 0,8 gambe e tutto il resto, × 0,6 parte alta.
  * Senza peso corporeo (o sui kg dei blocchi di Ste, prescrizioni per ragazzi) restano 0,65 / 0,55.
  */
 export const FATTORE_PESO_F_BW = 0.8;
-export const FATTORE_PESO_F_BW_ALTO = 0.7;
+export const FATTORE_PESO_F_BW_ALTO = 0.6;
 
 /**
  * Arrotonda al peso che esiste davvero: kettlebell a 4 kg (minimo 4), manubri e zavorra al kg (minimo 1), bilanciere e
@@ -105,17 +107,20 @@ export function arrotondaPeso(x: number, per?: PesoPer | null, minBilanciere = 2
 
 /**
  * Il peso per una ragazza, arrotondato a quello che esiste davvero (`arrotondaPeso`, bilanciere dalla barra da 15 kg).
- * `daPesoCorporeo` = il kg è già stato calcolato dal suo peso corporeo: fattore più leggero (0,8 / 0,7).
+ * `daPesoCorporeo` = il kg è già stato calcolato dal suo peso corporeo: fattore più leggero (0,8 / 0,6).
  */
 export function pesoPerRagazza(kg: number, per?: PesoPer | null, parteAlta = false, daPesoCorporeo = false): number {
   const f = daPesoCorporeo ? (parteAlta ? FATTORE_PESO_F_BW_ALTO : FATTORE_PESO_F_BW) : (parteAlta ? FATTORE_PESO_F_ALTO : FATTORE_PESO_F);
   return arrotondaPeso(kg * f, per, BILANCIERE_F_MIN);
 }
 
+/** Peso corporeo valido, 30-150 kg (16/11: obbligatorio nel setup del Corpo, i pesi di partenza si calcolano da lì). */
+export const pesoCorporeoValido = (p: number | null | undefined): p is number => typeof p === 'number' && Number.isFinite(p) && p >= 30 && p <= 150;
+
 /** Riga per i prompt del planner e della chat del preparatore. */
 export function sessoTesto(sesso?: Sesso | null): string | null {
   if (sesso !== 'F') return null;
-  return `È una RAGAZZA: le soglie dei test sono già quelle femminili (i livelli B/A/PRO che vedi tengono conto di questo) e il server abbassa i pesi di partenza e i kg senza massimale (tetto ${KG_SENZA_MASSIMALE_MAX_F} kg). Rivolgiti a lei al femminile.`;
+  return `È una RAGAZZA: le soglie dei test sono già quelle femminili (i livelli B/A/PRO che vedi tengono conto di questo) e il server abbassa i pesi di partenza e i kg senza massimale (bilanciere e macchine al massimo ${KG_SENZA_MASSIMALE_MAX_F} kg). Rivolgiti a lei al femminile.`;
 }
 
 /** Riga per il contesto del Coach. */

@@ -2,7 +2,9 @@ import { describe, expect, it } from 'vitest';
 import { expandBlocco, pesoDiPartenza, PESO_RIFERIMENTO_KG } from '@/lib/trainingBlocks';
 import { limaCarichi } from '@/lib/trainingCarico';
 import { costruisciKettlebell } from '@/lib/trainingKettlebell';
-import { KG_SENZA_MASSIMALE_MAX, type ContestoV2 } from '@/lib/trainingRulesV2';
+import { KG_SENZA_MASSIMALE_MAX, tettoKgSenzaMassimale, validateItemV2, type ContestoV2 } from '@/lib/trainingRulesV2';
+import { esercizioV2ById } from '@/lib/trainingCatalogV2';
+import { FATTORE_PESO_F_BW_ALTO } from '@/lib/sesso';
 import type { PlanItem } from '@/lib/trainingEngine';
 
 // 16/11, Ste: «chiediamo il peso nel setup obbligatorio. Ragioniamo per bw e alleggeriamo il fattore per i pesi»
@@ -22,9 +24,9 @@ describe('pesi di partenza dal peso corporeo', () => {
     expect(pesoDiPartenza('fpb-squat', 'F', 60)!.kg).toBe(15);          // barra femminile
   });
 
-  it('ragazze: dal peso corporeo il fattore più leggero (0,8 gambe, 0,7 parte alta)', () => {
+  it('ragazze: dal peso corporeo il fattore più leggero (0,8 gambe, 0,6 parte alta)', () => {
     expect(pesoDiPartenza('fpb-goblet-squat', 'F', 60)!.kg).toBe(12);   // 13,7 × 0,8 = 11 → 12
-    expect(pesoDiPartenza('fpa-gorilla-row', 'F', 60)!.kg).toBe(8);     // 10,3 × 0,7 = 7,2 → 8
+    expect(pesoDiPartenza('fpa-gorilla-row', 'F', 60)!.kg).toBe(8);     // 10,3 × 0,6 = 6,2 → 8 (kettlebell)
     expect(pesoDiPartenza('fpa-dumbbell-lateral-raise', 'F', 55)!.kg).toBe(2);
     // senza peso corporeo resta la regola di prima (0,65 / 0,55 sul peso del catalogo)
     expect(pesoDiPartenza('fpb-goblet-squat', 'F')!.kg).toBe(12);
@@ -63,5 +65,28 @@ describe('pesi di partenza dal peso corporeo', () => {
       expect(it.carico_kg).toBe(p.kg);
       expect(it.nota).toContain(p.nota);
     }
+  });
+});
+
+describe('kettlebell e manubri: fino al doppio del peso di partenza (16/11)', () => {
+  it('il tetto senza massimale è il doppio della partenza; bilanciere e macchine restano a 20 / 12', () => {
+    const goblet = esercizioV2ById('fpb-goblet-squat');
+    expect(tettoKgSenzaMassimale(goblet, {})).toBe(32);
+    expect(tettoKgSenzaMassimale(goblet, { pesoCorporeo: 55 })).toBe(24);
+    expect(tettoKgSenzaMassimale(goblet, { sesso: 'F', pesoCorporeo: 60 })).toBe(24);
+    expect(tettoKgSenzaMassimale(esercizioV2ById('fpb-squat'), {})).toBe(KG_SENZA_MASSIMALE_MAX);
+    expect(tettoKgSenzaMassimale(esercizioV2ById('fpb-squat'), { sesso: 'F' })).toBe(12);
+  });
+
+  it('il validatore lascia passare uno swing a 24 kg e ferma 36', () => {
+    const ctx: ContestoV2 = { livello: 'A', attrezzatura: ['kettlebell'], inCoppia: false, eta: 22, esperienzaPalestra: true, pesoCorporeo: 70 };
+    const it = (kg: number) => validateItemV2({ esercizio_id: 'fesp-kettlebell-swing', serie: 3, quantita: 10, recupero_sec: 60, carico_kg: kg }, ctx, null, { skipBounds: true, skipSoloLivello: true }).errors.filter((e) => e.includes('kg'));
+    expect(it(24)).toEqual([]);
+    expect(it(36).length).toBe(1);
+  });
+
+  it('ragazze: parte alta × 0,6 dal peso corporeo (gli studi: ~60 % per kg)', () => {
+    expect(FATTORE_PESO_F_BW_ALTO).toBe(0.6);
+    expect(pesoDiPartenza('fpa-incline-dumbbell-flyes', 'F', 70)!.kg).toBe(5); // 8 × 0,6 = 4,8 → 5
   });
 });
