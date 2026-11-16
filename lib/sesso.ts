@@ -33,10 +33,11 @@ const S = (intermedio: number, avanzato: number, pro: number): Soglie => ({ inte
  * Soglie per le ragazze, per id di test. [proposta 13/11, da confermare con Ste]
  * Uomo → donna accanto, per controllo.
  */
+/** Dal 16/11 dagli studi (docs/sesso-soglie-ricerca-2026-11.md, approvate da Ste): rapporto donne/uomini per qualità. */
 export const SOGLIE_F: Readonly<Record<string, Soglie>> = {
   // Forza parte alta a corpo libero (v1)
   'test-push': S(8, 18, 25),      // M 15 / 30 / 40
-  'test-pull': S(1, 3, 6),        // M 2 / 8 / 12
+  'test-pull': S(1, 4, 6),        // M 2 / 8 / 12
   // Resistenza (secondi, meno è meglio)
   't2-1km': S(280, 258, 235),     // M 250 / 230 / 210
   't2-3km': S(925, 840, 790),     // M 825 / 750 / 705
@@ -46,20 +47,20 @@ export const SOGLIE_F: Readonly<Record<string, Soglie>> = {
   't2-ankle-jump-dx': S(5, 7, 8), // M 6 / 8 / 9
   't2-ankle-jump-sx': S(5, 7, 8),
   // Velocità (secondi, meno è meglio)
-  't2-50m': S(9.8, 8.7, 7.6),     // M 9 / 8 / 7
-  't2-t-sprint': S(15.1, 13, 10.8), // M 14 / 12 / 10
+  't2-50m': S(10.1, 9.0, 7.8),    // M 9 / 8 / 7
+  't2-t-sprint': S(15.7, 13.4, 11.2), // M 14 / 12 / 10
   // Forza esplosiva (cm)
-  't2-broad-jump': S(140, 165, 205),    // M 170 / 200 / 250
-  't2-broad-jump-dx': S(125, 155, 195), // M 150 / 190 / 240
-  't2-broad-jump-sx': S(125, 155, 195),
+  't2-broad-jump': S(136, 160, 200),    // M 170 / 200 / 250
+  't2-broad-jump-dx': S(120, 150, 190), // M 150 / 190 / 240
+  't2-broad-jump-sx': S(120, 150, 190),
   // Palestra: massimale stimato / peso corporeo
-  't2-lift-squat': S(0.8, 1.05, 1.3),         // M 1.0 / 1.3 / 1.6
-  't2-lift-stacco-rumeno': S(0.75, 1.0, 1.25), // M 0.9 / 1.2 / 1.5
-  't2-lift-hip-thrust': S(0.9, 1.25, 1.6),    // M 1.0 / 1.4 / 1.8
+  't2-lift-squat': S(0.8, 1.0, 1.25),          // M 1.0 / 1.3 / 1.6
+  't2-lift-stacco-rumeno': S(0.7, 0.95, 1.2),  // M 0.9 / 1.2 / 1.5
+  't2-lift-hip-thrust': S(0.8, 1.1, 1.45),     // M 1.0 / 1.4 / 1.8
   't2-lift-squat-bulgaro': S(0.3, 0.45, 0.6), // M 0.4 / 0.6 / 0.8
-  't2-lift-panca': S(0.4, 0.55, 0.7),         // M 0.6 / 0.8 / 1.0
-  't2-lift-shoulder-press': S(0.3, 0.4, 0.5), // M 0.4 / 0.55 / 0.7
-  't2-lift-pull-up': S(1.0, 1.1, 1.25),       // M 1.1 / 1.3 / 1.5 (1.0 = una trazione a corpo libero)
+  't2-lift-panca': S(0.4, 0.5, 0.65),          // M 0.6 / 0.8 / 1.0
+  't2-lift-shoulder-press': S(0.25, 0.35, 0.45), // M 0.4 / 0.55 / 0.7
+  't2-lift-pull-up': S(1.0, 1.1, 1.2),        // M 1.1 / 1.3 / 1.5 (1.0 = una trazione a corpo libero)
 };
 
 /** Le soglie che valgono per questa persona: quelle per le ragazze se ci sono, altrimenti quelle del catalogo. */
@@ -69,8 +70,10 @@ export function soglieTest(testId: string, soglie: Soglie, sesso?: Sesso | null)
 
 // ─── Carichi ─────────────────────────────────────────────────────────────────
 
-/** Peso di partenza e kg dei blocchi senza massimale: × 0,65 per le ragazze. [proposta] */
+/** Peso di partenza e kg dei blocchi senza massimale: × 0,65 per le ragazze (gambe e resto; Miller 1993: 66 %). */
 export const FATTORE_PESO_F = 0.65;
+/** Parte alta (panca, spalle, trazioni, rematori): × 0,55 (16/11, Ste; Miller 1993: 52 %). */
+export const FATTORE_PESO_F_ALTO = 0.55;
 /** Tetto dei kg senza massimale per le ragazze (per i ragazzi 20, `KG_SENZA_MASSIMALE_MAX`). [proposta] */
 export const KG_SENZA_MASSIMALE_MAX_F = 12;
 /** Bilanciere femminile: la barra pesa 15 kg, sotto non si scende. */
@@ -82,8 +85,8 @@ type PesoPer = 'bilanciere' | 'manubrio' | 'kettlebell' | 'zavorra' | 'macchina'
  * Il peso per una ragazza, arrotondato a quello che esiste davvero: kettlebell a 4 kg (minimo 4), manubri e zavorra
  * al kg (minimo 1), bilanciere e macchina a 2,5 kg (il bilanciere mai sotto la barra da 15 kg).
  */
-export function pesoPerRagazza(kg: number, per?: PesoPer | null): number {
-  const x = kg * FATTORE_PESO_F;
+export function pesoPerRagazza(kg: number, per?: PesoPer | null, parteAlta = false): number {
+  const x = kg * (parteAlta ? FATTORE_PESO_F_ALTO : FATTORE_PESO_F);
   switch (per) {
     case 'kettlebell': return Math.max(4, Math.round(x / 4) * 4);
     case 'bilanciere': return Math.max(BILANCIERE_F_MIN, Math.round(x / 2.5) * 2.5);

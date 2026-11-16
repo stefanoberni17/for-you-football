@@ -25,12 +25,12 @@ const conNota = (nota: string | undefined, msg: string) => (nota ? `${msg} — $
 
 /**
  * Ragazze (13/11, lib/sesso.ts): senza un massimale suo, il peso di partenza del catalogo e i kg dei blocchi di Ste
- * (prescrizioni per clienti maschi) scendono a ~65 %, arrotondati al peso che esiste (kettlebell a 4 kg, bilanciere
+ * (prescrizioni per clienti maschi) scendono a ~65 % (parte alta ~55 %, dal 16/11), arrotondati al peso che esiste (kettlebell a 4 kg, bilanciere
  * dalla barra da 15). Il peso di partenza cambia anche la frase che lo spiega.
  */
 function pesoRagazza(it: PlanItem): PlanItem {
   const ex = esercizioV2ById(it.esercizio_id);
-  const kg = pesoPerRagazza(it.carico_kg!, ex?.pesoPer ?? null);
+  const kg = pesoPerRagazza(it.carico_kg!, ex?.pesoPer ?? null, ex?.qualita === 'forza-parte-alta');
   if (kg >= it.carico_kg!) return it;
   const p = pesoDiPartenza(it.esercizio_id);
   if (p && p.kg === it.carico_kg && it.nota?.includes(p.nota)) {
