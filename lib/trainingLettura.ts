@@ -12,6 +12,8 @@
  *   2. dolore e limitazioni (`riduciPerDolore`): la zona segnalata e quelle del setup; un item già alleggerito
  *      dal resoconto non perde altre serie (vale la riduzione più forte), solo i kg
  *   3. aumenti nella settimana (M5, `aumentiNellaSettimana`): mai sugli esercizi ridotti per dolore o limitazione
+ *      Dal 16/11 da 4/10 in su vale la fase del dolore (`applicaFaseDolore`, lib/doloreFasi): stop, zona ferma, ripresa
+ *      leggera o graduale; niente serie test sugli esercizi che coinvolgono la zona.
  *   4. ri-test in seduta (`inserisciSerieTest`), solo nelle settimane di ri-test: mai nei giorni alleggeriti dal
  *      resoconto, mai sul distretto della zona dolorante, mai un massimale con i kg sul distretto di una limitazione
  */
@@ -23,6 +25,7 @@ import { inserisciSerieTest, type SerieTest } from './trainingRitest';
 import { distrettiZona, doloreAttivo, riduciPerDolore, type Dolore, type Limitazioni } from './trainingDolore';
 import { distrettoEsercizio, type Distretto } from './trainingSquilibri';
 import type { SquadraSettimana } from './trainingSquadra';
+import { applicaFaseDolore, coinvolge, type StatoDolore } from './doloreFasi';
 
 export interface OpzioniLettura {
   weekStart: string;
@@ -34,6 +37,8 @@ export interface OpzioniLettura {
   logs: readonly SetLogRow[];
   votiSedute?: ReadonlyMap<number, number | null>;
   dolore?: Dolore | null;
+  /** Dolore a fasce (16/11, lib/doloreFasi): da 4/10 in su. Con uno stato la riduzione del lieve non vale per quella zona. */
+  statoDolore?: StatoDolore | null;
   limitazioni?: Limitazioni | null;
   /**
    * Il feedback rimodula il resto del piano (Fisico Pro, 3/11). Falso per Base e Medio: dei resoconti solo le regole di
@@ -66,9 +71,10 @@ export function pianoPerLettura(plan: WeekPlan, o: OpzioniLettura): EsitoLettura
   // 1. resoconti
   const feedback = o.feedback !== false;
   let p = applicaResoconti(plan, { weekStart: o.weekStart, oggi: o.oggi, resoconti: o.resoconti, squadra: o.squadra, fatteGiorni: o.fatteGiorni, soloSicurezza: !feedback }).plan;
-  // 2. dolore e limitazioni
-  const r = riduciPerDolore(p, { dolore: o.dolore, limitazioni: o.limitazioni, oggi: o.oggi, oggiDow: o.oggiDow, fatteGiorni: o.fatteGiorni });
+  // 2. dolore e limitazioni: da 4/10 la fase del dolore (stop, zona ferma, ripresa leggera o graduale), sotto la riduzione
+  const r = riduciPerDolore(p, { dolore: o.statoDolore ? null : o.dolore, limitazioni: o.limitazioni, oggi: o.oggi, oggiDow: o.oggiDow, fatteGiorni: o.fatteGiorni });
   if (r.ridotti) p = r.plan;
+  if (o.statoDolore) p = applicaFaseDolore(p, o.statoDolore, { oggiDow: o.oggiDow, fatteGiorni: o.fatteGiorni }).plan;
   // 3. aumenti nella settimana (salta da solo gli item 'dolore' e 'limitazione')
   if (feedback) p = aumentiNellaSettimana(p, { weekStart: o.weekStart, oggi: o.oggi, logs: o.logs, fatteGiorni: o.fatteGiorni, votiSedute: o.votiSedute }).plan;
   // 4. ri-test in seduta
@@ -78,6 +84,7 @@ export function pianoPerLettura(plan: WeekPlan, o: OpzioniLettura): EsitoLettura
     const filtra = (lista: SerieTest[]) => lista.filter((t) => {
       const d = distrettoEsercizio(t.esercizio_id);
       if (d && evita.dolore.has(d)) return false;
+      if (o.statoDolore && coinvolge(t.esercizio_id, o.statoDolore.zona)) return false;
       if (d && t.tipo === 'lift' && evita.limitazioni.has(d)) return false;
       return true;
     });

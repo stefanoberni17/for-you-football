@@ -5,6 +5,8 @@
  * Server-only (service role). Fail-soft: ogni lettura che manca lascia il pezzo vuoto, mai un errore.
  */
 import { calendarioDellaSettimana } from '@/lib/settimanaServer';
+import { loadStatoDolore } from './trainingDoloreServer';
+import { applicaFaseDolore, faseRiga } from './doloreFasi';
 import { accessoCampo } from './trainingAccess';
 import { createClient } from '@supabase/supabase-js';
 import { loadSquadraCompleta, mondayOfThisWeekRome, oggiDowRome, todayRome } from './trainingPlanner';
@@ -38,6 +40,8 @@ export interface CampoOggi {
   accesso: boolean;           // profiles.training_access
   consensiMancanti: boolean;  // "Prima di iniziare" (idoneità, dati salute) non ancora accettato: la seduta si apre solo dall'hub
   painHold: boolean;
+  /** Dolore a fasce (16/11): la riga di adesso, per la home (null senza). */
+  doloreRiga?: string | null;
   oggiDow: number;            // 1=Lun … 7=Dom
   lunedi: string;             // YYYY-MM-DD
   haPiano: boolean;           // piano della settimana corrente
@@ -71,12 +75,13 @@ export async function loadCampoOggi(userId: string): Promise<CampoOggi> {
   // Il Campo del pacchetto (Fisico o Completo) o acceso a mano; in pausa la home non propone sedute
   if (!accesso || accesso.inPausa) return VUOTO(oggiDow, lunedi);
 
-  const [{ data: lastPlan }, { data: calendar }, { squadra, partita }, resoconti, consensi] = await Promise.all([
+  const [{ data: lastPlan }, { data: calendar }, { squadra, partita }, resoconti, consensi, statoDolore] = await Promise.all([
     supabaseAdmin.from('training_plans').select('id, week_start, plan').eq('user_id', userId).order('created_at', { ascending: false }).limit(1).maybeSingle(),
     calendarioDellaSettimana(userId).then((c) => ({ data: c })),
     loadSquadraCompleta(userId),
     loadResoconti(userId), // finestra intera: i livelli 2-3 del resoconto guardano i giorni dopo e i giorni consecutivi
     getConsents(userId).catch(() => null),
+    loadStatoDolore(userId),
   ]);
 
   // Completamenti su TUTTI i piani della settimana (rigenera/modifica salvano una riga nuova)
@@ -93,7 +98,9 @@ export async function loadCampoOggi(userId: string): Promise<CampoOggi> {
   }
   // Il piano con i resoconti applicati (serie facoltative, giorni più leggeri): le `proposte` nascono qui, il piano salvato non le ha
   const oggi = todayRome();
-  const planAdattato = haPiano ? applicaResoconti(lastPlan!.plan as Parameters<typeof applicaResoconti>[0], { weekStart: String(lastPlan!.week_start), oggi, resoconti, squadra, fatteGiorni: fatti, soloSicurezza: !(accesso.manuale || accesso.regole.feedback) }).plan : null;
+  const conResoconti = haPiano ? applicaResoconti(lastPlan!.plan as Parameters<typeof applicaResoconti>[0], { weekStart: String(lastPlan!.week_start), oggi, resoconti, squadra, fatteGiorni: fatti, soloSicurezza: !(accesso.manuale || accesso.regole.feedback) }).plan : null;
+  // Dolore a fasce (16/11): nello stop niente sedute, con la zona ferma senza gli esercizi della zona (come nello state)
+  const planAdattato = conResoconti && statoDolore ? applicaFaseDolore(conResoconti, statoDolore, { oggiDow, fatteGiorni: fatti }).plan : conResoconti;
   const sedute: SedutaOggi[] = planAdattato
     ? ([...((planAdattato as { sedute?: PlanSession[] }).sedute || [])].sort((a, b) => a.giorno - b.giorno)).map((s) => ({
       giorno: s.giorno, titolo: s.titolo, tipo: s.tipo, durataMin: s.durata_min, aperturaMin: s.apertura_min ?? 0,
@@ -110,6 +117,7 @@ export async function loadCampoOggi(userId: string): Promise<CampoOggi> {
     accesso: true,
     consensiMancanti: !!consensi && !(consensi.has('training_idoneita') && consensi.has('health_data')),
     painHold: prof?.training_pain_hold === true,
+    doloreRiga: statoDolore ? faseRiga(statoDolore, oggi) : null,
     oggiDow, lunedi, haPiano, seduta, prossima, sedute,
     trainingDays, matchDays,
     settimanaConfermata: !!calendar?.confermata,

@@ -24,7 +24,8 @@ import { calcolaCarico, caricoSquadraStimato, caricoTesto, durataRealeMin, giorn
 import { squadraMisurata, type Resoconto, type SquadraMisurata } from './trainingResoconto';
 import { cicloDaiDati, condizioneAtleta, type CicloEsito } from './trainingCondizione';
 import type { Dolore, Limitazioni } from './trainingDolore';
-import { loadDolore, loadLimitazioni } from './trainingDoloreServer';
+import { loadDolore, loadLimitazioni, loadStatoDolore } from './trainingDoloreServer';
+import type { StatoDolore } from './doloreFasi';
 import { bloccoById } from './trainingBlocks';
 import { loadResoconti } from './trainingResocontoServer';
 import { giorniPartita, parsePartitaAbituale, parseSquadra, squadraTesto, type SquadraSettimana } from './trainingSquadra';
@@ -147,6 +148,7 @@ export interface PlannerContext {
   resoconti: Resoconto[];        // resoconti squadra/partita degli ultimi 28 giorni (19/10, lib/trainingResoconto)
   trainingDays: number[];
   painHold: boolean;
+  statoDolore?: StatoDolore | null; // dolore a fasce (16/11, lib/doloreFasi): con uno stato `dolore` è null e vale la fase
   dolore?: Dolore | null;       // M9 (26/10, lib/trainingDolore): zona segnalata e finestra della riduzione; i prompt la raccontano, lo state riduce il piano
   limitazioni?: Limitazioni | null; // punto 4 (26/10): infortuni e limitazioni dal setup (zone croniche + nota), nel prompt; lo state riduce il piano
   hasSbarra: boolean;
@@ -255,7 +257,7 @@ export async function loadPlannerContext(userId: string, opzioni: { feedback?: b
   // Fisico Base e Medio (3/11): il feedback non rimodula il piano: niente tetto personale né scarico dai dati (resta il
   // ciclo a calendario, la quarta settimana di scarico)
   const conFeedback = opzioni.feedback !== false;
-  const [{ data: profile }, resultsRes, { data: calendar }, completions, { data: pianoRow }, { data: primaTestSession }, { data: ultimaTestSession }, { squadra, partita: partitaAbituale }, focusSetup, preferenzeSetup, resoconti, dolore, limitazioni, sesso] = await Promise.all([
+  const [{ data: profile }, resultsRes, { data: calendar }, completions, { data: pianoRow }, { data: primaTestSession }, { data: ultimaTestSession }, { squadra, partita: partitaAbituale }, focusSetup, preferenzeSetup, resoconti, doloreZona, limitazioni, sesso, statoDolore] = await Promise.all([
     supabaseAdmin.from('profiles').select('training_pain_hold, current_week, training_goals, training_notes, training_fase, training_squadra_durata_min').eq('user_id', userId).maybeSingle(),
     supabaseAdmin.from('training_test_results').select('test_id, valore, livello_calcolato, punteggio_calcolato, created_at, dettaglio')
       .eq('user_id', userId).order('created_at', { ascending: false }).limit(60),
@@ -279,6 +281,7 @@ export async function loadPlannerContext(userId: string, opzioni: { feedback?: b
     loadDolore(userId),
     loadLimitazioni(userId),
     loadSesso(userId),
+    loadStatoDolore(userId),
   ]);
   // Migration 018 non ancora applicata → riquery senza `dettaglio` (serve al rombo per i massimali)
   let results = resultsRes.data as { test_id: string; valore: number; livello_calcolato: string; punteggio_calcolato: number; created_at?: string; dettaglio?: Record<string, unknown> | null }[] | null;
@@ -394,7 +397,8 @@ export async function loadPlannerContext(userId: string, opzioni: { feedback?: b
     resoconti,
     trainingDays,
     painHold: profile?.training_pain_hold === true,
-    dolore,
+    dolore: statoDolore ? null : doloreZona,
+    statoDolore: statoDolore ?? null,
     limitazioni,
     hasSbarra,
     results: rows,

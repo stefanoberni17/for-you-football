@@ -401,6 +401,7 @@ export interface WeekPlan {
   violazioni?: string[];     // piano di sicurezza: cosa il planner AI non è riuscito a rispettare (per capire e correggere)
   nota?: string;             // settimana già avviata: giornate ridotte ai giorni rimasti (mostrata nell'hub)
   aggiustamenti?: string[];  // cosa il server ha sistemato nel piano di Claude (lib/trainingRiparazione) o le giornate prese dal piano base
+  dopo_dolore?: string;      // dolore a fasce (16/11): piano rifatto dopo un ok (data ISO); non conta nel tetto delle rigenerazioni
   adattato_calendario?: string; // M8 (26/10): piano salvato dall'adattamento al calendario cambiato (data ISO); non conta nel tetto delle rigenerazioni
   blocco?: { inizio: string; settimana: number; di: number }; // Fisico Base (3/11, lib/trainingBlocco): settimana del blocco di 4
   scritto_il?: string;       // 10/11: il giorno in cui il preparatore ha scritto titoli, spiegazioni e messaggio (AAAA-MM-GG): l'hub lo data

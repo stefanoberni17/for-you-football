@@ -4,6 +4,7 @@
  * e `tests/trainingSimulazione.test.ts` (il piano base di ogni scenario deve passare dal validatore).
  * Niente di quello che c'è qui finisce nell'app: è una palestra per il planner.
  */
+import type { StatoDolore } from './doloreFasi';
 import type { LivelloFisico } from './listino';
 import { costruisciContextV2, type ContextV2 } from './trainingPlannerV2';
 import type { Resoconto } from './trainingResoconto';
@@ -53,6 +54,7 @@ export interface Atleta {
   checkinOggi?: CheckinSnapshot | null;
   pianoCorrente?: WeekPlan | null;
   daRecuperare?: ContextV2['daRecuperare'];
+  statoDolore?: StatoDolore | null; // dolore a fasce (16/11, lib/doloreFasi)
   dolore?: Dolore | null;        // M9: zona segnalata (lo state riduce il piano, il prompt lo racconta)
   limitazioni?: Limitazioni | null; // punto 4: zone del setup
   condizione?: CondizioneCarico; // tetto personale: stanco / fresco
@@ -220,7 +222,7 @@ export function baseFinta(a: Atleta): PlannerContext {
     checkinOggi: a.checkinOggi ?? { fisico: 7, sonno: 7.5, recupero: 7, mentale: 7 }, checkinMedia7: { fisico: 7, sonno: 7.3, recupero: 6.8, mentale: 7.2, giorni: 7 },
     ciclo, storicoSerie: riepilogoEsercizi(logs), logsSerie: logs,
     carico: calcolaCarico({ completions: storico.completions, setRpe: [], plans: storico.plans, oggi, lunedi, isDeload: ciclo.isDeload, squadraSettimanale, condizione: a.condizione }),
-    dolore: a.dolore ?? null, limitazioni: a.limitazioni ?? null,
+    dolore: a.dolore ?? null, statoDolore: a.statoDolore ?? null, limitazioni: a.limitazioni ?? null,
     squadra, fase: a.fase, focusSetup: a.focusSetup, preferenze: undefined, preferenzeSetup: a.preferenze ?? { giorni: [], sedute: null, durataMin: null },
     squilibri: calcolaSquilibri({ results: a.results, logs, sesso: a.sesso }),
   } as PlannerContext;

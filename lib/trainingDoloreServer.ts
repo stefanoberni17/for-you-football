@@ -5,6 +5,7 @@
  */
 import { createClient } from '@supabase/supabase-js';
 import { limitazioniVuote, parseLimitazioni, type Dolore, type Limitazioni } from './trainingDolore';
+import { parseStatoDolore, type StatoDolore } from './doloreFasi';
 
 const supabaseAdmin = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
@@ -36,4 +37,16 @@ export async function loadLimitazioni(userId: string): Promise<Limitazioni | nul
     const l = parseLimitazioni((data as { training_limitazioni?: unknown } | null)?.training_limitazioni);
     return limitazioniVuote(l) ? null : l;
   } catch { return null; }
+}
+
+/**
+ * Dolore a fasce (16/11, migration 043, lib/doloreFasi). `undefined` = colonna assente (vale il comportamento di prima),
+ * `null` = nessuno stato.
+ */
+export async function loadStatoDolore(userId: string): Promise<StatoDolore | null | undefined> {
+  try {
+    const { data, error } = await supabaseAdmin.from('profiles').select('training_pain_stato').eq('user_id', userId).maybeSingle();
+    if (error) return undefined; // migration 043 non applicata
+    return parseStatoDolore((data as { training_pain_stato?: unknown } | null)?.training_pain_stato);
+  } catch { return undefined; }
 }
