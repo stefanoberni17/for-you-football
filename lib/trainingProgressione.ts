@@ -7,7 +7,7 @@
  * 1. DOSE (SALI / SCENDI dai log per serie, lib/trainingAdapt): reps, secondi o kg
  *    dell'esercizio salgono o scendono di un passo rispetto all'ULTIMA volta
  *    (non rispetto al blocco: così la progressione si accumula di settimana in
- *    settimana). Tetto: +30 % sul programma di Ste (PROGRESSIONE_MAX_DRIFT).
+ *    settimana). Tetto: +30 % sul programma di Ste (PROGRESSIONE_MAX_DRIFT) per reps e secondi; sui kg nessun tetto (16/11).
  * 2. GRADINO SUCCESSIVO (solo catene v1: push, pull, core, laterale, lombari…):
  *    quando la dose è già al tetto e i log dicono ancora SALI, l'esercizio passa
  *    al gradino dopo della catena con una dose ridotta (×0.7). Per il catalogo v2
@@ -73,7 +73,7 @@ function adattaDose(it: PlanItem, r: RiepilogoEsercizio): PlanItem | null {
   const d = prossimaDose(it, r);
   if (!d.cambiata) return null;
   const out: PlanItem = { ...it };
-  if (d.caricoKg != null && d.caricoKg !== (it.carico_kg ?? null)) out.carico_kg = d.caricoKg;
+  if (d.caricoKg != null && d.caricoKg !== (it.carico_kg ?? null)) { out.carico_kg = d.caricoKg; out.kg_dai_log = true; }
   if (d.quantita !== it.quantita) out.quantita = d.quantita;
   // TIENI (27/10) può stare sotto il programma (si torna un passo alla volta) o sopra (il progresso resta): l'etichetta segue il numero
   const sotto = d.caricoKg != null && it.carico_kg ? d.caricoKg < it.carico_kg : d.quantita < it.quantita;
@@ -181,7 +181,7 @@ function perEsecuzione(it: PlanItem, r: RiepilogoEsercizio): PlanItem | null {
   const consiglio = facile ? ` Se serve, la versione più facile: ${facile}` : '';
   if (!d.cambiata) return facile ? { ...it, adattamento: 'esecuzione', nota: `${perche}: fallo pulito.${consiglio}${dedicata}` } : null;
   const out: PlanItem = { ...it, adattamento: 'esecuzione', nota: `↓ ${d.motivo}.${consiglio}${dedicata}` };
-  if (d.caricoKg != null && d.caricoKg !== (it.carico_kg ?? null)) out.carico_kg = d.caricoKg;
+  if (d.caricoKg != null && d.caricoKg !== (it.carico_kg ?? null)) { out.carico_kg = d.caricoKg; out.kg_dai_log = true; }
   if (d.quantita !== it.quantita) out.quantita = d.quantita;
   return out;
 }
@@ -283,5 +283,5 @@ export function adattaPiano(plan: WeekPlan, ctx: ContestoProgressione, valida: (
 
 /** Righe per il prompt: cosa il server applica da solo (così Claude non lo ripete a modo suo). */
 export function progressioniTesto(): string {
-  return `Le PROGRESSIONI sui singoli esercizi le applica il server dopo la tua scelta. Gli esercizi di catena a corpo libero (push, pull, core, lombari) dentro un blocco passano da soli al gradino dell'atleta letto dalla scala skill (es. Push-Up → Piegamenti arciere, Pull-Up → Archer pull-up), con la dose dal suo massimo misurato: un blocco B con Push-Up va bene anche a un atleta avanzato. Dai log dell'atleta (Ste, 18/10): le reps fatte oltre il previsto diventano subito la nuova base (CONFERMA); SALI = +1-2 reps, +5-10" o +2.5 % kg solo dopo 2 sedute facili di fila (fino a +${Math.round(PROGRESSIONE_MAX_DRIFT * 100)} % del programma; oltre, sulle catene a corpo libero passa al gradino successivo); la soglia del gradino raggiunta in seduta vale come il test: gradino successivo a dose ridotta; SCENDI = un passo indietro. Tu NON cambi le dosi: scegli i blocchi e il codice di progressione.`;
+  return `Le PROGRESSIONI sui singoli esercizi le applica il server dopo la tua scelta. Gli esercizi di catena a corpo libero (push, pull, core, lombari) dentro un blocco passano da soli al gradino dell'atleta letto dalla scala skill (es. Push-Up → Piegamenti arciere, Pull-Up → Archer pull-up), con la dose dal suo massimo misurato: un blocco B con Push-Up va bene anche a un atleta avanzato. Dai log dell'atleta (Ste, 18/10): le reps fatte oltre il previsto diventano subito la nuova base (CONFERMA); SALI = +1-2 reps, +5-10" o +2.5 % kg solo dopo 2 sedute facili di fila (reps e secondi fino a +${Math.round(PROGRESSIONE_MAX_DRIFT * 100)} % del programma, i kg senza tetto; oltre, sulle catene a corpo libero passa al gradino successivo); la soglia del gradino raggiunta in seduta vale come il test: gradino successivo a dose ridotta; SCENDI = un passo indietro. Tu NON cambi le dosi: scegli i blocchi e il codice di progressione.`;
 }

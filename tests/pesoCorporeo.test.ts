@@ -68,21 +68,30 @@ describe('pesi di partenza dal peso corporeo', () => {
   });
 });
 
-describe('kettlebell e manubri: fino al doppio del peso di partenza (16/11)', () => {
-  it('il tetto senza massimale è il doppio della partenza; bilanciere e macchine restano a 20 / 12', () => {
-    const goblet = esercizioV2ById('fpb-goblet-squat');
-    expect(tettoKgSenzaMassimale(goblet, {})).toBe(32);
-    expect(tettoKgSenzaMassimale(goblet, { pesoCorporeo: 55 })).toBe(24);
-    expect(tettoKgSenzaMassimale(goblet, { sesso: 'F', pesoCorporeo: 60 })).toBe(24);
-    expect(tettoKgSenzaMassimale(esercizioV2ById('fpb-squat'), {})).toBe(KG_SENZA_MASSIMALE_MAX);
-    expect(tettoKgSenzaMassimale(esercizioV2ById('fpb-squat'), { sesso: 'F' })).toBe(12);
+describe('il limite vale solo in partenza (16/11, Ste)', () => {
+  it('per partire: 20 kg (12 per le ragazze), o il peso di partenza dal peso corporeo se è più alto', () => {
+    expect(tettoKgSenzaMassimale(esercizioV2ById('fpb-goblet-squat'), {})).toBe(20);
+    expect(tettoKgSenzaMassimale(esercizioV2ById('fpb-squat'), { sesso: 'F' })).toBe(15);  // la barra femminile pesa 15
+    expect(tettoKgSenzaMassimale(esercizioV2ById('fpa-dumbbell-lateral-raise'), { sesso: 'F' })).toBe(12);
   });
 
-  it('il validatore lascia passare uno swing a 24 kg e ferma 36', () => {
-    const ctx: ContestoV2 = { livello: 'A', attrezzatura: ['kettlebell'], inCoppia: false, eta: 22, esperienzaPalestra: true, pesoCorporeo: 70 };
-    const it = (kg: number) => validateItemV2({ esercizio_id: 'fesp-kettlebell-swing', serie: 3, quantita: 10, recupero_sec: 60, carico_kg: kg }, ctx, null, { skipBounds: true, skipSoloLivello: true }).errors.filter((e) => e.includes('kg'));
-    expect(it(24)).toEqual([]);
-    expect(it(36).length).toBe(1);
+  it('il validatore ferma i kg di partenza oltre il limite, non quelli arrivati dai suoi log', () => {
+    const ctx: ContestoV2 = { livello: 'A', attrezzatura: ['kettlebell', 'palestra'], inCoppia: false, eta: 16, esperienzaPalestra: false, pesoCorporeo: 70 };
+    const errori = (it: Partial<PlanItem> & { esercizio_id: string; carico_kg: number }) =>
+      validateItemV2({ serie: 3, quantita: 10, recupero_sec: 60, ...it }, ctx, null, { skipBounds: true, skipSoloLivello: true }).errors.filter((e) => e.includes('kg'));
+    expect(errori({ esercizio_id: 'fesp-kettlebell-swing', carico_kg: 36 }).length).toBe(1);
+    expect(errori({ esercizio_id: 'fesp-kettlebell-swing', carico_kg: 36, kg_dai_log: true })).toEqual([]);
+    // anche con il massimale: la % dell'età vale per partire, non per quello che chiude davvero
+    const conMax = { ...ctx, massimali: { 'fpb-squat': 80 } };
+    const it = { esercizio_id: 'fpb-squat', serie: 3, quantita: 8, recupero_sec: 90, carico_kg: 70 };
+    expect(validateItemV2(it, conMax, null, { skipBounds: true, skipSoloLivello: true }).errors.some((e) => e.includes('kg'))).toBe(true);
+    expect(validateItemV2({ ...it, kg_dai_log: true }, conMax, null, { skipBounds: true, skipSoloLivello: true }).errors.some((e) => e.includes('kg'))).toBe(false);
+  });
+
+  it('limaCarichi non tocca i kg arrivati dai log', () => {
+    const ctx: ContestoV2 = { livello: 'B', attrezzatura: ['kettlebell'], inCoppia: false, eta: 22, esperienzaPalestra: true, sesso: 'F' };
+    const it: PlanItem = { esercizio_id: 'fesp-kettlebell-swing', serie: 3, quantita: 10, recupero_sec: 60, carico_kg: 28, kg_dai_log: true };
+    expect(limaCarichi([it], ctx).items[0].carico_kg).toBe(28);
   });
 
   it('ragazze: parte alta × 0,6 dal peso corporeo (gli studi: ~60 % per kg)', () => {

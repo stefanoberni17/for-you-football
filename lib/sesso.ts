@@ -120,7 +120,7 @@ export const pesoCorporeoValido = (p: number | null | undefined): p is number =>
 /** Riga per i prompt del planner e della chat del preparatore. */
 export function sessoTesto(sesso?: Sesso | null): string | null {
   if (sesso !== 'F') return null;
-  return `È una RAGAZZA: le soglie dei test sono già quelle femminili (i livelli B/A/PRO che vedi tengono conto di questo) e il server abbassa i pesi di partenza e i kg senza massimale (bilanciere e macchine al massimo ${KG_SENZA_MASSIMALE_MAX_F} kg). Rivolgiti a lei al femminile.`;
+  return `È una RAGAZZA: le soglie dei test sono già quelle femminili (i livelli B/A/PRO che vedi tengono conto di questo) e il server abbassa i pesi di partenza (senza massimale si parte al massimo da ${KG_SENZA_MASSIMALE_MAX_F} kg, o dalla barra da 15); poi il peso sale dai suoi kg. Rivolgiti a lei al femminile.`;
 }
 
 /** Riga per il contesto del Coach. */

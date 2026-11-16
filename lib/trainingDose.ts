@@ -7,12 +7,12 @@
  *
  * Regole (tutte decise prima, qui solo raccolte): CONFERMA = riparte da quanto fatto senza passo; SALI = un passo in più
  * (+1 rep fino a 10, +2 oltre; +5" fino a 30", +10" oltre; +2.5 % kg, minimo 1 kg; kettlebell +4 kg); SCENDI = un passo
- * indietro (kg −5 %, kettlebell −4 kg); tetto +30 % sul programma di Ste (mai sotto una dose già dimostrata), reps al
+ * indietro (kg −5 %, kettlebell −4 kg); tetto +30 % sul programma di Ste per reps e secondi (sui kg nessun tetto dal 16/11), reps al
  * massimo 30 e tenute al massimo 120"; pavimento 70 % del programma. Solo schema fisso e stessa unità del log.
  */
 import { esercizioById } from './trainingCatalog';
 import { esercizioV2ById } from './trainingCatalogV2';
-import { ACCESSORI_CORPO_LIBERO_REPS_MAX, isPesoLibero, PESO_LIBERO_TETTO } from './trainingRulesV2';
+import { ACCESSORI_CORPO_LIBERO_REPS_MAX } from './trainingRulesV2';
 import type { RiepilogoEsercizio, Suggerimento } from './trainingAdapt';
 import { dosePerEsecuzione, ESECUZIONE_LABEL, OK_PER_SBLOCCARE_SALI } from './trainingEsecuzione';
 
@@ -25,8 +25,6 @@ export const PAVIMENTO_PCT = 0.7;            // mai sotto il 70 % del programma
 
 export const isEsercizioKettlebell = (id: string) => esercizioV2ById(id)?.attrezzatura === 'kettlebell';
 const round05 = (x: number) => Math.round(x * 2) / 2;
-/** Quanto può salire il carico oltre il programma: +30 %, kettlebell e manubri fino al doppio (16/11, non hanno un massimale). */
-export const driftKg = (id: string) => (isPesoLibero(esercizioV2ById(id)) ? PESO_LIBERO_TETTO - 1 : PROGRESSIONE_MAX_DRIFT);
 export const fmtDose = (q: number, unita: string) => `${q}${unita === 'secondi' ? '"' : unita === 'minuti' ? "'" : ''}`;
 
 /** Il programma su cui si calcola: l'item del piano (programma di Ste) o, per hint e prompt, l'ultima prescrizione dai log. */
@@ -114,21 +112,21 @@ export function prossimaDose(programma: ProgrammaDose, r: RiepilogoEsercizio | n
   const out: ProssimaDose = { ...base, condizioni };
 
   if (programma.carico_kg && programma.carico_kg > 0) {
-    // Carico: kg dall'ultima volta ±%, tetto +30 % sul programma, mai sotto il 70 %
+    // Carico: kg dall'ultima volta ± un passo, mai sotto il 70 % del programma. NESSUN tetto in alto (16/11, Ste: «il limite
+    // è quanto peso il ragazzo riesce a fare per le reps e l'esercizio necessario»): il limite vale solo per il peso di partenza
     const prog = programma.carico_kg;
     const da = ultima.caricoKg && ultima.caricoKg > 0 ? ultima.caricoKg : prog;
     const kb = isEsercizioKettlebell(programma.esercizio_id);
     const delta = conferma ? 0 : kb ? verso * KB_PASSO_KG : verso === 1 ? Math.max(PASSO_KG_MIN, da * PASSO_KG_PCT) : -Math.max(PASSO_KG_MIN, da * PASSO_KG_PCT * 2);
-    const drift = driftKg(programma.esercizio_id);
-    const grezzo = Math.min(prog * (1 + drift) + (kb && drift === PROGRESSIONE_MAX_DRIFT ? KB_PASSO_KG / 2 : 0), Math.max(prog * PAVIMENTO_PCT, da + delta));
+    const grezzo = Math.max(prog * PAVIMENTO_PCT, da + delta);
     const nuovo = kb ? Math.max(KB_PASSO_KG, Math.round(grezzo / KB_PASSO_KG) * KB_PASSO_KG) : round05(grezzo);
     condizioni.push(kb ? `kettlebell: il passo è di ${KB_PASSO_KG} kg` : `passo ${verso === 1 ? `+${PASSO_KG_PCT * 100} %` : `−${PASSO_KG_PCT * 200} %`}, almeno ${PASSO_KG_MIN} kg`);
-    condizioni.push(drift === PROGRESSIONE_MAX_DRIFT ? `mai oltre +${PROGRESSIONE_MAX_DRIFT * 100} % né sotto il ${PAVIMENTO_PCT * 100} % del programma (${prog} kg)` : `mai oltre il doppio né sotto il ${PAVIMENTO_PCT * 100} % del peso di partenza (${prog} kg)`);
+    condizioni.push(`nessun tetto in alto: sale finché chiude le ripetizioni previste; mai sotto il ${PAVIMENTO_PCT * 100} % del programma (${prog} kg)`);
     if (verso === 1 && !conferma) condizioni.push('vale se tieni le serie previste con il voto entro 6');
     if (nuovo !== prog) { out.caricoKg = nuovo; out.cambiata = true; }
     out.motivo = out.cambiata
       ? (verso === 1 ? `${nuovo} kg: le ultime due volte a ${da} kg ti era facile` : `${nuovo} kg: l'ultima volta a ${da} kg era al limite`)
-      : (verso === 1 ? `resti a ${prog} kg: sei già al tetto del programma` : `resti a ${prog} kg: sei già al minimo del programma`);
+      : (verso === 1 ? `resti a ${prog} kg` : `resti a ${prog} kg: sei già al minimo del programma`);
   } else if (unita === 'reps' || unita === 'secondi') {
     // Corpo libero / tenute: dalla dose dell'ultima volta (stessa unità) ± un passo.
     // Se ha FATTO più del previsto (Ste, 22/9: "8 previste, 10 facili"), si riparte da quanto ha fatto davvero:
@@ -171,12 +169,14 @@ function tieniDallUltima(programma: ProgrammaDose, r: RiepilogoEsercizio, base: 
   const u = r.ultimaSeduta;
   if (programma.schema && programma.schema !== 'fisso') return base;
   if (u.unita && u.unita !== unita) return base;
-  const vicina = (da: number, prog: number, drift = PROGRESSIONE_MAX_DRIFT) => Math.abs(da - prog) <= Math.max(2, prog * (drift + 0.05));
+  const vicina = (da: number, prog: number) => Math.abs(da - prog) <= Math.max(2, prog * (PROGRESSIONE_MAX_DRIFT + 0.05));
   if (programma.carico_kg && programma.carico_kg > 0) {
     const prog = programma.carico_kg;
     const da = u.caricoPrevistoKg ?? u.caricoKg;
-    if (!da || da <= 0 || da === prog || !vicina(da, prog, driftKg(programma.esercizio_id))) return base;
+    if (!da || da <= 0 || da === prog) return base;
+    // sopra il programma il peso guadagnato resta, per quanto sia lontano (16/11: niente tetto in alto)
     if (da > prog) return { ...base, caricoKg: da, cambiata: true, motivo: `tieni ${da} kg: l'ultima volta era giusta` };
+    if (!vicina(da, prog)) return base;
     const kb = isEsercizioKettlebell(programma.esercizio_id);
     const su = Math.min(prog, kb ? da + KB_PASSO_KG : round05(da + Math.max(PASSO_KG_MIN, da * PASSO_KG_PCT)));
     if (su >= prog) return { ...base, motivo: `torni a ${prog} kg: l'ultima volta a ${da} kg era giusta` };
@@ -203,5 +203,5 @@ export function doseTesto(d: ProssimaDose): string {
 
 /** Le regole della dose per il prompt del planner e della chat (così il preparatore non inventa un +2.5 % sui kettlebell). */
 export function doseRegoleTesto(): string {
-  return `Dose per esercizio (la calcola il server dai log, tu la racconti con le stesse parole): CONFERMA = riparte da quanto ha fatto, senza passo; SALI solo dopo ${2} sedute facili di fila = +1 rep (fino a 10) o +2, +5" (fino a 30") o +10", +${PASSO_KG_PCT * 100} % kg (almeno ${PASSO_KG_MIN} kg), kettlebell +${KB_PASSO_KG} kg; SCENDI = un passo indietro (kg −${PASSO_KG_PCT * 200} %, kettlebell −${KB_PASSO_KG} kg); tetto +${PROGRESSIONE_MAX_DRIFT * 100} % sul programma (kettlebell e manubri fino al doppio del peso di partenza), reps al massimo ${ACCESSORI_CORPO_LIBERO_REPS_MAX}, tenute al massimo ${SECONDI_MAX}", mai sotto il ${PAVIMENTO_PCT * 100} %.`;
+  return `Dose per esercizio (la calcola il server dai log, tu la racconti con le stesse parole): CONFERMA = riparte da quanto ha fatto, senza passo; SALI solo dopo ${2} sedute facili di fila = +1 rep (fino a 10) o +2, +5" (fino a 30") o +10", +${PASSO_KG_PCT * 100} % kg (almeno ${PASSO_KG_MIN} kg), kettlebell +${KB_PASSO_KG} kg; SCENDI = un passo indietro (kg −${PASSO_KG_PCT * 200} %, kettlebell −${KB_PASSO_KG} kg); sulle ripetizioni e sui secondi tetto +${PROGRESSIONE_MAX_DRIFT * 100} % sul programma, sui kg NESSUN tetto (il limite è quello che chiude per le ripetizioni previste), reps al massimo ${ACCESSORI_CORPO_LIBERO_REPS_MAX}, tenute al massimo ${SECONDI_MAX}", mai sotto il ${PAVIMENTO_PCT * 100} %.`;
 }

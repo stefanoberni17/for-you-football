@@ -362,6 +362,7 @@ export interface PlanItem {
   // Resoconto dopo squadra/partita (19/10, lib/trainingResoconto): 'togli' = l'esercizio si può saltare; 'aggiungi' = una serie in più se se la sente
   facoltativo?: 'togli' | 'aggiungi';
   facoltativo_motivo?: string;
+  kg_dai_log?: boolean; // 16/11 (Ste): kg arrivati dai suoi log dalla dose (sale finché chiude le ripetizioni): il validatore non li tetta
   resoconto?: 'leggero' | 'ridotto'; // cosa ha fatto il resoconto su questo item (serie ×0.7 / reps ×0.8), separato da `adattamento` che resta della progressione
   dopo_partita?: { scala: number; serie_piene: number }; // gambe il giorno dopo la partita (26/10): serie × scala (0.4-0.75) dalla dose piena; applicaResoconti le ricalcola se il resoconto arriva dopo il piano
   aumento_settimana?: { daGiorno: number; da: string }; // M5 (26/10, lib/trainingAumenti): un passo in più già in settimana perché il giorno `daGiorno` era molto leggero; `da` = la dose del piano

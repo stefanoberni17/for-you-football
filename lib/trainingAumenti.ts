@@ -90,7 +90,7 @@ export function aumentiNellaSettimana(plan: WeekPlan, opt: {
       const a = kg ? `${d.caricoKg} kg` : fmtDose(d.quantita, d.unita);
       const perche = `${DAY_NAMES[l.giorno]} era molto leggero (tutte le serie con voto fino a ${AUMENTO_SETTIMANA_RPE_MAX})`;
       const out: PlanItem = { ...it, aumento_settimana: { daGiorno: l.giorno, da }, nota: [it.nota, `↑ ${a}: ${perche}, programma ${da}.`].filter(Boolean).join(' ') };
-      if (kg) out.carico_kg = d.caricoKg!; else out.quantita = d.quantita;
+      if (kg) { out.carico_kg = d.caricoKg!; out.kg_dai_log = true; } else out.quantita = d.quantita;
       if (!out.adattamento || out.adattamento === 'sali') out.adattamento = 'sali';
       toccata = true;
       aumenti.push({ giorno: s.giorno, daGiorno: l.giorno, esercizio_id: it.esercizio_id, da, a });

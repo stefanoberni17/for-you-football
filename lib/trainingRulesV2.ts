@@ -224,14 +224,6 @@ export const PESO_RIFERIMENTO_KG = 70;
 /** Il peso dal peso corporeo non supera quello del catalogo di più del 25 % (il primo giorno, poi decide la dose). [proposta] */
 export const PESO_BW_TETTO = 1.25;
 /**
- * Kettlebell e manubri (16/11, Ste: «ok vai»): non hanno un test del massimale, quindi il tetto fisso di 20 kg (12 per le
- * ragazze) li fermava per sempre. Ora salgono con la dose (kettlebell +4 kg dopo due sedute facili di fila) fino al
- * DOPPIO del peso di partenza; il tetto fisso resta su bilanciere, macchine e zavorra, che il test ce l'hanno.
- */
-export const PESO_LIBERO_TETTO = 2;
-export const isPesoLibero = (ex?: Pick<ExerciseV2, 'pesoPer'> | null) => ex?.pesoPer === 'kettlebell' || ex?.pesoPer === 'manubrio';
-
-/**
  * Il peso di partenza di un esercizio per questa persona: il catalogo (per chi pesa 70 kg) in proporzione al peso
  * corporeo, mai oltre +25 %, arrotondato al peso che esiste; il bilanciere da 20 kg è la barra e resta fisso.
  * Ragazze: × 0,8 / 0,6 se il peso viene dal peso corporeo, × 0,65 / 0,55 altrimenti (lib/sesso.ts). null = senza pesi.
@@ -247,13 +239,14 @@ export function pesoPartenzaKg(e: Pick<ExerciseV2, 'pesoKg' | 'pesoPer' | 'quali
   return { kg: sesso === 'F' ? Math.min(e.pesoKg, pesoPerRagazza(e.pesoKg, e.pesoPer ?? null, parteAlta)) : e.pesoKg, conBw };
 }
 
-/** Il tetto in kg senza massimale per questo esercizio: kettlebell e manubri il doppio del peso di partenza, il resto 20 kg (12 per le ragazze). */
+/**
+ * Il limite in kg senza massimale vale solo per il PESO DI PARTENZA (16/11, Ste: «ci sta il limite in partenza ma poi non deve
+ * esserci un limite massimo: il limite è quanto peso il ragazzo riesce a fare per le reps»): 20 kg (12 per le ragazze), o il
+ * suo peso di partenza dal peso corporeo se è più alto. I kg che vengono dai suoi log (`kg_dai_log`) non hanno tetto.
+ */
 export function tettoKgSenzaMassimale(ex: ExerciseV2 | undefined, ctx: { sesso?: Sesso | null; pesoCorporeo?: number | null }): number {
-  if (isPesoLibero(ex)) {
-    const p = pesoPartenzaKg(ex, ctx.sesso, ctx.pesoCorporeo);
-    if (p) return p.kg * PESO_LIBERO_TETTO;
-  }
-  return kgSenzaMassimaleMax(ctx.sesso);
+  const p = pesoPartenzaKg(ex, ctx.sesso, ctx.pesoCorporeo);
+  return Math.max(kgSenzaMassimaleMax(ctx.sesso), p?.kg ?? 0);
 }
 
 /** Brzycki (foglio CALCOLO MASSIMALI del File_DB): 1RM = peso / (1.0278 − 0.0278 × reps) */
@@ -325,6 +318,7 @@ export interface ItemV2 {
   regime?: RegimeForza;   // forza con carico: 'max' | 'esplosiva' | 'base'
   carico_pct?: number;    // % del massimale stimato
   carico_kg?: number;     // carico assoluto (blocchi / log per serie): se c'è il massimale diventa una % e passa gli stessi controlli
+  kg_dai_log?: boolean;   // 16/11: kg arrivati dai suoi log (la dose sale da quello che ha chiuso): niente tetto
   blocco_id?: string;
 }
 
@@ -415,7 +409,7 @@ export function validateItemV2(
     if (regime === 'max' && maxPct < 80) errors.push(`${n}: forza massima non ammessa per questo profilo (carico max ${maxPct}%)`);
     // carico assoluto con massimale noto → stessa verifica in % (gating + regime)
     const oneRm = ctx.massimali?.[ex.id];
-    if (it.carico_pct === undefined && it.carico_kg !== undefined && oneRm && oneRm > 0) {
+    if (it.carico_pct === undefined && it.carico_kg !== undefined && oneRm && oneRm > 0 && !it.kg_dai_log) {
       const pct = Math.round((it.carico_kg / oneRm) * 100);
       if (pct > maxPct) errors.push(`${n}: ${it.carico_kg} kg = ${pct}% del massimale stimato (${oneRm} kg), oltre il massimo ammesso ${maxPct}%`);
     }
@@ -428,15 +422,14 @@ export function validateItemV2(
     if ((regime === 'max' || regime === 'esplosiva') && !(ctx.massimali && ctx.massimali[ex.id]))
       errors.push(`${n}: regime ${regime} richiede il massimale stimato (batteria palestra non fatta)`);
   }
-  // Rete di sicurezza sui kg (vale ANCHE per gli item fidati dei blocchi): senza massimale non si
-  // supera KG_SENZA_MASSIMALE_MAX (kettlebell e manubri: il doppio del peso di partenza, 16/11); con massimale il tetto è caricoMaxPct (età, esperienza, livello)
-  if (it.carico_kg !== undefined && it.carico_kg > 0) {
+  // Rete di sicurezza sui kg di PARTENZA (vale ANCHE per gli item fidati dei blocchi): senza massimale non si supera
+  // `tettoKgSenzaMassimale`; con massimale il tetto è caricoMaxPct (età, esperienza, livello). I kg arrivati dai suoi log
+  // (`kg_dai_log`, 16/11) non hanno tetto: il limite è quello che chiude per le ripetizioni previste.
+  if (it.carico_kg !== undefined && it.carico_kg > 0 && !it.kg_dai_log) {
     const oneRm = ctx.massimali?.[ex.id];
     const tetto = tettoKgSenzaMassimale(ex, ctx);
     if (!(oneRm && oneRm > 0) && it.carico_kg > tetto)
-      errors.push(isPesoLibero(ex)
-        ? `${n}: ${it.carico_kg} kg, oltre il doppio del peso di partenza (massimo ${tetto} kg)`
-        : `${n}: ${it.carico_kg} kg senza massimale stimato (massimo ${tetto} kg finché non fa i test in palestra)`);
+      errors.push(`${n}: ${it.carico_kg} kg senza massimale stimato (per partire al massimo ${tetto} kg, poi si sale dai suoi kg)`);
   }
 
   // Finestra partita per qualità (un test usato come esercizio in un blocco di Ste segue il blocco, non la finestra "test")
