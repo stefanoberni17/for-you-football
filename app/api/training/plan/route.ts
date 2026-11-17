@@ -9,9 +9,10 @@ import { getAuthUser } from '@/lib/auth';
 import { puoScrivereCampo, riprogrammazioni } from '@/lib/trainingAccess';
 import { pianoSettimanaBlocco, settimanaDelBlocco } from '@/lib/trainingBlocco';
 import { logEvent } from '@/lib/events';
+import { notificaSte } from '@/lib/notifyOwner';
 import { generateWeekPlan, PLANNER_MODEL, PLANNER_PROMPT_VERSION, detectPain, mondayOfThisWeekRome, updateTrainingMemory } from '@/lib/trainingPlanner';
 import { generateWeekPlanV2, PLANNER_V2_MODEL, PLANNER_V2_PROMPT_VERSION, loadContextV2, validateCtxFor } from '@/lib/trainingPlannerV2';
-import { componiRichiesta, parseRichiesta, PIANI_LIMITE_ATTIVO, PIANI_MAX_SETTIMANA, puoPosticipare, type Vincoli } from '@/lib/trainingRequest';
+import { componiRichiesta, contaNelTetto, parseRichiesta, PIANI_LIMITE_ATTIVO, PIANI_MAX_SETTIMANA, PIANI_MAX_TOTALI_SETTIMANA, puoPosticipare, type Vincoli } from '@/lib/trainingRequest';
 import { validatePlan, type WeekPlan } from '@/lib/trainingEngine';
 import { oggiDowRome, todayRome } from '@/lib/trainingPlanner';
 
@@ -48,9 +49,10 @@ export async function POST(request: NextRequest) {
     // I piani di questa settimana: il primo senza richiesta è il piano AUTOMATICO (gratis); ogni altro è una
     // riprogrammazione chiesta dall'atleta, contata per livello (Ste, 3/11: Base 1 al mese, Medio 2 al mese, Pro 2 a
     // settimana, 1 in prova). M8: i piani salvati dall'adattamento al calendario (zero Claude) non contano.
-    const { data: pianiRows } = await supabaseAdmin.from('training_plans').select('id, plan, created_at')
+    const { data: pianiRows } = await supabaseAdmin.from('training_plans').select('id, plan, generato_da, created_at')
       .eq('user_id', userId).eq('week_start', lunedi).order('created_at', { ascending: false });
-    const pianiSettimana = (pianiRows || []).filter((p: { plan?: { adattato_calendario?: string; dopo_dolore?: string } }) => !p.plan?.adattato_calendario && !p.plan?.dopo_dolore).length;
+    // 17/11: le settimane non riuscite (fallback) non contano: non è il ragazzo che ha cambiato idea
+    const pianiSettimana = (pianiRows || []).filter(contaNelTetto).length;
     const corpoVuoto = !body || (typeof body === 'object' && Object.keys(body).length === 0);
     // Dolore a fasce (16/11): dopo un ok la settimana si rifà sulla fase nuova (solo le altre parti, la ripresa…).
     // Una al giorno, fuori dal tetto e dalle riprogrammazioni: non l'ha chiesta il ragazzo per cambiare programma
@@ -66,7 +68,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Tetto tecnico alle rigenerazioni: ogni piano è una chiamata al modello (fino a 3 tentativi)
-    if (PIANI_LIMITE_ATTIVO && pianiSettimana >= PIANI_MAX_SETTIMANA) {
+    if (PIANI_LIMITE_ATTIVO && (pianiSettimana >= PIANI_MAX_SETTIMANA || (pianiRows || []).length >= PIANI_MAX_TOTALI_SETTIMANA)) {
       return NextResponse.json({
         error: `Hai già rifatto il piano ${PIANI_MAX_SETTIMANA} volte questa settimana. Il conto riparte lunedì: intanto segui la settimana che hai, o parlane col preparatore in chat.`,
         reason: 'limite_settimanale', limite: PIANI_MAX_SETTIMANA,
@@ -187,6 +189,17 @@ export async function POST(request: NextRequest) {
       plan,
     }).select('id, week_start, plan, generato_da, created_at').single();
     if (error || !saved) return NextResponse.json({ error: error?.message || 'save' }, { status: 500 });
+
+    // 17/11 (Ste: «mai la settimana base»): se la settimana è uscita con correzioni o non si è potuta costruire, Ste lo sa
+    const savedPlan = saved.plan as WeekPlan;
+    if (generatoDa === 'fallback' || savedPlan.non_generabile?.length) {
+      const { data: chi } = await supabaseAdmin.from('profiles').select('name').eq('user_id', userId).maybeSingle();
+      const nome = (chi?.name as string | null) || userId;
+      const righe = savedPlan.non_generabile?.length
+        ? [`⚠️ Campo: NESSUNA settimana possibile per ${nome}. Serve il tuo intervento.`, ...savedPlan.non_generabile.map((v) => `• ${v.slice(0, 200)}`)]
+        : [`Campo: settimana di ${nome} costruita dalle regole (il planner AI non è riuscito).`, ...(savedPlan.rinunce ?? []).map((v) => `• ${v}`), ...(violazioni ?? []).slice(0, 3).map((v) => `– ${v.slice(0, 160)}`)];
+      notificaSte(righe.join('\n')).catch(() => {});
+    }
 
     // La richiesta alimenta la memoria del preparatore (obiettivi + note)
     // La memoria del preparatore si nutre solo di ciò che scrive l'atleta (nota della maschera o testo libero legacy)

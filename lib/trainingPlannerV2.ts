@@ -28,6 +28,7 @@ import { adattaPiano, LEGGERO_SCALA, progressioniTesto } from './trainingProgres
 import { MAX_DURATA_PER_FASE, SETUP_SELECT, mapSetup, maxSeduteFisiche, maxSeduteTotali, type PreferenzeSetup, type TrainingSetup } from './trainingSetup';
 import { limaCarichi } from './trainingCarico';
 import { riparaPiano } from './trainingRiparazione';
+import { giornataTolta, rinunceDa, violazioneMorbida } from './trainingRinunce';
 import { calcolaMese, MESE_SETTIMANE, meseRigheAtleta, meseTesto, type Mese, type RispostaMese, type SettimanaMese } from './trainingMese';
 import { addDays } from './carta';
 import { caricoMaxPct, contaSprintPesanti, SPRINT_MASSIMALI_IDS, CONVIVENZE_BLOCCHI_VIETATE, CONVIVENZE_SCONSIGLIATE, FINESTRA_PARTITA, giorniAllaPartita, giorniDallaPartita, QUALITA_FISICHE, SPRINT_MAX_VICINO_PARTITA, type ContestoV2 } from './trainingRulesV2';
@@ -1284,7 +1285,8 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
   const copre = (b: { id: string; qualita: string }, qs: readonly string[]) => { if (isKettlebell(b.id)) return false; const bl = bloccoDi(ctx, b.id); return bl ? bloccoCopre(bl, qs) : qs.includes(b.qualita); };
   // Non per il kettlebell (un kb a settimana) né per la velocità (UNA giornata a settimana, regola 24: 15/10, la simulazione
   // chiedeva insieme "velocità in almeno 2 giornate" e "al massimo una giornata di velocità")
-  if (primo && primo !== 'kettlebell' && primo !== 'velocita' && posti >= 3) {
+  // Con la zona ferma le giornate sono un massimo (17/11): niente obbligo di due giornate sul primo obiettivo
+  if (primo && primo !== 'kettlebell' && primo !== 'velocita' && posti >= 3 && !doloreFermo) {
     const qsPrimo = FOCUS_QUALITA[primo];
     const candPrimo = ctx.blocchi.filter((b) => qsPrimo.includes(b.qualita) && !isKettlebell(b.id)).sort((a, b) => (isTecnicaComposta(b.id) ? 1 : 0) - (isTecnicaComposta(a.id) ? 1 : 0));
     const giornatePrimo = settimana.filter((s) => (s.blocchi || []).some((b) => copre(b, qsPrimo))).length;
@@ -1661,7 +1663,7 @@ function primo(ctx: ContextV2, q: QualitaV2, pref?: RegExp): Blocco | undefined 
  * di Claude che non hanno errori propri restano, il piano base riempie solo i giorni che mancano (Ste, 7/10:
  * tre giornate buone su quattro non si buttano). Se neanche quello passa, il base da solo; poi solo giornate leggere.
  */
-export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; violazioni: string[] }): { plan: WeekPlan; violazioni: string[]; tenute: number[] } {
+export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; violazioni: string[] }): { plan: WeekPlan; violazioni: string[]; tenute: number[]; rinunce: string[] } {
   const b = ctx.base;
   const vietati = new Set<number>();
   for (const md of b.matchDays) { vietati.add(md); vietati.add(md === 1 ? 7 : md - 1); }
@@ -1690,7 +1692,7 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
   const registra = (ids: string[]) => { for (const id of ids) { usatiBlocchi.add(id); const g = gruppoDi(id); if (g) usatiFormati.add(g); } };
   for (const s of ctx.sedutePassate ?? []) registra((s.blocchi ?? []).map((x) => x.id));
   const vctx = validateCtxFor(ctx);
-  const tenta = (ss: SedutaLLM[], messaggio = 'Piano base della settimana (generato in modalità sicura).') => {
+  const tenta = (ss: SedutaLLM[], messaggio = 'La settimana costruita con le regole del preparatore.') => {
     const { plan, errors } = expandPiano({ sedute: ss, messaggio }, ctx);
     const violazioni = [...errors, ...(plan.sedute.length ? validatePlan(plan, vctx) : ['piano vuoto'])];
     return { plan, violazioni };
@@ -1809,7 +1811,7 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
     // Il giorno prima della partita la tecnica leggera si AGGIUNGE al blocco pre partita, facoltativa (Ste, 26/10: "si aggiunge come facoltativo se qualcuno ha tecnica come obiettivo")
     const leggera = p && isPrePartita(p) && ctx.blocchi.some((x) => x.id === TE_LEGGERA_ID) ? TE_LEGGERA_ID : undefined;
     return {
-      giorno: g, titolo: principale ? 'Seduta base' : 'Giornata leggera', spiegazione: 'Piano base di sicurezza generato automaticamente.',
+      giorno: g, titolo: principale && p ? nomeBloccoAtleta(p.nome) : 'Giornata leggera', spiegazione: 'Costruita dalle regole del preparatore sui tuoi obiettivi.',
       blocchi: [conFascia ? fascia.id : undefined, p?.id ?? fascia?.id, leggera].filter((x): x is string => !!x),
     };
   };
@@ -1840,11 +1842,17 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
     const passa = (c: { blocco: Blocco; principale: boolean }) => nuoviCon(c).length === 0;
     const recuperoLeggero = () => candidatiLeggeri(g).filter((x) => x.qualita === 'mobilita-recupero').map((x) => ({ blocco: x, principale: false })).find(passa);
     const menoViolazioni = () => cands.map((c) => ({ c, n: nuoviCon(c).length })).sort((a, b) => a.n - b.n)[0]?.c;
-    const scelta = cands.find(passa) ?? recuperoLeggero() ?? menoViolazioni();
-    const s = seduta(g, scelta?.blocco, !!scelta?.principale);
+    // 17/11 (Ste, cosce dietro e settimana di scarico): il candidato con meno violazioni entrava anche quando sforava
+    // il tetto di carico, e il piano base usciva con tre sedute oltre il tetto. Una giornata che porta oltre il tetto
+    // di carico non entra: meglio una seduta in meno
+    const oltreIlTetto = (c: { blocco: Blocco; principale: boolean }) => nuoviCon(c).some((v) => v.startsWith('carico settimanale previsto'));
+    const minima = menoViolazioni();
+    const scelta = cands.find(passa) ?? recuperoLeggero() ?? (minima && !oltreIlTetto(minima) ? minima : undefined);
+    if (!scelta) continue;
+    const s = seduta(g, scelta.blocco, scelta.principale);
     if (!s.blocchi.length) continue;
     sedute.push(s);
-    if (scelta) { registra([scelta.blocco.id]); segnaCoperti([scelta.blocco.id]); }
+    registra([scelta.blocco.id]); segnaCoperti([scelta.blocco.id]);
     if (fisico) k++;
   }
   // Il piano base passa dal VALIDATORE come quello di Claude (review 25/9: prima usciva da expandPiano
@@ -1861,24 +1869,54 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
     if (sola.errors.some((e) => giornoDellaViolazione(e) === x.giorno) || sola.plan.sedute.length !== 1) return false;
     return validatePlan(sola.plan, { ...vctx, oggiDow: undefined }).length === 0;
   });
+  // 17/11 (Ste: «mai la settimana base: se non riesce deve correggere per renderla generabile»). Una settimana passa
+  // se non ha violazioni DURE (sicurezza e metodo); le MORBIDE (un obiettivo in una sola giornata, una giornata in
+  // meno, il recupero che non ci sta) si accettano e si dicono al ragazzo (`rinunce`). Con una violazione dura la
+  // giornata che la causa esce; se la violazione è della settimana intera (il carico) esce l'ultima giornata fisica.
+  const correggi = (ss: SedutaLLM[], messaggio: string) => {
+    let restanti = [...ss];
+    const tolte: string[] = [];
+    for (let giro = 0; giro < 8 && restanti.length; giro++) {
+      const esito = tenta(restanti, messaggio);
+      const dure = esito.violazioni.filter((v) => !violazioneMorbida(v) && v !== 'piano vuoto');
+      if (!dure.length) return { plan: esito.plan, rinunce: [...tolte, ...rinunceDa(esito.violazioni)], dure: [] as string[] };
+      const giorniRotti = new Set(dure.map(giornoDellaViolazione).filter((d): d is number => d !== null));
+      if (giorniRotti.size) {
+        for (const d of giorniRotti) tolte.push(giornataTolta(DAY_NAMES[d] ?? `Giorno ${d}`, dure.find((v) => giornoDellaViolazione(v) === d)!));
+        restanti = restanti.filter((x) => !giorniRotti.has(x.giorno));
+        continue;
+      }
+      // Violazione della settimana intera: via una giornata alla volta, prima l'ultima fisica (le leggere costano poco)
+      const fisica = (x: SedutaLLM) => x.blocchi.some((id) => { const b = bloccoDi(ctx, id); return !!b && !isApertura(b) && QUALITA_FISICHE.has(b.qualita); });
+      const via = [...restanti].reverse().find(fisica) ?? restanti[restanti.length - 1];
+      tolte.push(giornataTolta(DAY_NAMES[via.giorno] ?? `Giorno ${via.giorno}`, dure[0]));
+      restanti = restanti.filter((x) => x !== via);
+    }
+    const ultimo = restanti.length ? tenta(restanti, messaggio) : null;
+    return { plan: null as WeekPlan | null, rinunce: tolte, dure: ultimo?.violazioni.filter((v) => !violazioneMorbida(v)) ?? [] };
+  };
   if (tenute.length) {
     const giorniTenuti = new Set(tenute.map((x) => x.giorno));
     // Prima TUTTE le giornate buone di Claude, poi le base nei giorni che restano fino al numero chiesto
     const nMax = Math.max(seduteRichieste(ctx) ?? sedute.length, tenute.length);
     const riempitivi = sedute.filter((x) => !giorniTenuti.has(x.giorno)).slice(0, Math.max(0, nMax - tenute.length));
     const ibrido = [...tenute, ...riempitivi].sort((x, y) => x.giorno - y.giorno);
-    const esitoIbrido = tenta(ibrido, seme?.piano.messaggio || 'La settimana proposta, con qualche giornata sistemata dal preparatore.');
-    if (!esitoIbrido.violazioni.length) return { plan: conProgressioni(esitoIbrido.plan, ctx, vctx), violazioni: [], tenute: tenute.map((x) => x.giorno) };
-    console.error('trainingPlannerV2: anche l\'ibrido viola le regole', esitoIbrido.violazioni);
+    const esitoIbrido = correggi(ibrido, seme?.piano.messaggio || 'La settimana proposta, con qualche giornata sistemata dal preparatore.');
+    if (esitoIbrido.plan?.sedute.length) return { plan: conProgressioni(esitoIbrido.plan, ctx, vctx), violazioni: [], tenute: tenute.map((x) => x.giorno), rinunce: esitoIbrido.rinunce };
+    console.error('trainingPlannerV2: anche l\'ibrido viola le regole', esitoIbrido.dure);
   }
-  let esito = tenta(sedute, 'Piano base della settimana (generato in modalità sicura).');
-  if (esito.violazioni.length) {
+  const MSG = 'La settimana costruita con le regole del preparatore.';
+  let esito = correggi(sedute, MSG);
+  if (!esito.plan?.sedute.length) {
     const leggere = giorni.map(({ d }) => seduta(d, candidatiLeggeri(d)[0], false)).filter((x) => x.blocchi.length > 0);
-    const esito2 = tenta(leggere, 'Piano base della settimana: solo giornate leggere (il piano completo non rispettava le regole).');
-    if (!esito2.violazioni.length) esito = esito2;
-    else console.error('trainingPlannerV2: anche il piano base viola le regole', esito.violazioni);
+    const esito2 = correggi(leggere, 'La settimana con le sole giornate leggere: le sedute di forza non rispettavano le regole di questa settimana.');
+    if (esito2.plan?.sedute.length) esito = { ...esito2, rinunce: ['Solo giornate leggere: le sedute di forza non ci stavano nelle regole di questa settimana.', ...esito2.rinunce] };
+    else console.error('trainingPlannerV2: nessuna settimana possibile', esito.dure, esito2.dure);
   }
-  return { plan: conProgressioni(esito.plan, ctx, vctx), violazioni: esito.violazioni, tenute: [] };
+  if (!esito.plan?.sedute.length) {
+    return { plan: { sedute: [], messaggio: MSG }, violazioni: esito.dure.length ? esito.dure : ['nessun giorno libero per allenarsi'], tenute: [], rinunce: esito.rinunce };
+  }
+  return { plan: conProgressioni(esito.plan, ctx, vctx), violazioni: [], tenute: [], rinunce: esito.rinunce };
 }
 
 /** Il giorno a cui si riferisce una violazione ("seduta del giorno 3: …", "seduta di Giovedì: …"); null se è della settimana intera. */
@@ -2170,12 +2208,20 @@ export async function generaPianoV2(
   // Ibrido: le giornate buone di Claude restano, il piano base riempie i giorni che mancano; se non passa, il base da solo
   const base = fallbackPianoBlocchi(ctx, migliore ?? undefined);
   const violazioni = [...new Set([...tuttiErrori, ...base.violazioni.map((v) => `piano base: ${v}`)])];
+  const rinunce = base.rinunce.length ? { rinunce: base.rinunce } : {};
   if (base.tenute.length) {
     const sostituiti = base.plan.sedute.filter((s) => !base.tenute.includes(s.giorno)).map((s) => DAY_NAMES[s.giorno]);
-    const aggiustamenti = [...(migliore?.riparazioni ?? []), ...(sostituiti.length ? [`${sostituiti.join(', ')}: giornat${sostituiti.length === 1 ? 'a' : 'e'} base al posto di quell${sostituiti.length === 1 ? 'a' : 'e'} propost${sostituiti.length === 1 ? 'a' : 'e'} (${(migliore?.violazioni[0] ?? '').slice(0, 120) || 'non rispettava le regole'})`] : [])];
-    return { plan: rifinisci({ ...base.plan, violazioni: violazioni.slice(0, 8) }, aggiustamenti), generatoDa: 'llm', ctx, ibrido: true };
+    const aggiustamenti = [...(migliore?.riparazioni ?? []), ...(sostituiti.length ? [`${sostituiti.join(', ')}: giornat${sostituiti.length === 1 ? 'a costruita' : 'e costruite'} dalle regole del preparatore`] : [])];
+    return { plan: rifinisci({ ...base.plan, ...rinunce, violazioni: violazioni.slice(0, 8) }, aggiustamenti), generatoDa: 'llm', ctx, ibrido: true };
   }
-  return { plan: rifinisci(base.plan, []), generatoDa: 'fallback', ctx, violazioni };
+  // 17/11: niente si poteva fare (nessun giorno libero, tutte le giornate contro una regola di sicurezza). Si dice perché,
+  // non si consegna una settimana a caso: `non_generabile` con i motivi; la route avvisa Ste
+  if (!base.plan.sedute.length) {
+    return { plan: rifinisci({ ...base.plan, ...rinunce, non_generabile: base.violazioni.slice(0, 4), violazioni: violazioni.slice(0, 8),
+      messaggio: 'Questa settimana non sono riuscito a costruire sedute che rispettino le regole di sicurezza. Il preparatore è stato avvisato e ti sistema la settimana a mano.' }, []),
+      generatoDa: 'fallback', ctx, violazioni };
+  }
+  return { plan: rifinisci({ ...base.plan, ...rinunce }, []), generatoDa: 'fallback', ctx, violazioni };
 }
 
 /**

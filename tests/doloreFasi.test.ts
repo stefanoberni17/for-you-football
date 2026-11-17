@@ -270,3 +270,33 @@ describe('altre parti con i gradini alti (17/11, il caso di Ste: cosce dietro 8/
     expect(e.plan.messaggio).toMatch(/schiena ferma/);
   });
 });
+
+describe('settimana di scarico con uno storico piccolo (17/11, il caso di Ste: tetto duro 141 AU, piano base)', async () => {
+  const { contextFinto, SCENARI, risultatoFinto } = await import('@/lib/trainingSimulazione');
+  const { generaPianoV2 } = await import('@/lib/trainingPlannerV2');
+  const { calcolaCarico, TETTO_DURO_MIN_AU } = await import('@/lib/trainingLoad');
+  const marco = SCENARI.find((x) => x.id === 'marco')!.atleta;
+  const sk = (id: string, v: number): TestResultRow => ({ test_id: `skill:${id}`, valore: v, livello_calcolato: 'base', punteggio_calcolato: 50, dettaglio: null });
+
+  it('il tetto duro non scende sotto una settimana leggera', () => {
+    const plans = [{ id: 'p1', week_start: '2026-10-26', plan: { sedute: [{ giorno: 1, tipo: 'fisica', durata_min: 20, titolo: 'x', items: [] }] } }] as never;
+    const completions = [{ session_key: 'p1#1', plan_id: 'p1', feedback: 'ok', completed_at: '2026-10-26T18:00:00.000Z', rpe: 5 }] as never;
+    const c = calcolaCarico({ completions, setRpe: [], plans, oggi: '2026-11-17', lunedi: '2026-11-16', isDeload: true, squadraSettimanale: 0 });
+    if (c.tettoDuro !== null) expect(c.tettoDuro).toBeGreaterThanOrEqual(TETTO_DURO_MIN_AU);
+  });
+
+  it('con il tetto stretto il piano base mette meno sedute invece di sforare', async () => {
+    const s = applicaOk(nuovoStato(8, 'cosce dietro', OGGI)!, 'altre_parti', OGGI)!;
+    const ctx = contextFinto({
+      ...marco, statoDolore: s, oggiDow: 2, trainingDays: [], matchDays: [],
+      results: [sk('push-8', 7), sk('push-7', 14), sk('pull-7', 10), sk('pull-6', 10), sk('core-6', 70), sk('lomb-4', 90),
+        risultatoFinto('test-amrap', 9), risultatoFinto('test-push', 70), risultatoFinto('test-pull', 12)],
+      attrezzatura: ['kettlebell', 'sbarra', 'piccoli attrezzi', 'campo'], focusSetup: ['parte_alta', 'gambe', 'pliometria', 'fascia', 'tecnica'] as never,
+      preferenze: { giorni: [1, 3, 5, 7], sedute: 3, durataMin: 60 }, ciclo: { settimana: 4, isDeload: true, ritestDue: false },
+    });
+    ctx.base.carico = { ...ctx.base.carico, cronico: 94, acwr: 2.1, stato: 'rischio', calibrazione: 1, target: { min: 47, max: 66 }, tetto: 120, tettoDuro: TETTO_DURO_MIN_AU };
+    const e = await generaPianoV2(ctx, undefined, {}, { senzaClaude: true });
+    expect(e.plan.sedute.length).toBeGreaterThan(0);
+    expect(e.violazioni ?? []).toEqual([]);
+  });
+});
