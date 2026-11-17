@@ -2,6 +2,15 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-17 — Dolore «altre parti»: la settimana non è più vuota; card del dolore leggibile
+
+Ste, 17/11 (cosce dietro 8/10, ok «il fisio dice che posso allenare le altre parti», poi «Rifai la settimana»): «non si legge bene» e «mi fa piano base» (piano vuoto, tempo finito dopo 2 tentativi).
+- Causa: ai gradini alti le serie di parte alta composte dal server (`pa-*`) hanno dentro il core-6 e il lomb-4, che lavorano le cosce dietro; `filtraBlocchiDolore` scartava il blocco intero e la libreria restava a zero blocchi. Ora un blocco con solo qualche esercizio sulla zona resta senza quegli esercizi, durata in proporzione (`itemsSenzaZona` in `lib/doloreFasi.ts`): se restano almeno due esercizi veri e almeno metà di quelli che aveva, e la sua qualità non è la zona (`qualitaSullaZona`: con le gambe ferme gambe, salti, velocità, resistenza e tecnica con la palla non si puliscono). Gli obiettivi che sono la zona escono anche se un blocco pulito li coprirebbe ancora.
+- `coinvolge` riconosceva come gambe solo la tecnica della libreria nuova: conduzione, muro, palleggi e mobilità della scala v1 (`cond-*` nei `te-passaggi` e `te-dribbling`) restavano nelle sedute con le cosce dietro ferme. Ora contano.
+- Se con il dolore non resta davvero niente di adatto, la settimana è vuota con il messaggio che lo dice (`WeekPlan.vuoto_dolore`), senza chiamare Claude e senza l'avviso «settimana base, riprova con più tempo».
+- Card del dolore: il `Button` tronca il testo su una riga, i due ok sembravano uguali («Il fisio dice che posso allenare le altre…»). Ora bottoni che vanno a capo, leggibili anche spenti, con la riga «Spunta la casella qui sopra per dare l'ok».
+- Test in `tests/doloreFasi.test.ts` (il caso di Ste con i suoi gradini, la tecnica v1, la settimana vuota con la schiena).
+
 ## 2026-11-16 — Pesi di partenza dal peso corporeo, peso obbligatorio nel setup
 
 Ste, 16/11: «chiediamo il peso nel setup obbligatorio. Secondo me dobbiamo ragionare per bw e alleggerire il fattore per i pesi».
