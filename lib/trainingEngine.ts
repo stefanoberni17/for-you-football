@@ -403,6 +403,8 @@ export interface WeekPlan {
   nota?: string;             // settimana già avviata: giornate ridotte ai giorni rimasti (mostrata nell'hub)
   aggiustamenti?: string[];  // cosa il server ha sistemato nel piano di Claude (lib/trainingRiparazione) o le giornate prese dal piano base
   vuoto_dolore?: string;     // 17/11: con il dolore non resta niente di adatto in libreria (zona): settimana vuota voluta, non un piano base
+  rinunce?: string[];        // 17/11: le correzioni fatte per rendere la settimana possibile, dette al ragazzo (mai più «settimana base»)
+  non_generabile?: string[]; // 17/11: nessuna settimana possibile; i motivi (Ste avvisato su Telegram)
   dopo_dolore?: string;      // dolore a fasce (16/11): piano rifatto dopo un ok (data ISO); non conta nel tetto delle rigenerazioni
   adattato_calendario?: string; // M8 (26/10): piano salvato dall'adattamento al calendario cambiato (data ISO); non conta nel tetto delle rigenerazioni
   blocco?: { inizio: string; settimana: number; di: number }; // Fisico Base (3/11, lib/trainingBlocco): settimana del blocco di 4

@@ -68,7 +68,7 @@ export default function MesePage() {
               <p className="text-label font-semibold text-muted mt-3">Il piano di quella settimana</p>
               {w.piano ? (
                 <>
-                  <p className="text-caption text-faint mt-0.5">{w.piano.generatoDa === 'llm' ? 'dal preparatore AI' : 'settimana base'}{w.piano.nPiani > 1 ? ` · ${w.piano.nPiani} piani` : ''}</p>
+                  <p className="text-caption text-faint mt-0.5">{w.piano.generatoDa === 'llm' ? 'dal preparatore AI' : 'dalle regole del preparatore'}{w.piano.nPiani > 1 ? ` · ${w.piano.nPiani} piani` : ''}</p>
                   <ul className="mt-1 space-y-1">
                     {w.piano.sedute.map((s) => (
                       <li key={s.giorno} className="text-body-sm leading-snug flex gap-2">
@@ -80,7 +80,7 @@ export default function MesePage() {
                   {w.piano.aggiustamenti.length > 0 && <p className="text-caption text-muted mt-1">Sistemato: {w.piano.aggiustamenti.join(' · ')}</p>}
                   {w.piano.violazioni.length > 0 && (
                     <details className="mt-1">
-                      <summary className="text-caption text-muted cursor-pointer tap flex items-center">Perché la settimana base</summary>
+                      <summary className="text-caption text-muted cursor-pointer tap flex items-center">Perché dalle regole</summary>
                       <ul className="mt-1 space-y-0.5">{w.piano.violazioni.slice(0, 3).map((v, i) => <li key={i} className="text-caption text-muted leading-snug">· {v}</li>)}</ul>
                     </details>
                   )}

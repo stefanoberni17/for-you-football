@@ -28,7 +28,7 @@ import { MAX_DURATA_PER_FASE, SETUP_SELECT, mapSetup, maxSeduteFisiche, maxSedut
 import { contaTemi, conteggiPerScelta, sceltaMix, TECNICA_MINUTI_MAX, tecnicaDelMese, temaProssimo, TEMI, tettoTiri, ultimoTemaTecnica } from '@/lib/trainingTecnicaComposta';
 import { prioritaTecnica } from '@/lib/trainingTecnica';
 import { loadFocusSetup, loadPreferenzeSetup, loadSquadraCompleta } from '@/lib/trainingPlanner';
-import { PIANI_LIMITE_ATTIVO, PIANI_MAX_SETTIMANA } from '@/lib/trainingRequest';
+import { contaNelTetto, PIANI_LIMITE_ATTIVO, PIANI_MAX_SETTIMANA, PIANI_MAX_TOTALI_SETTIMANA } from '@/lib/trainingRequest';
 import { CATEGORIA_LABEL, TESTS_V2 } from '@/lib/trainingTestsV2';
 import { riepilogoEsercizi, riepilogoUi, type SetLogRow } from '@/lib/trainingAdapt';
 import { esercizioV2ById } from '@/lib/trainingCatalogV2';
@@ -176,11 +176,15 @@ export async function GET(request: NextRequest) {
     // (rigenera/modifica salvano una riga nuova, le sedute già fatte restano segnate per giorno)
     let completions: { session_key: string; feedback: string | null; rpe?: number | null }[] = [];
     let pianiQuestaSettimana = 0;
+    let pianiTotaliSettimana = 0;
     if (lastPlan?.id) {
-      const { data: piani } = await supabaseAdmin.from('training_plans').select('id, plan')
+      const { data: piani } = await supabaseAdmin.from('training_plans').select('id, plan, generato_da')
         .eq('user_id', userId).eq('week_start', lastPlan.week_start);
       // M8: i piani salvati dall'adattamento al calendario (zero Claude) non contano nel tetto delle rigenerazioni
-      if (lastPlan.week_start === mondayOfThisWeekRome()) pianiQuestaSettimana = (piani || []).filter((p: { plan?: { adattato_calendario?: string; dopo_dolore?: string } }) => !p.plan?.adattato_calendario && !p.plan?.dopo_dolore).length;
+      if (lastPlan.week_start === mondayOfThisWeekRome()) {
+        pianiQuestaSettimana = (piani || []).filter(contaNelTetto).length;
+        pianiTotaliSettimana = (piani || []).length;
+      }
       const ids = (piani || []).map((p: { id: string }) => p.id);
       // Con il voto della seduta (migration 026): serve a M5 (aumenti in settimana); se la colonna manca, senza
       const q = (cols: string) => supabaseAdmin.from('training_session_completions').select(cols).eq('user_id', userId).in('plan_id', ids.length ? ids : [lastPlan.id]);
@@ -379,7 +383,7 @@ export async function GET(request: NextRequest) {
       lunedi: mondayOfThisWeekRome(),
       planStale: !!lastPlan && lastPlan.week_start < mondayOfThisWeekRome(),
       // Tetto alle rigenerazioni (PIANI_MAX_SETTIMANA per settimana, il piano automatico del lunedì conta 1); null = tetto spento
-      rigenerazioniRimaste: PIANI_LIMITE_ATTIVO ? Math.max(0, PIANI_MAX_SETTIMANA - pianiQuestaSettimana) : null,
+      rigenerazioniRimaste: PIANI_LIMITE_ATTIVO ? Math.max(0, Math.min(PIANI_MAX_SETTIMANA - pianiQuestaSettimana, PIANI_MAX_TOTALI_SETTIMANA - pianiTotaliSettimana)) : null,
       completions,
       checkinOggi,
       storicoSerie,

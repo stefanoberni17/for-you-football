@@ -1,5 +1,6 @@
 'use client';
 
+import { motivoBreve } from '@/lib/trainingRinunce';
 import SettimanaObbligatoria from '@/components/SettimanaObbligatoria';
 import WeeklyCalendarPopup from '@/components/WeeklyCalendarPopup';
 import type { PropostaSettimana } from '@/lib/settimanaCalendario';
@@ -50,7 +51,7 @@ export interface TrainingState {
   romboBase?: RomboPoint[];
   tests: { id: string; nome: string; done: boolean; lastValue: number | null; lastLevel: string | null }[];
   testsV2: { id: string; nome?: string; done: boolean }[];
-  plan: { id: string; week_start: string; plan: { sedute: PlanSession[]; messaggio?: string; nota?: string; violazioni?: string[]; aggiustamenti?: string[]; scritto_il?: string; vuoto_dolore?: string }; generato_da: string } | null;
+  plan: { id: string; week_start: string; plan: { sedute: PlanSession[]; messaggio?: string; nota?: string; violazioni?: string[]; aggiustamenti?: string[]; scritto_il?: string; vuoto_dolore?: string; rinunce?: string[]; non_generabile?: string[] }; generato_da: string } | null;
   oggiDow: number;
   lunedi: string;
   planStale: boolean; // piano di una settimana passata → se ne prepara uno nuovo
@@ -901,20 +902,37 @@ export default function AllenamentoHub() {
                 </ul>
               </details>
             )}
-            {state.plan!.generato_da === 'fallback' && !state.plan!.plan.vuoto_dolore && (
+            {/* 17/11 (Ste: «mai la settimana base»): la settimana si corregge per stare nelle regole e lo dice; se proprio
+                non si può costruire, dice perché e Ste è avvisato */}
+            {!!state.plan!.plan.non_generabile?.length ? (
               <Card variant="warn" padding="sm" className="mb-3">
-                <p className="text-body-sm text-warning">Questa volta ho preparato una settimana base. Riprova con più tempo per seduta o meno vincoli.</p>
-                {!!state.plan!.plan.violazioni?.length && (
-                  <details className="mt-2">
-                    <summary className="text-body-sm text-warning/80 cursor-pointer tap flex items-center">Perché</summary>
-                    <ul className="mt-1 space-y-1">
-                      {state.plan!.plan.violazioni.slice(0, 4).map((v, i) => (
-                        <li key={i} className="text-caption text-muted leading-snug">· {v}</li>
-                      ))}
-                    </ul>
-                  </details>
-                )}
+                <p className="text-body-sm text-warning">Questa settimana non sono riuscito a costruire sedute che rispettino le regole di sicurezza. Il preparatore è stato avvisato e ti sistema la settimana.</p>
+                <p className="text-caption text-muted mt-2">Perché:</p>
+                <ul className="mt-1 space-y-1">
+                  {state.plan!.plan.non_generabile.slice(0, 3).map((v, i) => (
+                    <li key={i} className="text-caption text-muted leading-snug">· {motivoBreve(v)}</li>
+                  ))}
+                </ul>
+                <p className="text-caption text-muted mt-2">Intanto puoi provare con più giorni o più tempo per seduta da «Rifai la settimana».</p>
               </Card>
+            ) : !!state.plan!.plan.rinunce?.length ? (
+              <Card padding="sm" className="mb-3">
+                <p className="text-body-sm text-muted">Per farla stare nelle regole di questa settimana ho dovuto:</p>
+                <ul className="mt-1 space-y-1">
+                  {state.plan!.plan.rinunce.map((v, i) => (
+                    <li key={i} className="text-caption text-muted leading-snug">· {v}</li>
+                  ))}
+                </ul>
+              </Card>
+            ) : state.plan!.generato_da === 'fallback' && !state.plan!.plan.vuoto_dolore && !!state.plan!.plan.violazioni?.length && (
+              <details className="mb-3">
+                <summary className="text-body-sm text-muted cursor-pointer tap flex items-center">Settimana costruita dalle regole del preparatore: perché</summary>
+                <ul className="mt-1 space-y-1">
+                  {state.plan!.plan.violazioni.slice(0, 4).map((v, i) => (
+                    <li key={i} className="text-caption text-muted leading-snug">· {motivoBreve(v)}</li>
+                  ))}
+                </ul>
+              </details>
             )}
             {saltate > 0 && (
               <p className="text-body-sm text-muted mb-2">{saltate === 1 ? '1 seduta saltata' : `${saltate} sedute saltate`} questa settimana: restano in memoria, il calendario va avanti.</p>
@@ -1365,14 +1383,15 @@ export default function AllenamentoHub() {
           errorMsg={genError}
           sedute={sedute.map((s) => ({ giorno: s.giorno, titolo: s.titolo, modificabile: statoDi(s) === 'oggi' || statoDi(s) === 'futura' }))}
           oggiDow={oggiDow}
-          calendario={(state.calendario?.trainingDays.length || state.calendario?.matchDays.length) ? state.calendario
-            // Calendario della settimana vuoto (6/11): vale l'abitudine del setup, come per il planner (giorni squadra, partita abituale)
+          calendario={(state.settimanaConfermata || state.calendario?.trainingDays.length || state.calendario?.matchDays.length) ? (state.calendario ?? { trainingDays: [], matchDays: [] })
+            // Calendario della settimana vuoto (6/11): vale l'abitudine del setup, come per il planner (giorni squadra, partita abituale);
+            // 17/11: non con la settimana confermata vuota («niente squadra né partita»)
             : { trainingDays: Object.keys(state.squadra ?? {}).map(Number).filter((d) => d >= 1 && d <= 7), matchDays: state.partitaAbituale ? [state.partitaAbituale] : [] }}
           maxSedute={state.maxSeduteTotali ?? state.maxSeduteFisiche}
           maxSeduteFisiche={state.maxSeduteFisiche}
           focusSetup={state.setup.focus}
           fase={state.setup.fase}
-          conSquadraDefault={!!((state.calendario?.trainingDays.length ?? 0) || (state.calendario?.matchDays.length ?? 0) || state.partitaAbituale || Object.keys(state.squadra ?? {}).length)}
+          conSquadraDefault={!!((state.calendario?.trainingDays.length ?? 0) || (state.calendario?.matchDays.length ?? 0) || (!state.settimanaConfermata && (state.partitaAbituale || Object.keys(state.squadra ?? {}).length)))}
           preferenzeSetup={{ giorni: state.setup.giorni ?? [], sedute: state.setup.sedute ?? null, durataMin: state.setup.durataMin ?? null }}
           generating={generating}
           onSubmit={generaPiano}

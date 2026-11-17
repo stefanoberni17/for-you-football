@@ -2,6 +2,16 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-17 — Mai la «settimana base»: la settimana si corregge e lo dice
+
+Ste, 17/11: «non deve mai proporre la settimana base: se uno paga deve dare un programma; se non riesce a generarlo deve evidenziare come mai e fare correzioni per renderlo generabile». E: «il mio account non mi fa più rigenerare, sbloccamelo».
+- Regole MORBIDE e DURE (`lib/trainingRinunce.ts`, test in `tests/trainingRinunce.test.ts`): morbide = la settimana è meno completa del richiesto (obiettivo in una sola giornata, aspetto che manca, giornate in meno, recupero che non ci sta); dure = sicurezza e metodo (partita, carico, livello, tetti, sprint, attrezzi). Le morbide si accettano e si dicono al ragazzo (`WeekPlan.rinunce`, card «Per farla stare nelle regole di questa settimana ho dovuto:»); con una dura esce la giornata che la causa, o una giornata alla volta se è della settimana intera (il carico). Prima bastava una morbida per buttare il piano di Claude e consegnare la «settimana base» (l'ultimo caso di Ste: «Forza parte alta in una sola giornata»).
+- Le sedute costruite dalle regole portano il nome del blocco e «Costruita dalle regole del preparatore sui tuoi obiettivi», non più «Seduta base». Niente più «Questa volta ho preparato una settimana base» nell'hub né nel replay del mese.
+- Se nessuna settimana è possibile (nessun giorno libero, tutte le giornate contro una regola di sicurezza) il piano esce vuoto con `non_generabile` e i motivi, l'hub lo dice e Ste riceve un avviso su Telegram («serve il tuo intervento»); Ste è avvisato anche quando la settimana l'hanno costruita le regole perché il planner AI non ce l'ha fatta. Cosa fare in quel caso (chiedere al ragazzo o intervento di Ste) è ancora da decidere.
+- Tetto delle rigenerazioni: le settimane non riuscite (`generato_da = 'fallback'`) non contano più (`contaNelTetto` in `lib/trainingRequest.ts`); resta un tetto di 15 piani a settimana su tutto (`PIANI_MAX_TOTALI_SETTIMANA`) per non spendere all'infinito in chiamate al modello.
+- Account di Ste sbloccato a mano il 17/11: le cinque settimane vuote di quel giorno marcate fuori dal tetto (`fuori_tetto` nel JSON del piano).
+- Maschera «Rifai la settimana»: con la settimana confermata vuota non ripropone più squadra e partita dei giorni abituali.
+
 ## 2026-11-17 — Tetto di carico con poco storico, piano base sotto il tetto, settimana senza squadra
 
 Ste, 17/11, dopo la PR #190: «da ancora stesso risultato, settimana base». Il piano di Claude aveva sedute di parte alta ma il validatore lo rifiutava per il carico: cronico dell'app 94 AU, settimana di scarico, nessuna squadra questa settimana → tetto duro 141 AU, meno di una seduta da 30'.

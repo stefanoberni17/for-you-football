@@ -53,6 +53,12 @@ export const FOCUS_SETUP_MAX = FOCUS_OPZIONI.length;
 /** Piani generabili a settimana per atleta (nuova + modifica; il piano automatico del lunedì conta 1) — Ste, 14/9: un tetto alle rigenerazioni. */
 export const PIANI_MAX_SETTIMANA = 6;
 /** Interruttore del tetto: SPENTO finché testa solo Ste (14/9) — rimettere a true prima di aprire il Campo ad altri utenti. */
+/** 17/11 (Ste: «devo poter rigenerare»): le settimane non riuscite (generato_da 'fallback') non contano nel tetto qui sopra;
+ *  questo è il tetto su TUTTI i piani della settimana, solo per non spendere all'infinito in chiamate al modello. */
+export const PIANI_MAX_TOTALI_SETTIMANA = 15;
+export function contaNelTetto(p: { generato_da?: string | null; plan?: { adattato_calendario?: string; dopo_dolore?: string } | null }): boolean {
+  return p.generato_da !== 'fallback' && !p.plan?.adattato_calendario && !p.plan?.dopo_dolore;
+}
 export const PIANI_LIMITE_ATTIVO = true; // 25/9 (Sera C): tetto acceso prima di aprire il Campo ad altri
 /** Quanti obiettivi il validatore pretende davvero (i primi N in ordine di priorità). */
 export const FOCUS_OBBLIGATORI = 2;
