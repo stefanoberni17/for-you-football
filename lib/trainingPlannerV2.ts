@@ -16,7 +16,7 @@ import { DAY_NAMES } from './constants';
 import { isFaticaAlta, isPeriodoScarso, isTestaAltrove, validatePlan, type PlanItem, type PlanSession, type WeekPlan } from './trainingEngine';
 import { todayRome, feedbackSeduteBlock, loadFocusSetup, loadPlannerContext, mondayOfThisWeekRome, percorsoMentaleTesto, storicoSerieBlock, type PlannerContext } from './trainingPlanner';
 import { distrettiZona, doloreAttivo, doloreTesto, limitazioniTesto } from './trainingDolore';
-import { bloccoAmmesso, faseTesto, intensiFuori, zonaGambe } from './doloreFasi';
+import { bloccoAmmesso, faseTesto, intensiFuori, itemsSenzaZona, qualitaSullaZona, zonaGambe } from './doloreFasi';
 import { caricoPianificato, DELOAD_RPE, caricoTesto } from './trainingLoad';
 import { squadraTesto } from './trainingSquadra';
 import { blocchiDisponibili, bloccoById, bloccoHaCarichiPesanti, bloccoRiga, expandBlocco, famiglie, type Blocco } from './trainingBlocks';
@@ -275,9 +275,20 @@ function filtraBlocchiDolore(ctx: ContextV2): void {
     if (ctx.blocchi.length < prima) ctx.noteRegole.push(`ripresa graduale (${s.zona}): niente velocità, sprint e pliometria intensiva questa settimana`);
     return;
   }
-  ctx.blocchi = ctx.blocchi.filter((b) => !isPrePartita(b) && bloccoAmmesso(b.items.map((i) => ({ esercizio_id: i.esercizio_id })), s));
+  // Un blocco che ha solo qualche esercizio sulla zona (il core o un lombare dentro la parte alta) resta senza quegli
+  // esercizi, durata in proporzione (17/11: scartarlo intero lasciava la libreria vuota)
+  let puliti = 0;
+  ctx.blocchi = ctx.blocchi.flatMap((b): Blocco[] => {
+    if (isPrePartita(b)) return [];
+    if (bloccoAmmesso(b.items.map((i) => ({ esercizio_id: i.esercizio_id })), s)) return [b];
+    const items = itemsSenzaZona(b.items, s, { qualita: b.qualita });
+    if (!items) return [];
+    puliti++;
+    return [{ ...b, items, durataMin: Math.max(5, Math.round(b.durataMin * items.length / Math.max(1, b.items.length))), mancanti: [...b.mancanti] }];
+  });
   if (ctx.blocchi.length < prima) ctx.noteRegole.push(`dolore (${s.zona}, ${s.intensita}/10, fase ${s.fase.replace('_', ' ')}): fuori i blocchi che coinvolgono la zona`);
-  const conBlocchi = (f: FocusId) => f !== FOCUS_TUTTO && ctx.blocchi.some((b) => (f === 'kettlebell' ? isKettlebell(b.id) : !isKettlebell(b.id) && bloccoCopre(b, FOCUS_QUALITA[f])));
+  if (puliti) ctx.noteRegole.push(`dolore (${s.zona}): ${puliti} ${puliti === 1 ? 'blocco resta' : 'blocchi restano'} senza gli esercizi che toccano la zona`);
+  const conBlocchi = (f: FocusId) => f !== FOCUS_TUTTO && !(f !== 'kettlebell' && FOCUS_QUALITA[f].every((q) => qualitaSullaZona(q, s.zona))) && ctx.blocchi.some((b) => (f === 'kettlebell' ? isKettlebell(b.id) : !isKettlebell(b.id) && bloccoCopre(b, FOCUS_QUALITA[f])));
   const base = ctx.obiettivi[0] === FOCUS_TUTTO ? FOCUS_BILANCIATO : ctx.obiettivi;
   const restano = base.filter(conBlocchi);
   ctx.obiettivi = restano.length ? restano : conBlocchi('parte_alta') ? ['parte_alta'] : [];
@@ -2099,6 +2110,15 @@ export async function generaPianoV2(
     const notaTot = [nota, mancanti].filter(Boolean).join(' ');
     return { ...plan, scritto_il: todayRome(), ...(notaTot ? { nota: notaTot } : {}), ...(aggiustamenti.length ? { aggiustamenti } : {}), ...(ctx.base.ciclo.isDeload ? { scarico: true } : {}) };
   };
+  // Dolore a fasce (17/11): se con la zona ferma non resta niente di adatto, la settimana vuota è la risposta giusta,
+  // non un "piano base" da rifare (prima: due chiamate a Claude, "piano vuoto" e l'invito a riprovare con più tempo)
+  const sd = ctx.base.statoDolore;
+  if (sd && sd.fase !== 'graduale' && !ctx.blocchi.some((b) => b.qualita !== 'riscaldamento' && !APERTURA_IDS.has(b.id))) {
+    const zona = sd.zona ?? 'la zona';
+    return { plan: rifinisci({ sedute: [], vuoto_dolore: zona,
+      messaggio: `Con ${zona} ferma, tra i tuoi esercizi non c'è niente che si possa fare senza toccarla: questa settimana niente sedute dell'app. Quando il fisioterapista ti dà il prossimo ok, dallo qui e la settimana si rifà da sola.` }, []),
+      generatoDa: 'fallback', ctx };
+  }
   const validateCtx = validateCtxFor(ctx);
   const system = systemPrompt(ctx);
   const opzioniRiparazione = () => ({ nRichieste: seduteRichieste(ctx), giorniRimasti: giorniRimasti(ctx), oggi: todayRome() });

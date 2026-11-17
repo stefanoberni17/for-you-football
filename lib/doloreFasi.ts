@@ -213,7 +213,9 @@ export function coinvolge(esercizioId: string, zona: string | null | undefined):
   if (!zonaGambe(zona)) return false;
   if (core) return CORE_GAMBE_RE.test(nome);
   if (d === 'gambe') return true;
-  if (v1) return false;
+  // La tecnica con la palla della scala v1 (conduzione, muro, palleggi) e la mobilità lavorano le gambe (17/11: il
+  // dribbling restava nelle sedute con le cosce dietro ferme)
+  if (v1) return ['conduzione', 'muro', 'palleggi', 'mobilita'].includes(v1.area);
   if (!v2) return true; // sconosciuto: meglio fermo
   if (v2.qualitaSecondaria === 'forza-parte-bassa') return true; // spinte isometriche al muro: spinge la gamba
   if (q === 'forza-parte-alta') return CORE_GAMBE_RE.test(nome); // knee raise alle parallele: lavora l'anca
@@ -240,6 +242,39 @@ export function bloccoAmmesso(items: readonly { esercizio_id: string | null }[],
   if (!coinvolti.length) return true;
   const leggeraOk = s.fase === 'leggera' || (s.fase === 'altre_parti' && !!s.conLeggera);
   return leggeraOk && coinvolti.every(leggeroPerZona);
+}
+
+/**
+ * Il blocco senza la zona (17/11, il caso di Ste: cosce dietro 8/10, ok "altre parti"): un blocco di parte alta ai
+ * gradini alti ha dentro un core (dragon flag) o un lombare che lavora le cosce dietro, e scartarlo intero lasciava la
+ * libreria vuota ("piano vuoto"). Qui si tolgono solo gli esercizi che coinvolgono la zona; il blocco resta se gli
+ * esercizi veri rimasti sono almeno due e almeno metà di quelli che aveva (un blocco di gambe o di tecnica non passa).
+ * Null = il blocco non si propone. Nella ripresa leggera restano anche isometrie ed elastici sulla zona. Un blocco la cui
+ * qualità È la zona (gambe, salti, velocità, resistenza, tecnica con la palla per le gambe; parte alta per la spalla) non
+ * si pulisce: senza la zona non resterebbe quello che promette.
+ */
+export function itemsSenzaZona<T extends { esercizio_id: string | null }>(items: readonly T[], s: StatoDolore | null | undefined, o?: { qualita?: string }): T[] | null {
+  if (!s || s.fase === 'graduale') return [...items];
+  if (s.fase === 'stop') return null;
+  const leggeraOk = s.fase === 'leggera' || (s.fase === 'altre_parti' && !!s.conLeggera);
+  const tieni = (it: T) => !it.esercizio_id || !coinvolge(it.esercizio_id, s.zona) || (leggeraOk && leggeroPerZona(it.esercizio_id));
+  const vero = (it: T) => !!it.esercizio_id && it.esercizio_id !== PAUSA_ID && esercizioV2ById(it.esercizio_id)?.qualita !== 'riscaldamento';
+  if (o?.qualita && qualitaSullaZona(o.qualita, s.zona)) return null;
+  const rimasti = items.filter(tieni);
+  if (rimasti.length === items.length) return rimasti;
+  const veriPrima = items.filter(vero).length;
+  const veriDopo = rimasti.filter(vero).length;
+  if (veriDopo < 2 || veriDopo * 2 < veriPrima) return null;
+  return rimasti;
+}
+
+/** La qualità di un blocco lavora proprio quella zona? */
+export function qualitaSullaZona(qualita: string, zona: string | null | undefined): boolean {
+  if (!zona || zona === 'altro') return false;
+  if (zona === 'schiena') return true;
+  if (ZONE_ALTE.has(zona)) return qualita === 'forza-parte-alta';
+  if (!zonaGambe(zona)) return false;
+  return qualita !== 'forza-parte-alta' && qualita !== 'core';
 }
 
 // ─── Il piano letto ─────────────────────────────────────────────────────────

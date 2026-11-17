@@ -12,7 +12,7 @@ import { DAY_SHORT_NAMES, DAY_NAMES as DAY_NAMES_IT } from '@/lib/constants';
 import {
   ResponsiveContainer, BarChart, Bar, XAxis, YAxis,
 } from 'recharts';
-import { AlertTriangle, BatteryLow, CalendarClock, Check, ChevronRight, CircleDot, ClipboardList, MessageCircle, RefreshCw, Scale, Settings2, ShieldAlert, Users } from 'lucide-react';
+import { AlertTriangle, BatteryLow, CalendarClock, Check, CheckCircle2, ChevronRight, CircleDot, ClipboardList, Loader2, MessageCircle, RefreshCw, Scale, Settings2, ShieldAlert, Users } from 'lucide-react';
 import type { TecnicaMese } from '@/lib/trainingTecnicaComposta';
 import { pesoCorporeoValido, type TrainingSetup } from '@/lib/trainingSetup';
 import type { SquadraSettimana } from '@/lib/trainingSquadra';
@@ -50,7 +50,7 @@ export interface TrainingState {
   romboBase?: RomboPoint[];
   tests: { id: string; nome: string; done: boolean; lastValue: number | null; lastLevel: string | null }[];
   testsV2: { id: string; nome?: string; done: boolean }[];
-  plan: { id: string; week_start: string; plan: { sedute: PlanSession[]; messaggio?: string; nota?: string; violazioni?: string[]; aggiustamenti?: string[]; scritto_il?: string }; generato_da: string } | null;
+  plan: { id: string; week_start: string; plan: { sedute: PlanSession[]; messaggio?: string; nota?: string; violazioni?: string[]; aggiustamenti?: string[]; scritto_il?: string; vuoto_dolore?: string }; generato_da: string } | null;
   oggiDow: number;
   lunedi: string;
   planStale: boolean; // piano di una settimana passata → se ne prepara uno nuovo
@@ -900,7 +900,7 @@ export default function AllenamentoHub() {
                 </ul>
               </details>
             )}
-            {state.plan!.generato_da === 'fallback' && (
+            {state.plan!.generato_da === 'fallback' && !state.plan!.plan.vuoto_dolore && (
               <Card variant="warn" padding="sm" className="mb-3">
                 <p className="text-body-sm text-warning">Questa volta ho preparato una settimana base. Riprova con più tempo per seduta o meno vincoli.</p>
                 {!!state.plan!.plan.violazioni?.length && (
@@ -1212,12 +1212,18 @@ export default function AllenamentoHub() {
                 )}
                 {state.doloreFase.ok.length > 0 && (
                   <div className="mt-2 space-y-2">
+                    {/* 17/11 (Ste: "non si legge"): il Button tronca su una riga; qui il testo va a capo e resta leggibile anche spento */}
                     {state.doloreFase.ok.map((o) => (
-                      <Button key={o.id} variant="secondary" size="sm" fullWidth disabled={!responsabilita} loading={doloreBusy === o.id}
-                        onClick={() => passoDolore(o.id, { ok: o.id, responsabilita: true })} className="!h-auto !py-2 text-left whitespace-normal">
-                        {o.testo}
-                      </Button>
+                      <button key={o.id} type="button" disabled={!responsabilita || !!doloreBusy}
+                        onClick={() => passoDolore(o.id, { ok: o.id, responsabilita: true })}
+                        className={`w-full min-h-[48px] rounded-btn border px-4 py-3 text-left text-body font-semibold leading-snug flex items-center gap-3 transition-colors ${responsabilita ? 'border-forest-400 bg-surface-2 text-app active:bg-surface-3' : 'border-divider bg-surface text-muted'}`}>
+                        {doloreBusy === o.id
+                          ? <Loader2 size={18} className="animate-spin shrink-0" aria-hidden />
+                          : <CheckCircle2 size={18} className={`shrink-0 ${responsabilita ? 'text-forest-400' : 'text-faint'}`} aria-hidden />}
+                        <span>{o.testo}</span>
+                      </button>
                     ))}
+                    {!responsabilita && <p className="text-body-sm text-muted">Spunta la casella qui sopra per dare l&apos;ok.</p>}
                   </div>
                 )}
                 {state.doloreFase.domandaGraduale && (

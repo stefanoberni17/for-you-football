@@ -1,10 +1,10 @@
 import { describe, expect, it } from 'vitest';
 import {
-  applicaFaseDolore, applicaOk, bloccoAmmesso, coinvolge, domandaGradualeDovuta, fasciaDi, faseRiga, intensiFuori,
+  applicaFaseDolore, applicaOk, bloccoAmmesso, coinvolge, domandaGradualeDovuta, fasciaDi, faseRiga, intensiFuori, itemsSenzaZona,
   leggeroPerZona, nuovoStato, okPossibili, parseStatoDolore, rispondiGraduale, scalaGraduale, unisciSegnalazione,
   type StatoDolore,
 } from '@/lib/doloreFasi';
-import type { PlanItem, WeekPlan } from '@/lib/trainingEngine';
+import type { PlanItem, TestResultRow, WeekPlan } from '@/lib/trainingEngine';
 
 const OGGI = '2026-11-16'; // lunedì
 
@@ -221,5 +221,52 @@ describe('il planner con il dolore a fasce (il caso di Ste: flessore 9/10)', asy
     const ferma = { ...stato, fase: 'zona_ferma' as const, graduale: undefined };
     const letto = pianoPerLettura(e.plan, { weekStart: '2026-11-16', oggi: OGGI, oggiDow: 1, fatteGiorni: new Set(), resoconti: [], logs: [], statoDolore: ferma });
     expect(letto.plan.sedute.flatMap((x) => x.items).filter((i) => coinvolge(i.esercizio_id, 'cosce dietro'))).toEqual([]);
+  });
+});
+
+describe('altre parti con i gradini alti (17/11, il caso di Ste: cosce dietro 8/10, "piano vuoto")', async () => {
+  const { contextFinto, SCENARI, risultatoFinto } = await import('@/lib/trainingSimulazione');
+  const { generaPianoV2 } = await import('@/lib/trainingPlannerV2');
+  const marco = SCENARI.find((x) => x.id === 'marco')!.atleta;
+  const sk = (id: string, v: number): TestResultRow => ({ test_id: `skill:${id}`, valore: v, livello_calcolato: 'base', punteggio_calcolato: 50, dettaglio: null });
+  // Gradini alti: le serie di parte alta hanno dentro il core-6 e il lomb-4, che lavorano le cosce dietro
+  const avanzato = {
+    ...marco, results: [sk('push-8', 7), sk('push-7', 14), sk('push-6', 20), sk('pull-7', 10), sk('pull-6', 10), sk('core-6', 70), sk('core-5', 120), sk('lomb-4', 90), sk('lomb-3', 120),
+      risultatoFinto('test-amrap', 9), risultatoFinto('test-push', 70), risultatoFinto('test-pull', 12), risultatoFinto('test-core', 250), risultatoFinto('test-lombari', 200)],
+    attrezzatura: ['kettlebell', 'sbarra', 'piccoli attrezzi', 'campo'], trainingDays: [2], matchDays: [6], oggiDow: 2,
+    focusSetup: ['parte_alta', 'gambe', 'pliometria', 'fascia', 'tecnica'] as never, preferenze: { giorni: [1, 3, 5, 7], sedute: 3, durataMin: 60 },
+    ciclo: { settimana: 4, isDeload: true, ritestDue: false },
+  };
+
+  it('la tecnica con la palla della scala v1 coinvolge le gambe', () => {
+    expect(coinvolge('cond-3', 'cosce dietro')).toBe(true);
+    expect(coinvolge('push-8', 'cosce dietro')).toBe(false);
+  });
+
+  it('il blocco resta senza gli esercizi sulla zona; un blocco di gambe o di tecnica no', () => {
+    const s = applicaOk(nuovoStato(8, 'cosce dietro', OGGI)!, 'altre_parti', OGGI)!;
+    const items = ['push-8', 'fpa-handstand-push-up', 'pull-7', 'fpa-gorilla-row', 'core-6', 'lomb-4'].map((esercizio_id) => ({ esercizio_id }));
+    expect(itemsSenzaZona(items, s, { qualita: 'forza-parte-alta' })?.map((i) => i.esercizio_id)).toEqual(['push-8', 'fpa-handstand-push-up', 'pull-7', 'fpa-gorilla-row']);
+    expect(itemsSenzaZona(items, s, { qualita: 'forza-esplosiva' })).toBeNull();
+    expect(itemsSenzaZona([{ esercizio_id: 'cond-3' }, { esercizio_id: 'cond-5' }], s, { qualita: 'tecnica-conduzione' })).toBeNull();
+  });
+
+  it('la settimana ha le sedute di parte alta, niente sulla zona', async () => {
+    const s = applicaOk(nuovoStato(8, 'cosce dietro', OGGI)!, 'altre_parti', OGGI)!;
+    const ctx = contextFinto({ ...avanzato, statoDolore: s });
+    expect(ctx.obiettivi).toEqual(['parte_alta']);
+    const e = await generaPianoV2(ctx, undefined, {}, { senzaClaude: true });
+    expect(e.plan.sedute.length).toBeGreaterThan(0);
+    expect(e.plan.vuoto_dolore).toBeUndefined();
+    expect(e.plan.sedute.flatMap((x) => x.items).filter((i) => coinvolge(i.esercizio_id, 'cosce dietro')).map((i) => i.esercizio_id)).toEqual([]);
+  });
+
+  it('se non resta niente di adatto: settimana vuota detta chiara, non il piano base', async () => {
+    const s = applicaOk(nuovoStato(8, 'schiena', OGGI)!, 'altre_parti', OGGI)!;
+    const e = await generaPianoV2(contextFinto({ ...avanzato, statoDolore: s }), undefined, {}, { senzaClaude: true });
+    expect(e.plan.sedute).toEqual([]);
+    expect(e.plan.vuoto_dolore).toBe('schiena');
+    expect(e.plan.violazioni).toBeUndefined();
+    expect(e.plan.messaggio).toMatch(/schiena ferma/);
   });
 });
