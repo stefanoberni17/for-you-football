@@ -747,7 +747,8 @@ export default function AllenamentoHub() {
 
   // ── Vista SETTIMANA (9/11, Ste: «vista proprio dei giorni della settimana, anche quando ha la squadra, solo
   // descrizione generale e durata; se clicca dentro vede più dettaglio»): i sette giorni, poi il messaggio del piano ──
-  const calendarioVuoto = !state.calendario || (state.calendario.trainingDays.length === 0 && state.calendario.matchDays.length === 0);
+  // 17/11: con la settimana confermata vuota («niente squadra né partita») non si torna ai giorni abituali del setup
+  const calendarioVuoto = !state.settimanaConfermata && (!state.calendario || (state.calendario.trainingDays.length === 0 && state.calendario.matchDays.length === 0));
   const giorniSquadra = new Set<number>(calendarioVuoto
     ? Object.keys(state.squadra || {}).map(Number).filter((d) => d >= 1 && d <= 7)
     : state.calendario!.trainingDays);

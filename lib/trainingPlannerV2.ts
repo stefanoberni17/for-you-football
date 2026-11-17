@@ -1284,7 +1284,8 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
   const copre = (b: { id: string; qualita: string }, qs: readonly string[]) => { if (isKettlebell(b.id)) return false; const bl = bloccoDi(ctx, b.id); return bl ? bloccoCopre(bl, qs) : qs.includes(b.qualita); };
   // Non per il kettlebell (un kb a settimana) né per la velocità (UNA giornata a settimana, regola 24: 15/10, la simulazione
   // chiedeva insieme "velocità in almeno 2 giornate" e "al massimo una giornata di velocità")
-  if (primo && primo !== 'kettlebell' && primo !== 'velocita' && posti >= 3) {
+  // Con la zona ferma le giornate sono un massimo (17/11): niente obbligo di due giornate sul primo obiettivo
+  if (primo && primo !== 'kettlebell' && primo !== 'velocita' && posti >= 3 && !doloreFermo) {
     const qsPrimo = FOCUS_QUALITA[primo];
     const candPrimo = ctx.blocchi.filter((b) => qsPrimo.includes(b.qualita) && !isKettlebell(b.id)).sort((a, b) => (isTecnicaComposta(b.id) ? 1 : 0) - (isTecnicaComposta(a.id) ? 1 : 0));
     const giornatePrimo = settimana.filter((s) => (s.blocchi || []).some((b) => copre(b, qsPrimo))).length;
@@ -1840,11 +1841,17 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
     const passa = (c: { blocco: Blocco; principale: boolean }) => nuoviCon(c).length === 0;
     const recuperoLeggero = () => candidatiLeggeri(g).filter((x) => x.qualita === 'mobilita-recupero').map((x) => ({ blocco: x, principale: false })).find(passa);
     const menoViolazioni = () => cands.map((c) => ({ c, n: nuoviCon(c).length })).sort((a, b) => a.n - b.n)[0]?.c;
-    const scelta = cands.find(passa) ?? recuperoLeggero() ?? menoViolazioni();
-    const s = seduta(g, scelta?.blocco, !!scelta?.principale);
+    // 17/11 (Ste, cosce dietro e settimana di scarico): il candidato con meno violazioni entrava anche quando sforava
+    // il tetto di carico, e il piano base usciva con tre sedute oltre il tetto. Una giornata che porta oltre il tetto
+    // di carico non entra: meglio una seduta in meno
+    const oltreIlTetto = (c: { blocco: Blocco; principale: boolean }) => nuoviCon(c).some((v) => v.startsWith('carico settimanale previsto'));
+    const minima = menoViolazioni();
+    const scelta = cands.find(passa) ?? recuperoLeggero() ?? (minima && !oltreIlTetto(minima) ? minima : undefined);
+    if (!scelta) continue;
+    const s = seduta(g, scelta.blocco, scelta.principale);
     if (!s.blocchi.length) continue;
     sedute.push(s);
-    if (scelta) { registra([scelta.blocco.id]); segnaCoperti([scelta.blocco.id]); }
+    registra([scelta.blocco.id]); segnaCoperti([scelta.blocco.id]);
     if (fisico) k++;
   }
   // Il piano base passa dal VALIDATORE come quello di Claude (review 25/9: prima usciva da expandPiano

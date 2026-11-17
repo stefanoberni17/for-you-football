@@ -98,6 +98,8 @@ export const RPE_PARTITA = 9;   // partita (stima), 90'
 
 export const MIN_GIORNI_STORICO = 14;  // sotto: niente ACWR, niente tetto
 export const ACWR_SOGLIE = { poco: 0.8, ok: 1.3, alto: 1.5 } as const;
+/** Il tetto duro non scende mai sotto una settimana leggera: due sedute da 30' a fatica 5 (17/11). */
+export const TETTO_DURO_MIN_AU = 300;
 
 /** RPE atteso di una seduta pianificata: media pesata sulla durata dei blocchi (o dal tipo per i piani v1). */
 export function rpeAttesoSeduta(s: PlanSession): number {
@@ -236,6 +238,10 @@ export function calcolaCarico(input: {
     const f = input.condizione?.fattore ?? 1, fd = input.condizione?.fattoreTettoDuro ?? 1;
     if (f !== 1) { target = { min: Math.round(target.min * f), max: Math.round(target.max * f) }; tetto = Math.round(tetto * f); }
     if (fd !== 1) tettoDuro = Math.round(tettoDuro * fd);
+    // 17/11 (Ste: cronico app 94 AU, tetto duro 141: meno di una seduta da 30', e ogni settimana usciva il piano base).
+    // Con uno storico dell'app piccolo il rapporto acuto/cronico non dice niente: il tetto duro non scende mai sotto una
+    // settimana leggera (due sedute da 30' a fatica 5). La guida resta quella dei dati
+    tettoDuro = Math.max(tettoDuro, TETTO_DURO_MIN_AU);
   }
   // M11: l'ultima settimana di scarico salvata (il piano porta `scarico: true`), per la distanza tra uno scarico e l'altro e il ri-test
   const ultimoScarico = input.plans.filter((p) => p.plan?.scarico && p.week_start).map((p) => String(p.week_start).slice(0, 10)).sort().pop() ?? null;

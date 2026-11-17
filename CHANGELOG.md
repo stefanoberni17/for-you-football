@@ -2,6 +2,15 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-17 — Tetto di carico con poco storico, piano base sotto il tetto, settimana senza squadra
+
+Ste, 17/11, dopo la PR #190: «da ancora stesso risultato, settimana base». Il piano di Claude aveva sedute di parte alta ma il validatore lo rifiutava per il carico: cronico dell'app 94 AU, settimana di scarico, nessuna squadra questa settimana → tetto duro 141 AU, meno di una seduta da 30'.
+- `TETTO_DURO_MIN_AU` = 300 in `lib/trainingLoad.ts`: con uno storico dell'app piccolo il rapporto acuto/cronico non dice niente, il tetto duro non scende mai sotto una settimana leggera (due sedute da 30' a fatica 5). La guida del prompt resta quella dei dati. Scelta mia da confermare.
+- Piano base: il candidato «con meno violazioni» entrava anche oltre il tetto di carico (tre sedute da 583 AU contro 300); ora una giornata che porta oltre il tetto non entra, meglio una seduta in meno.
+- Con la zona ferma per il dolore niente obbligo di due giornate sul primo obiettivo: le giornate sono un massimo.
+- Scheda Settimana del Corpo: con la settimana confermata vuota («niente squadra né partita») mostrava lo stesso squadra e partita dei giorni abituali del setup.
+- Test in `tests/doloreFasi.test.ts` (fallisce senza la correzione: tre sedute oltre il tetto).
+
 ## 2026-11-17 — Dolore «altre parti»: la settimana non è più vuota; card del dolore leggibile
 
 Ste, 17/11 (cosce dietro 8/10, ok «il fisio dice che posso allenare le altre parti», poi «Rifai la settimana»): «non si legge bene» e «mi fa piano base» (piano vuoto, tempo finito dopo 2 tentativi).
