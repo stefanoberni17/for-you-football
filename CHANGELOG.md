@@ -2,6 +2,15 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-16 — Pesi di partenza dal peso corporeo, peso obbligatorio nel setup
+
+Ste, 16/11: «chiediamo il peso nel setup obbligatorio. Secondo me dobbiamo ragionare per bw e alleggerire il fattore per i pesi».
+- `pesoDiPartenza(id, sesso, pesoCorporeo)` in `lib/trainingBlocks.ts`: il peso del catalogo vale per chi pesa 70 kg (`PESO_RIFERIMENTO_KG`), gli altri lo hanno in proporzione, mai oltre il catalogo + 25 % (`PESO_BW_TETTO`), arrotondato al peso che esiste (`arrotondaPeso` in `lib/sesso.ts`). Il bilanciere fino a 20 kg è la barra e resta fisso. La frase sotto l'esercizio dice «dal tuo peso, N kg».
+- Ragazze con il peso corporeo: × 0,8 (gambe e resto) e × 0,6 (parte alta), `FATTORE_PESO_F_BW` / `_ALTO`, dagli studi sulla forza per kg di peso corporeo (squat 1,4 contro 1,7 volte il peso, panca 0,8 contro 1,3; record di powerlifting 66-77 % e 61-71 %). Senza peso corporeo, e sui kg dei blocchi di Ste, restano 0,65 / 0,55.
+- **Il limite vale solo per partire** (Ste: «ci sta il limite in partenza ma poi non deve esserci un limite massimo: il limite è quanto peso il ragazzo riesce a fare per le reps e l'esercizio necessario»). Il tetto senza massimale del 25/9 (20 kg, 12 per le ragazze; era una regola mia, non del metodo) e la % del massimale per età ed esperienza restano sul peso di PARTENZA (`tettoKgSenzaMassimale` = il più alto tra 20/12 kg e il peso di partenza dal peso corporeo; il bilanciere femminile parte dalla barra da 15). Poi i kg che la dose porta dai suoi log (`PlanItem.kg_dai_log`, messo da `adattaDose`, dall'esecuzione e dagli aumenti nella settimana) non hanno tetto: `prossimaDose` non ha più il +30 % in alto sui kg (resta su reps e secondi, e il pavimento al 70 %), il validatore e `limaCarichi` li lasciano passare. Sopra il programma il peso guadagnato resta anche se è lontano (`tieniDallUltima`).
+- Peso obbligatorio: il setup non si salva senza (`/api/training/setup` rifiuta `pesoKg: null`, il bottone è spento con la riga che lo dice); `/api/training/plan` risponde 409 `peso_mancante`; nell'hub chi ha fatto il setup senza il peso trova in cima a «Oggi» la card «Quanto pesi?» e il piano automatico aspetta. `pesoCorporeoValido` in `lib/trainingSetup.ts`.
+- Test in `tests/pesoCorporeo.test.ts`. La tabella per esercizio da correggere resta `docs/pesi-peso-corporeo-2026-11.md`.
+
 ## 2026-11-16 — Ragazze: soglie dagli studi e parte alta più leggera
 
 Ste, 16/11: «vai» sulla ricerca (`docs/sesso-soglie-ricerca-2026-11.md`, 21 fonti).

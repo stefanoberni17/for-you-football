@@ -95,6 +95,8 @@ export function mapSetup(row: Record<string, unknown> | null | undefined): Train
   };
 }
 
+export { pesoCorporeoValido } from './sesso'; // 16/11: obbligatorio nel setup
+
 /** Il setup è "completo" quando l'atleta ha risposto almeno su attrezzatura e fase. */
 export function setupCompleto(s: TrainingSetup, hasRow: boolean): boolean {
   return hasRow && (s.attrezzatura.length > 0 || s.esperienzaPalestra || s.pesoKg !== null);

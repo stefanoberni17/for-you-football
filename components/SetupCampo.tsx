@@ -4,7 +4,7 @@ import SessoScelta from '@/components/SessoScelta';
 import { useState } from 'react';
 import { authFetch } from '@/lib/authFetch';
 import { DAY_SHORT_NAMES, DAY_NAMES } from '@/lib/constants';
-import { ATTREZZATURA_LABEL, ATTREZZATURA_OPZIONI, FASE_LABEL, FASI, type TrainingSetup } from '@/lib/trainingSetup';
+import { ATTREZZATURA_LABEL, ATTREZZATURA_OPZIONI, FASE_LABEL, FASI, pesoCorporeoValido, type TrainingSetup } from '@/lib/trainingSetup';
 import { SQUADRA_QUALITA, type SquadraSettimana, type SquadraQualitaId } from '@/lib/trainingSquadra';
 import { DURATE, FOCUS_OPZIONI, FOCUS_TUTTO, toggleFocus, type FocusId } from '@/lib/trainingRequest';
 import { Banner, Button, Card, Chip, Field, Input, RpeScale, SectionTitle, Textarea } from '@/components/ui';
@@ -65,6 +65,8 @@ export default function SetupCampo({ state, ricarica, conFascia = false }: {
   const setupDirty = !!state && !!setupDraft && JSON.stringify(setupDraft) !== JSON.stringify(state.setup);
   const squadraDirty = !!state && (JSON.stringify(squadraDraft) !== JSON.stringify(state.squadra || {}) || partitaDraft !== (state.partitaAbituale ?? null));
   const dirty = setupDirty || squadraDirty;
+  // 16/11 (Ste): il peso è obbligatorio, senza non si salva
+  const pesoOk = pesoCorporeoValido(setupDraft?.pesoKg ?? null);
 
   const salva = async () => {
     if (!state || !setupDraft || !dirty) return;
@@ -299,11 +301,11 @@ export default function SetupCampo({ state, ricarica, conFascia = false }: {
 
           {/* Il tuo corpo */}
           <Card padding="sm">
-            <SectionTitle title="Il tuo corpo" subtitle="Serve per i massimali in palestra." className="mb-3" />
+            <SectionTitle title="Il tuo corpo" subtitle="Serve per i pesi di partenza e per i massimali in palestra." className="mb-3" />
             <div className="mb-4">
               <SessoScelta value={setupDraft.sesso ?? null} onChange={(s) => setSetupDraft({ ...setupDraft, sesso: s })} />
             </div>
-            <Field label="Peso corporeo (kg)" htmlFor="setup-peso">
+            <Field label="Peso corporeo (kg)" htmlFor="setup-peso" helper={pesoOk ? 'I pesi di partenza degli esercizi si calcolano da qui.' : 'Obbligatorio: i pesi di partenza si calcolano da qui (tra 30 e 150 kg).'}>
               <Input id="setup-peso" type="text" inputMode="decimal" value={setupDraft.pesoKg ?? ''} placeholder="es. 62"
                 onChange={(e) => { const v = e.target.value.replace(',', '.').replace(/[^0-9.]/g, ''); setSetupDraft({ ...setupDraft, pesoKg: v === '' ? null : Number(v) }); }}
                 className="tabular-nums" />
@@ -374,7 +376,8 @@ export default function SetupCampo({ state, ricarica, conFascia = false }: {
         {/* Salva sticky sopra la tab bar: attivo solo se qualcosa è cambiato */}
         <div className="sticky bottom-[calc(4.5rem+env(safe-area-inset-bottom))] z-10 -mx-5 px-5 mt-5 pt-3 pb-2 bg-app-bg/90 backdrop-blur">
           {errore && <p className="text-body-sm text-warning mb-2">{errore}</p>}
-          <Button size="lg" fullWidth onClick={salva} loading={saving} disabled={!dirty || disabilitato}>
+          {!pesoOk && <p className="text-body-sm text-warning mb-2">Manca il tuo peso (in «Il tuo corpo»): senza non posso salvare.</p>}
+          <Button size="lg" fullWidth onClick={salva} loading={saving} disabled={!dirty || disabilitato || !pesoOk}>
             {saved ? 'Salvato' : 'Salva'}
           </Button>
         </div>

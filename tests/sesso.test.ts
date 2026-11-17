@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { KG_SENZA_MASSIMALE_MAX_F, parseSesso, pesoPerRagazza, SOGLIE_F, soglieTest } from '@/lib/sesso';
+import { parseSesso, pesoPerRagazza, SOGLIE_F, soglieTest } from '@/lib/sesso';
 import { buildRombo, livelloRisultato, scoreTest, type TestResultRow } from '@/lib/trainingEngine';
 import { livelloV2, scoreLift, testV2ById, TESTS_V2 } from '@/lib/trainingTestsV2';
 import { testById } from '@/lib/trainingCatalog';
@@ -107,7 +107,7 @@ describe('ragazzo o ragazza (13/11)', () => {
     expect(lei[0].carico_kg).toBe(12);
     expect(lei[0].nota).toContain('12 kg per kettlebell');
     expect(lei[0].nota).not.toContain('16 kg');
-    expect(lei[1].carico_kg).toBe(KG_SENZA_MASSIMALE_MAX_F);
+    expect(lei[1].carico_kg).toBe(15); // il bilanciere femminile: sotto la barra da 15 non si scende (16/11), non 12
     expect(kgSenzaMassimaleMax('F')).toBe(12);
     // Con il suo massimale contano i suoi numeri, niente riduzione
     const conMax = limaCarichi([items[1]], { ...base, sesso: 'F', massimali: { 'fpb-squat': 70 } }).items[0];

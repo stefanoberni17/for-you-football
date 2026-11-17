@@ -1,3 +1,4 @@
+import { pesoCorporeoValido } from '@/lib/trainingSetup';
 import { conSpostamento } from '@/lib/spostamenti';
 import { loadStatoDolore } from '@/lib/trainingDoloreServer';
 import { stopCompleto } from '@/lib/doloreFasi';
@@ -37,6 +38,12 @@ export async function POST(request: NextRequest) {
     const accesso = scrivi.accesso;
     const lunedi = mondayOfThisWeekRome();
     const body = await request.json().catch(() => ({}));
+
+    // 16/11 (Ste): il peso corporeo è obbligatorio, i pesi di partenza si calcolano da lì (lib/trainingBlocks.ts)
+    const { data: profPeso } = await supabaseAdmin.from('profiles').select('training_peso_kg').eq('user_id', userId).maybeSingle();
+    if (!pesoCorporeoValido(profPeso?.training_peso_kg != null ? Number(profPeso.training_peso_kg) : null)) {
+      return NextResponse.json({ error: 'Prima dicci quanto pesi: i pesi di partenza si calcolano da lì.', reason: 'peso_mancante' }, { status: 409 });
+    }
 
     // I piani di questa settimana: il primo senza richiesta è il piano AUTOMATICO (gratis); ogni altro è una
     // riprogrammazione chiesta dall'atleta, contata per livello (Ste, 3/11: Base 1 al mese, Medio 2 al mese, Pro 2 a

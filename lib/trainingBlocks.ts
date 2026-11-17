@@ -17,8 +17,8 @@ import { esercizioById } from './trainingCatalog';
 import { esercizioV2ById, LIVELLO_ORDINE } from './trainingCatalogV2';
 import type { PlanItem } from './trainingEngine';
 import { FAMIGLIA_FASCIA_FORZA, fasciaMarker } from './trainingFascia';
-import { KG_SENZA_MASSIMALE_MAX } from './trainingRulesV2';
-import { pesoPerRagazza, type Sesso } from './sesso';
+import { KG_SENZA_MASSIMALE_MAX, pesoPartenzaKg } from './trainingRulesV2';
+import type { Sesso } from './sesso';
 
 export type Variante = 'full' | 'short';
 
@@ -151,17 +151,24 @@ const PESO_PER_TESTO: Record<PesoPer, (kg: number) => string> = {
   macchina: (kg) => `${kg} kg sulla macchina (i pesi cambiano da macchina a macchina)`,
 };
 
+export { PESO_RIFERIMENTO_KG, PESO_BW_TETTO } from './trainingRulesV2';
+
 /**
  * Il peso da usare quando il blocco non lo dice (10/11, Ste: «Gorilla row bisogna mettere il peso da usare, controlla che
  * tutti gli esercizi con kb e pesi abbiano il peso»): il peso di partenza del catalogo, con la frase che dice che cosa vuol
  * dire il numero. Poi la dose lo porta su o giù dai kg segnati nel player. null per gli esercizi senza pesi.
+ *
+ * Con il peso corporeo (16/11, Ste: «ragionare per bw»): il peso del catalogo vale per chi pesa `PESO_RIFERIMENTO_KG`,
+ * gli altri lo hanno in proporzione (mai oltre +25 %), arrotondato al peso che esiste. Il bilanciere fino a 20 kg è la
+ * sola barra: resta fisso. Le ragazze con il peso corporeo hanno il fattore più leggero (lib/sesso.ts).
  */
-export function pesoDiPartenza(id: string, sesso?: Sesso | null): { kg: number; nota: string } | null {
+export function pesoDiPartenza(id: string, sesso?: Sesso | null, pesoCorporeo?: number | null): { kg: number; nota: string } | null {
   const e = esercizioV2ById(id);
-  if (!e?.pesoKg) return null;
-  const kg = sesso === 'F' ? Math.min(e.pesoKg, pesoPerRagazza(e.pesoKg, e.pesoPer ?? null, e.qualita === 'forza-parte-alta')) : e.pesoKg; // 13/11: ragazze, lib/sesso.ts
-  const quanto = e.pesoPer ? PESO_PER_TESTO[e.pesoPer](kg) : `${kg} kg`;
-  return { kg, nota: `Peso di partenza: ${quanto}. Giusto se chiudi le ripetizioni con 2-3 in riserva; se è troppo facile o troppo pesante cambialo e scrivi nel campo Carico quello che hai usato.` };
+  const p = pesoPartenzaKg(e, sesso, pesoCorporeo);
+  if (!e || !p) return null;
+  const quanto = e.pesoPer ? PESO_PER_TESTO[e.pesoPer](p.kg) : `${p.kg} kg`;
+  const perTe = p.conBw ? ` (dal tuo peso, ${pesoCorporeo} kg)` : '';
+  return { kg: p.kg, nota: `Peso di partenza: ${quanto}${perTe}. Giusto se chiudi le ripetizioni con 2-3 in riserva; se è troppo facile o troppo pesante cambialo e scrivi nel campo Carico quello che hai usato.` };
 }
 
 /** Espande un blocco negli items del piano (esercizio_id, serie, quantità, recupero, carico, schema). */

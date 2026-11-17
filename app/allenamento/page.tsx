@@ -14,7 +14,7 @@ import {
 } from 'recharts';
 import { AlertTriangle, BatteryLow, CalendarClock, Check, ChevronRight, CircleDot, ClipboardList, MessageCircle, RefreshCw, Scale, Settings2, ShieldAlert, Users } from 'lucide-react';
 import type { TecnicaMese } from '@/lib/trainingTecnicaComposta';
-import type { TrainingSetup } from '@/lib/trainingSetup';
+import { pesoCorporeoValido, type TrainingSetup } from '@/lib/trainingSetup';
 import type { SquadraSettimana } from '@/lib/trainingSquadra';
 import TrainingPlanForm from '@/components/TrainingPlanForm';
 import ResocontoSheet from '@/components/ResocontoSheet';
@@ -28,7 +28,7 @@ import { nomeBloccoAtleta, durataLabel } from '@/lib/trainingLabels';
 import { minutiTest, minutiTesto, testPerObiettivi } from '@/lib/testPerObiettivi';
 import { dataConGiorno, isRigaSpostamento, origineSpostamento, riepilogoSpostamenti, seduteCambiateDopo, type Spostamento } from '@/lib/spostamenti';
 import { CONSIGLIO_VISITA, PRESA_RESPONSABILITA, ZONE_DOLORE } from '@/lib/trainingDolore';
-import { AppLoader, Badge, Banner, Button, Card, CardPlay, Chip, Elenco, Field, RigaElenco, SectionTitle, Sheet, Textarea, TitoloGruppo } from '@/components/ui';
+import { AppLoader, Badge, Banner, Button, Card, CardPlay, Chip, Elenco, Field, Input, RigaElenco, SectionTitle, Sheet, Textarea, TitoloGruppo } from '@/components/ui';
 import SetupCampo from '@/components/SetupCampo';
 
 export interface RomboPoint { key: string; label: string; gruppo?: string; score: number | null; scoreIniziale?: number | null; delta?: number | null; fatti: number; totali: number; nonValutabili?: number; punte?: string[] }
@@ -184,6 +184,10 @@ export default function AllenamentoHub() {
   const [autoGen, setAutoGen] = useState(false); // nuova settimana preparata in automatico
   const autoGenTried = useRef(false); // un solo tentativo automatico per apertura: se fallisce, resta il bottone
   const [genError, setGenError] = useState<string | null>(null);
+  // 16/11 (Ste): il peso corporeo è obbligatorio; chi ha già fatto il setup senza lo scrive qui
+  const [pesoBozza, setPesoBozza] = useState('');
+  const [pesoSalvando, setPesoSalvando] = useState(false);
+  const [pesoErrore, setPesoErrore] = useState<string | null>(null);
   const [posticipoMsg, setPosticipoMsg] = useState<string | null>(null);
   // Sheet "Hai un dolore?"
   const [showPain, setShowPain] = useState(false);
@@ -306,12 +310,12 @@ export default function AllenamentoHub() {
   // Nuova settimana: se il piano è di una settimana passata, l'app prepara da sola quello nuovo
   // (le sedute saltate della settimana scorsa vengono riproposte uguali dal planner)
   useEffect(() => {
-    if (state?.planStale && state.settimanaConfermata !== false && !state.abbonamento?.inPausa && state.doloreFase?.fase !== 'stop' && !generating && !autoGen && !autoGenTried.current) {
+    if (state?.planStale && state.settimanaConfermata !== false && !state.abbonamento?.inPausa && state.doloreFase?.fase !== 'stop' && pesoCorporeoValido(state.setup?.pesoKg) && !generating && !autoGen && !autoGenTried.current) {
       autoGenTried.current = true;
       setAutoGen(true);
       generaPiano();
     }
-  }, [state?.planStale, state?.settimanaConfermata, state?.doloreFase?.fase, generating, autoGen, generaPiano]);
+  }, [state?.planStale, state?.settimanaConfermata, state?.doloreFase?.fase, state?.setup?.pesoKg, generating, autoGen, generaPiano]);
 
   // 10/11: la settimana con la squadra è obbligatoria. Finché il ragazzo non risponde, il foglio resta aperto e il piano
   // automatico aspetta; la proposta («Come la scorsa») arriva da /api/calendar solo quando serve
@@ -584,6 +588,31 @@ export default function AllenamentoHub() {
   );
 
 
+  // 16/11 (Ste: «chiediamo il peso nel setup obbligatorio»): chi ha fatto il setup senza il peso lo scrive qui, prima di tutto
+  const pesoMancante = !setupDaFare && !pesoCorporeoValido(state.setup?.pesoKg);
+  const salvaPeso = async () => {
+    const p = Number(pesoBozza.replace(',', '.'));
+    if (!pesoCorporeoValido(p)) { setPesoErrore('Scrivi un peso tra 30 e 150 kg.'); return; }
+    setPesoSalvando(true); setPesoErrore(null);
+    try {
+      const res = await authFetch('/api/training/setup', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pesoKg: p }) });
+      if (res.ok) await load();
+      else { const d = await res.json().catch(() => ({})); setPesoErrore(d.error || 'Non sono riuscito a salvarlo. Riprova.'); }
+    } finally { setPesoSalvando(false); }
+  };
+  const cardPeso = pesoMancante ? (
+    <Card variant="accent" className="mb-5">
+      <h2 className="font-display text-title-2 font-bold text-app mb-1">Quanto pesi?</h2>
+      <p className="text-body text-muted leading-relaxed mb-3">Serve per i pesi di partenza degli esercizi: si calcolano dal tuo peso. Senza, la settimana non si prepara.</p>
+      <Field label="Peso corporeo (kg)" htmlFor="hub-peso">
+        <Input id="hub-peso" type="text" inputMode="decimal" value={pesoBozza} placeholder="es. 62" className="tabular-nums"
+          onChange={(e) => setPesoBozza(e.target.value.replace(/[^0-9.,]/g, ''))} />
+      </Field>
+      {pesoErrore && <p className="text-body-sm text-warning mt-2">{pesoErrore}</p>}
+      <Button size="lg" fullWidth className="mt-3" onClick={salvaPeso} loading={pesoSalvando} disabled={!pesoBozza}>Salva il peso</Button>
+    </Card>
+  ) : null;
+
   // "La tua settimana non c'è ancora": senza piano (o se il piano automatico del lunedì non è riuscito)
   const cardSenzaPiano = state.doloreFase?.fase === 'stop' ? (
     <Card variant="accent" className="mb-5">
@@ -610,7 +639,8 @@ export default function AllenamentoHub() {
 
   // ── Vista OGGI (9/11): la cosa di oggi, i resoconti e il dolore; il resto sta nelle altre schede ─────────
   const vistaOggi = () => {
-    if (batteriaVuota) return <>{cardResoconto}{setupDaFare ? cardSetup : cardTest}</>;
+    if (batteriaVuota) return <>{cardPeso}{cardResoconto}{setupDaFare ? cardSetup : cardTest}</>;
+    if (pesoMancante && !haPiano) return <>{cardResoconto}{cardPeso}</>;
     let hero: React.ReactNode;
     const proposteOggi = diOggi?.proposte ?? [];
     if (!haPiano) {
@@ -672,6 +702,7 @@ export default function AllenamentoHub() {
     return (
       <>
         {cardResoconto}
+        {cardPeso}
         {/* M9: zona dolorante segnalata sotto soglia (o al rientro dalla pausa): si allena, con quella zona più leggera */}
         {!state.painHold && state.dolore?.riga && (
           <Card variant="warn" padding="sm" className="mb-4">

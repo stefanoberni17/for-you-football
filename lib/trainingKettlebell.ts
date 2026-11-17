@@ -77,7 +77,7 @@ function bloccoKb(f: FasciaKb): Blocco | null {
   for (const [id, serie, quantita, recupero_sec] of def.items) {
     const ex: ExerciseV2 | undefined = esercizioV2ById(id);
     if (!ex || !ex.attivo) continue;
-    items.push({ esercizio_id: id, nomeEverfit: ex.nome, serie, quantita, unita: 'reps', recupero_sec, schema: 'fisso', perLato: ex.perLato, carico_kg: ex.pesoKg });
+    items.push({ esercizio_id: id, nomeEverfit: ex.nome, serie, quantita, unita: 'reps', recupero_sec, schema: 'fisso', perLato: ex.perLato }); // i kg li mette expandBlocco (peso di partenza, dal 16/11 dal peso corporeo)
     qualitaSet[ex.qualita] = (qualitaSet[ex.qualita] ?? 0) + serie;
   }
   if (items.length < 3) return null;

@@ -8,7 +8,7 @@
  * ESERCIZI_V2; il planner LLM li riceve nel prompt ma non può scavalcarli.
  */
 import { esercizioV2ById, LIVELLO_ORDINE, type AttrezzaturaV2, type ExerciseV2, type LivelloMinV2, type QualitaV2 } from './trainingCatalogV2';
-import { KG_SENZA_MASSIMALE_MAX_F, type Sesso } from './sesso';
+import { arrotondaPeso, KG_SENZA_MASSIMALE_MAX_F, pesoCorporeoValido, pesoPerRagazza, type Sesso } from './sesso';
 
 // ─── Bounds per qualità ──────────────────────────────────────────────────────
 //
@@ -219,6 +219,36 @@ export const KG_SENZA_MASSIMALE_MAX = 20;
 /** Il tetto senza massimale per questa persona: 12 kg per le ragazze (13/11, lib/sesso.ts). */
 export const kgSenzaMassimaleMax = (sesso?: Sesso | null) => (sesso === 'F' ? KG_SENZA_MASSIMALE_MAX_F : KG_SENZA_MASSIMALE_MAX);
 
+/** Il peso corporeo a cui il peso di partenza del catalogo è "giusto" (16/11): la tabella di docs/pesi-peso-corporeo-2026-11.md. */
+export const PESO_RIFERIMENTO_KG = 70;
+/** Il peso dal peso corporeo non supera quello del catalogo di più del 25 % (il primo giorno, poi decide la dose). [proposta] */
+export const PESO_BW_TETTO = 1.25;
+/**
+ * Il peso di partenza di un esercizio per questa persona: il catalogo (per chi pesa 70 kg) in proporzione al peso
+ * corporeo, mai oltre +25 %, arrotondato al peso che esiste; il bilanciere da 20 kg è la barra e resta fisso.
+ * Ragazze: × 0,8 / 0,6 se il peso viene dal peso corporeo, × 0,65 / 0,55 altrimenti (lib/sesso.ts). null = senza pesi.
+ */
+export function pesoPartenzaKg(e: Pick<ExerciseV2, 'pesoKg' | 'pesoPer' | 'qualita'> | undefined, sesso?: Sesso | null, pesoCorporeo?: number | null): { kg: number; conBw: boolean } | null {
+  if (!e?.pesoKg) return null;
+  const parteAlta = e.qualita === 'forza-parte-alta';
+  const conBw = pesoCorporeoValido(pesoCorporeo) && !(e.pesoPer === 'bilanciere' && e.pesoKg <= 20);
+  if (conBw) {
+    const x = Math.min(e.pesoKg * (pesoCorporeo! / PESO_RIFERIMENTO_KG), e.pesoKg * PESO_BW_TETTO);
+    return { kg: sesso === 'F' ? pesoPerRagazza(x, e.pesoPer ?? null, parteAlta, true) : arrotondaPeso(x, e.pesoPer ?? null), conBw };
+  }
+  return { kg: sesso === 'F' ? Math.min(e.pesoKg, pesoPerRagazza(e.pesoKg, e.pesoPer ?? null, parteAlta)) : e.pesoKg, conBw };
+}
+
+/**
+ * Il limite in kg senza massimale vale solo per il PESO DI PARTENZA (16/11, Ste: «ci sta il limite in partenza ma poi non deve
+ * esserci un limite massimo: il limite è quanto peso il ragazzo riesce a fare per le reps»): 20 kg (12 per le ragazze), o il
+ * suo peso di partenza dal peso corporeo se è più alto. I kg che vengono dai suoi log (`kg_dai_log`) non hanno tetto.
+ */
+export function tettoKgSenzaMassimale(ex: ExerciseV2 | undefined, ctx: { sesso?: Sesso | null; pesoCorporeo?: number | null }): number {
+  const p = pesoPartenzaKg(ex, ctx.sesso, ctx.pesoCorporeo);
+  return Math.max(kgSenzaMassimaleMax(ctx.sesso), p?.kg ?? 0);
+}
+
 /** Brzycki (foglio CALCOLO MASSIMALI del File_DB): 1RM = peso / (1.0278 − 0.0278 × reps) */
 export function stima1RM(peso: number, reps: number): number {
   if (reps < 1 || reps > 12) return NaN; // fuori dal range in cui la formula è affidabile
@@ -275,6 +305,7 @@ export interface ContestoV2 {
   eta: number | null;
   esperienzaPalestra: boolean;
   massimali?: Record<string, number>; // 1RM stimati per esercizio (id v2) — necessari per regime max/esplosiva
+  pesoCorporeo?: number | null;   // 16/11: i pesi di partenza del catalogo in rapporto al peso corporeo (lib/trainingBlocks.ts)
   sesso?: Sesso | null;           // 13/11: ragazza → pesi di partenza più bassi e tetto senza massimale a 12 kg (lib/sesso.ts)
 }
 
@@ -287,6 +318,7 @@ export interface ItemV2 {
   regime?: RegimeForza;   // forza con carico: 'max' | 'esplosiva' | 'base'
   carico_pct?: number;    // % del massimale stimato
   carico_kg?: number;     // carico assoluto (blocchi / log per serie): se c'è il massimale diventa una % e passa gli stessi controlli
+  kg_dai_log?: boolean;   // 16/11: kg arrivati dai suoi log (la dose sale da quello che ha chiuso): niente tetto
   blocco_id?: string;
 }
 
@@ -377,7 +409,7 @@ export function validateItemV2(
     if (regime === 'max' && maxPct < 80) errors.push(`${n}: forza massima non ammessa per questo profilo (carico max ${maxPct}%)`);
     // carico assoluto con massimale noto → stessa verifica in % (gating + regime)
     const oneRm = ctx.massimali?.[ex.id];
-    if (it.carico_pct === undefined && it.carico_kg !== undefined && oneRm && oneRm > 0) {
+    if (it.carico_pct === undefined && it.carico_kg !== undefined && oneRm && oneRm > 0 && !it.kg_dai_log) {
       const pct = Math.round((it.carico_kg / oneRm) * 100);
       if (pct > maxPct) errors.push(`${n}: ${it.carico_kg} kg = ${pct}% del massimale stimato (${oneRm} kg), oltre il massimo ammesso ${maxPct}%`);
     }
@@ -390,12 +422,14 @@ export function validateItemV2(
     if ((regime === 'max' || regime === 'esplosiva') && !(ctx.massimali && ctx.massimali[ex.id]))
       errors.push(`${n}: regime ${regime} richiede il massimale stimato (batteria palestra non fatta)`);
   }
-  // Rete di sicurezza sui kg (vale ANCHE per gli item fidati dei blocchi): senza massimale non si
-  // supera KG_SENZA_MASSIMALE_MAX; con massimale il tetto è caricoMaxPct (età, esperienza, livello)
-  if (it.carico_kg !== undefined && it.carico_kg > 0) {
+  // Rete di sicurezza sui kg di PARTENZA (vale ANCHE per gli item fidati dei blocchi): senza massimale non si supera
+  // `tettoKgSenzaMassimale`; con massimale il tetto è caricoMaxPct (età, esperienza, livello). I kg arrivati dai suoi log
+  // (`kg_dai_log`, 16/11) non hanno tetto: il limite è quello che chiude per le ripetizioni previste.
+  if (it.carico_kg !== undefined && it.carico_kg > 0 && !it.kg_dai_log) {
     const oneRm = ctx.massimali?.[ex.id];
-    if (!(oneRm && oneRm > 0) && it.carico_kg > kgSenzaMassimaleMax(ctx.sesso))
-      errors.push(`${n}: ${it.carico_kg} kg senza massimale stimato (massimo ${kgSenzaMassimaleMax(ctx.sesso)} kg finché non fa i test in palestra)`);
+    const tetto = tettoKgSenzaMassimale(ex, ctx);
+    if (!(oneRm && oneRm > 0) && it.carico_kg > tetto)
+      errors.push(`${n}: ${it.carico_kg} kg senza massimale stimato (per partire al massimo ${tetto} kg, poi si sale dai suoi kg)`);
   }
 
   // Finestra partita per qualità (un test usato come esercizio in un blocco di Ste segue il blocco, non la finestra "test")
