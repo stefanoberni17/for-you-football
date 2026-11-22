@@ -8,6 +8,8 @@ const parole: ReelProps["parole"] = [
 
 export const prova: ReelProps = {
   girato: "media/prova.mp4",
+  voltoY: 0.47,
+  paroleChiave: ["professionista", "calcio", "vita", "professionistico", "percorso", "strade"],
   gancio: "Chi c'è dietro For You Football",
   pezzi: [
     { da: 8.8, a: 13.72 },

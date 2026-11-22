@@ -3,7 +3,15 @@ import type { Parola, Pezzo } from "./tipi";
 
 // Le regole di inquadratura e taglio, in un posto solo.
 export const FPS = 30;
-export const ZOOM_STRETTO = 1.18; // punch-in sui pezzi pari
+export const ALTEZZA = 1920;
+
+// Il volto sta nella parte medio-alta: il suo centro a un terzo dello schermo.
+export const VOLTO_TARGET_Y = 0.36;
+// I sottotitoli stanno poco sotto la metà, sempre sotto il mento.
+export const SOTTOTITOLI_TOP_Y = 0.6;
+
+export const ZOOM_LARGO = 1.24;
+export const ZOOM_STRETTO = 1.4;
 export const ZOOM_DERIVA = 0.03; // lento avvicinamento dentro ogni pezzo
 export const GANCIO_SECONDI = 2.5;
 
@@ -18,15 +26,29 @@ export const montaPezzi = (pezzi: Pezzo[]): PezzoMontato[] => {
   let cursore = 0;
   return pezzi.map((p, i) => {
     const durataFrame = Math.round((p.a - p.da) * FPS);
+    const stretto = p.stretto ?? i % 2 === 1;
     const montato = {
       ...p,
-      zoom: p.zoom ?? (i % 2 === 0 ? 1 : ZOOM_STRETTO),
+      zoom: stretto ? ZOOM_STRETTO : ZOOM_LARGO,
       inizioFrame: cursore,
       durataFrame,
     };
     cursore += durataFrame;
     return montato;
   });
+};
+
+// Zoom attorno al volto e spostamento verso l'alto, senza mai scoprire i bordi.
+export const inquadratura = (voltoY: number, zoom: number) => {
+  let spostamento = VOLTO_TARGET_Y - voltoY; // in frazioni di altezza, negativo = su
+  const bordoBasso = voltoY + (1 - voltoY) * zoom;
+  const bordoAlto = voltoY - voltoY * zoom;
+  spostamento = Math.max(spostamento, 1 - bordoBasso); // il fondo resta coperto
+  spostamento = Math.min(spostamento, -bordoAlto); // la cima resta coperta
+  return {
+    transformOrigin: `50% ${voltoY * 100}%`,
+    transform: `translateY(${spostamento * ALTEZZA}px) scale(${zoom})`,
+  };
 };
 
 export const durataReel = (pezzi: PezzoMontato[]): number =>
@@ -55,3 +77,6 @@ export const paroleNelReel = (
   }
   return out;
 };
+
+export const pulisci = (t: string) =>
+  t.trim().toLowerCase().replace(/[.,:;!?«»"]/g, "");

@@ -8,12 +8,13 @@ import {
 } from "remotion";
 import { createTikTokStyleCaptions } from "@remotion/captions";
 import type { Caption, TikTokPage } from "@remotion/captions";
+import { ALTEZZA, pulisci, SOTTOTITOLI_TOP_Y } from "./montaggio";
 import { stile } from "./stile";
 
 // Poche parole per volta: si leggono col telefono in mano.
 const CAMBIA_OGNI_MS = 900;
 
-const Pagina: React.FC<{ page: TikTokPage }> = ({ page }) => {
+const Pagina: React.FC<{ page: TikTokPage; chiave: Set<string> }> = ({ page, chiave }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const oraMs = page.startMs + (frame / fps) * 1000;
@@ -22,35 +23,68 @@ const Pagina: React.FC<{ page: TikTokPage }> = ({ page }) => {
   return (
     <AbsoluteFill
       style={{
-        justifyContent: "flex-end",
+        // Poco sotto la metà, sotto il volto.
+        paddingTop: SOTTOTITOLI_TOP_Y * ALTEZZA,
         alignItems: "center",
-        // Sopra la zona di descrizione e bottoni di Instagram.
-        paddingBottom: stile.margineSottotitoli,
-        paddingLeft: 80,
-        paddingRight: 80,
+        paddingLeft: 70,
+        paddingRight: 70,
       }}
     >
       <div
         style={{
-          fontFamily: stile.font,
-          fontSize: 78,
-          fontWeight: 800,
-          lineHeight: 1.12,
-          textAlign: "center",
-          whiteSpace: "pre-wrap",
-          color: stile.bianco,
-          textTransform: "uppercase",
-          letterSpacing: -0.5,
-          WebkitTextStroke: "10px rgba(0,0,0,0.85)",
-          paintOrder: "stroke fill",
-          transform: `scale(${0.92 + 0.08 * entrata})`,
+          display: "flex",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          alignItems: "baseline",
+          columnGap: 4,
+          rowGap: 4,
+          maxWidth: 940,
+          padding: "14px 22px",
+          borderRadius: 26,
+          // Fondo verde foresta scuro: si legge anche sulla maglia bianca.
+          background: "rgba(11, 31, 20, 0.62)",
+          opacity: entrata,
+          transform: `translateY(${(1 - entrata) * 14}px)`,
         }}
       >
         {page.tokens.map((t, i) => {
           const attiva = t.fromMs <= oraMs && t.toMs > oraMs;
+          const accento = chiave.has(pulisci(t.text));
+          const testo = t.text.trim();
+          if (accento) {
+            return (
+              <span
+                key={`${t.fromMs}-${i}`}
+                style={{
+                  fontFamily: stile.fontAccento,
+                  fontStyle: "italic",
+                  fontWeight: 600,
+                  fontSize: 94,
+                  padding: "0 6px",
+                  color: attiva ? stile.verde : stile.verdeChiaro,
+                  textShadow: stile.ombra,
+                }}
+              >
+                {testo}
+              </span>
+            );
+          }
           return (
-            <span key={`${t.fromMs}-${i}`} style={{ color: attiva ? stile.verde : stile.bianco }}>
-              {t.text}
+            <span
+              key={`${t.fromMs}-${i}`}
+              style={{
+                fontFamily: stile.font,
+                fontWeight: 700,
+                fontSize: 74,
+                lineHeight: 1.15,
+                color: attiva ? stile.scuro : stile.bianco,
+                background: attiva ? stile.verde : "transparent",
+                borderRadius: 14,
+                padding: "0 10px",
+                textShadow: attiva ? "none" : stile.ombra,
+              }}
+            >
+              {testo}
             </span>
           );
         })}
@@ -59,8 +93,12 @@ const Pagina: React.FC<{ page: TikTokPage }> = ({ page }) => {
   );
 };
 
-export const Sottotitoli: React.FC<{ captions: Caption[] }> = ({ captions }) => {
+export const Sottotitoli: React.FC<{ captions: Caption[]; paroleChiave: string[] }> = ({
+  captions,
+  paroleChiave,
+}) => {
   const { fps } = useVideoConfig();
+  const chiave = useMemo(() => new Set(paroleChiave), [paroleChiave]);
   const { pages } = useMemo(
     () => createTikTokStyleCaptions({ captions, combineTokensWithinMilliseconds: CAMBIA_OGNI_MS }),
     [captions],
@@ -78,7 +116,7 @@ export const Sottotitoli: React.FC<{ captions: Caption[] }> = ({ captions }) => 
         if (durata <= 0) return null;
         return (
           <Sequence key={i} from={from} durationInFrames={durata} layout="none">
-            <Pagina page={page} />
+            <Pagina page={page} chiave={chiave} />
           </Sequence>
         );
       })}

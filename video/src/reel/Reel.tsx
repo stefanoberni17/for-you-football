@@ -9,13 +9,17 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { GANCIO_SECONDI, montaPezzi, paroleNelReel, ZOOM_DERIVA } from "./montaggio";
+import { GANCIO_SECONDI, inquadratura, montaPezzi, paroleNelReel, ZOOM_DERIVA } from "./montaggio";
 import type { PezzoMontato } from "./montaggio";
 import { Sottotitoli } from "./Sottotitoli";
 import { stile } from "./stile";
 import type { ReelProps } from "./tipi";
 
-const Pezzo: React.FC<{ girato: string; pezzo: PezzoMontato }> = ({ girato, pezzo }) => {
+const Pezzo: React.FC<{ girato: string; voltoY: number; pezzo: PezzoMontato }> = ({
+  girato,
+  voltoY,
+  pezzo,
+}) => {
   const frame = useCurrentFrame();
   // Lento avvicinamento dentro il pezzo: l'immagine non resta mai ferma.
   const deriva = interpolate(frame, [0, pezzo.durataFrame], [0, ZOOM_DERIVA]);
@@ -28,9 +32,8 @@ const Pezzo: React.FC<{ girato: string; pezzo: PezzoMontato }> = ({ girato, pezz
           width: "100%",
           height: "100%",
           objectFit: "cover",
-          // Zoom verso il volto, che sta nel terzo alto.
-          transformOrigin: "50% 32%",
-          transform: `scale(${pezzo.zoom + deriva})`,
+          // Volto nella parte medio-alta, zoom attorno al volto.
+          ...inquadratura(voltoY, pezzo.zoom + deriva),
         }}
       />
     </AbsoluteFill>
@@ -46,14 +49,14 @@ const Gancio: React.FC<{ testo: string }> = ({ testo }) => {
     extrapolateRight: "clamp",
   });
   return (
-    <AbsoluteFill style={{ alignItems: "center", paddingTop: stile.margineAlto }}>
+    <AbsoluteFill style={{ alignItems: "center", paddingTop: 170 }}>
       <div
         style={{
           fontFamily: stile.font,
           fontWeight: 800,
           fontSize: 54,
           lineHeight: 1.1,
-          color: "#0b1f14",
+          color: stile.scuro,
           background: stile.verde,
           padding: "18px 34px",
           borderRadius: 22,
@@ -69,7 +72,14 @@ const Gancio: React.FC<{ testo: string }> = ({ testo }) => {
   );
 };
 
-export const Reel: React.FC<ReelProps> = ({ girato, pezzi, parole, gancio }) => {
+export const Reel: React.FC<ReelProps> = ({
+  girato,
+  voltoY,
+  pezzi,
+  parole,
+  paroleChiave = [],
+  gancio,
+}) => {
   const { fps } = useVideoConfig();
   const montati = useMemo(() => montaPezzi(pezzi), [pezzi]);
   const captions = useMemo(() => paroleNelReel(parole, montati), [parole, montati]);
@@ -78,10 +88,10 @@ export const Reel: React.FC<ReelProps> = ({ girato, pezzi, parole, gancio }) => 
     <AbsoluteFill style={{ backgroundColor: "black" }}>
       {montati.map((p, i) => (
         <Sequence key={i} from={p.inizioFrame} durationInFrames={p.durataFrame}>
-          <Pezzo girato={girato} pezzo={p} />
+          <Pezzo girato={girato} voltoY={voltoY} pezzo={p} />
         </Sequence>
       ))}
-      <Sottotitoli captions={captions} />
+      <Sottotitoli captions={captions} paroleChiave={paroleChiave} />
       {gancio ? (
         <Sequence durationInFrames={Math.round(GANCIO_SECONDI * fps)}>
           <Gancio testo={gancio} />

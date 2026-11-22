@@ -9,15 +9,16 @@ export type Parola = {
 export type Pezzo = {
   da: number; // secondi nel girato
   a: number;
-  // Zoom del pezzo: 1 = inquadratura piena. Se manca, si alterna 1 / ZOOM_STRETTO.
-  zoom?: number;
+  stretto?: boolean; // inquadratura stretta; se manca, si alterna larga / stretta
 };
 
 export type ReelProps = {
   girato: string; // percorso in public/, es. "media/prova.mp4"
+  // Altezza del centro del volto nel girato (0 = in alto, 1 = in basso), misurata sul fotogramma.
+  voltoY: number;
   pezzi: Pezzo[];
   parole: Parola[];
+  // Parole da mettere in corsivo verde chiaro (minuscole, senza punteggiatura).
+  paroleChiave?: string[];
   gancio?: string; // frase in alto nei primi secondi
-  volumeMusica?: number; // 0 = niente musica
-  musica?: string;
 };
