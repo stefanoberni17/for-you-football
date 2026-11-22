@@ -199,6 +199,7 @@ for-you-football/
 ├── .github/workflows/ci.yml               # CI su ogni PR e su main: typecheck · lint a cricchetto · test · build
 ├── .claude/settings.json                  # Permesso pre-approvato per `node scripts/everfit-assign.mjs` nelle sessioni Claude (tracciato con git add -f: .claude/ è in .gitignore)
 ├── public/                                # SVG di default Next.js
+├── video/                                 # Reel in Remotion (22/11/2026): progetto a sé, escluso da typecheck e lint dell'app. Stile approvato da Ste (volto medio-alto, zoom alternato, sottotitoli Outfit con contorno nero, parola attiva in pillola verde, parole chiave in Crimson Pro corsivo) e passaggi per montare in video/README.md
 ├── vercel.json                            # 3 cron Vercel: cleanup-telegram 03:00 UTC · daily-morning 06:00 UTC · daily-evening 16:00 UTC
 └── docs/
     └── supabase-schema.sql                # Schema completo: 6 tabelle + RLS + indexes + trigger
