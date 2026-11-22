@@ -163,7 +163,7 @@ export default function OnboardingPage() {
             {[
               { icon: <Clock size={24} aria-hidden />, text: 'Ogni giorno 5-10 minuti: apertura, pratica, una domanda.' },
               { icon: <Key size={24} aria-hidden />, text: 'Sette giorni. Il settimo è il Gate: chiude la settimana e apre la prossima.' },
-              { icon: <Wrench size={24} aria-hidden />, text: 'Ogni settimana uno strumento nuovo. Resta tuo: lo porti in campo.' },
+              { icon: <Wrench size={24} aria-hidden />, text: 'Nelle prime otto settimane uno strumento alla volta, poi li metti insieme nel tuo metodo. Restano tuoi: li porti in campo.' },
               { icon: <MessageCircle size={24} aria-hidden />, text: 'Il Coach AI c\'è quando lo cerchi tu, nella tab Coach.' },
             ].map((r, i) => (
               <li key={i} className="flex items-start gap-4">
@@ -189,7 +189,7 @@ export default function OnboardingPage() {
             <p className="text-overline uppercase tracking-wider font-semibold text-forest-100 mb-2">Settimana 1 · Presenza</p>
             <h3 className="font-display text-title-1 font-bold mb-3">Il Reset</h3>
             <p className="text-body text-forest-50 leading-relaxed mb-5">
-              Tornare al presente in qualsiasi momento. Tre respiri, e sei di nuovo nella partita.
+              Respiro, gesto e la tua parola: un modo per tornare qui, nel momento in cui sei.
             </p>
             <div className="space-y-2 text-body-sm bg-white/10 rounded-card p-4">
               <p className="flex items-center gap-2">

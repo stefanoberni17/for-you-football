@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getAuthUser } from '@/lib/auth';
-import { loadRisposte, loadRisposteChiave, salvaRisposta, RISPOSTA_MAX } from '@/lib/risposteServer';
+import { loadGiorniFatti, loadRisposte, loadRisposteChiave, salvaRisposta, RISPOSTA_MAX } from '@/lib/risposteServer';
 
 export const dynamic = 'force-dynamic';
 
@@ -14,8 +14,10 @@ export async function GET(request: NextRequest) {
     const userId = await getAuthUser(request);
     if (!userId) return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
     const soloChiavi = new URL(request.url).searchParams.get('chiavi') === '1';
-    const risposte = soloChiavi ? await loadRisposteChiave(userId) : await loadRisposte(userId);
-    return NextResponse.json({ risposte });
+    if (soloChiavi) return NextResponse.json({ risposte: await loadRisposteChiave(userId) });
+    // Tutte: anche i giorni fatti con la data, così si vedono i giorni saltati (W11-G3)
+    const [risposte, giorni] = await Promise.all([loadRisposte(userId), loadGiorniFatti(userId)]);
+    return NextResponse.json({ risposte, giorni });
   } catch (error) {
     console.error('❌ GET /api/risposte:', (error as Error).message);
     return NextResponse.json({ error: (error as Error).message }, { status: 500 });

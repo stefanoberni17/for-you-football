@@ -70,7 +70,7 @@ export const CAPACITA: Capacita[] = [
     esercizi: [
       anchor(
         'reset',
-        'Lo strumento base della presenza: tre secondi per tornare qui — respiro, gesto, mantra. È il gesto che richiami in campo quando la testa è andata altrove.',
+        'Lo strumento base della presenza: respiro, gesto e la tua parola. Da fermo lo fai completo; in campo, alla prima pausa, ne basta uno breve: un respiro comodo con il gesto e la parola.',
         'respirazione'
       ),
       {
@@ -94,7 +94,7 @@ export const CAPACITA: Capacita[] = [
           'Tenere l’attenzione su un punto e tornarci quando scappa: è la concentrazione, il muscolo della presenza. Il numero è l’àncora, il pensiero è il disturbo, ogni ritorno è una ripetizione vera. La distrazione non è l’errore: accorgersene e tornare È l’esercizio.',
         durataMinuti: 3,
         tipoPratica: 'riflessione',
-        pratica: `Seduto, occhi chiusi, un respiro per arrivare qui.
+        pratica: `Seduto. Occhi aperti, lo sguardo su un punto, attenzione al punto sotto lo sterno. Un respiro per arrivare qui.
 
 1. Porta l'attenzione sul numero 0. Tienilo lì, fermo, come un punto.
 2. Appena ti accorgi che è arrivato un pensiero, non seguirlo e non scacciarlo: lascialo andare e passa a 1.
@@ -170,7 +170,7 @@ Sei tornato qui.`,
           'Guardare i pensieri passare senza salirci sopra. Qui non cerchi di restare concentrato (quella è la Presenza): lasci che la mente produca e ti alleni a vederla da fuori. La psicologia dell’accettazione (ACT) lo chiama defusione: quando vedi un pensiero come un pensiero, e non come la realtà, perde la presa.',
         durataMinuti: 4,
         tipoPratica: 'visualizzazione',
-        pratica: `Seduto, occhi chiusi, un respiro.
+        pratica: `Seduto. Occhi aperti, lo sguardo su un punto, attenzione al punto sotto lo sterno. Un respiro.
 
 1. Immagina un ruscello che scorre, e foglie che galleggiano sull'acqua.
 2. Ogni pensiero che arriva, posalo su una foglia — un'immagine, una parola, una preoccupazione — e lascia che scorra via.
@@ -206,19 +206,18 @@ Sei tornato qui.`,
         'riflessione'
       ),
       {
-        id: 'attenzione-divisa',
-        nome: 'Attenzione divisa',
+        id: 'corpo-nelle-pause',
+        nome: 'Il corpo nelle pause',
         cosaAllena:
-          'Restare presente al corpo mentre ti muovi — presenza in azione, non da fermo. È il muscolo che in campo ti fa sentire te stesso e leggere il gioco nello stesso momento.',
+          'Accorgerti del corpo quando ti fermi, non mentre ti muovi. Mentre ti muovi l’attenzione sta su quello che fai; nella pausa torni un attimo su di te e guardi com’è il corpo adesso. In campo è lo stesso: il Body Check si fa da fermo o in una pausa vera, mai mentre giochi.',
         durataMinuti: 3,
         tipoPratica: 'riflessione',
         pratica: `In piedi, occhi aperti.
 
-1. Una mano sul punto sotto lo sterno: senti il respiro che entra ed esce.
-2. Senza perdere il corpo, apri lo sguardo a ciò che hai intorno — oggetti, suoni, spazio.
-3. Tieni le due cose insieme: te dentro + il mondo fuori.
-4. Cammina piano facendo lo stesso.
-5. Se ti perdi in una delle due, torna prima al corpo, poi riapri fuori.`,
+1. Cammina per un minuto, a passo normale. L'attenzione su dove vai: lo spazio, quello che hai intorno.
+2. Fermati. Un Body Check: piedi, stomaco, petto, spalle. Solo notare com'è adesso, senza cambiare niente.
+3. Riparti a camminare, con l'attenzione di nuovo fuori.
+4. Rifai il giro tre o quattro volte: mentre cammini, fuori; quando ti fermi, il Body Check.`,
       },
       {
         id: 'scansione-corpo',
@@ -227,7 +226,7 @@ Sei tornato qui.`,
           'Ascoltare il corpo zona per zona, più lento e completo del Body Check. Scorri l’attenzione e noti cosa c’è — caldo, freddo, peso, tensione — senza cambiare niente. La ricerca (MBSR) mostra che allena la capacità di sentire i segnali del corpo.',
         durataMinuti: 5,
         tipoPratica: 'riflessione',
-        pratica: `Seduto o sdraiato, occhi chiusi, un respiro.
+        pratica: `Seduto o sdraiato. Occhi aperti, lo sguardo su un punto, un respiro.
 
 1. Parti dai piedi: cosa senti? Caldo, freddo, pesante, leggero? Solo notare.
 2. Sali piano: gambe, bacino, pancia, petto, spalle, braccia, collo, viso.
@@ -241,7 +240,7 @@ Sei tornato qui.`,
           'Un ingresso gentile all’ascolto del corpo: trova il punto dove senti il respiro più vivo e resta lì. Più facile di una scansione intera quando sei agitato.',
         durataMinuti: 2,
         tipoPratica: 'riflessione',
-        pratica: `Occhi chiusi, non cambiare il respiro.
+        pratica: `Occhi aperti, lo sguardo su un punto. Non cambiare il respiro.
 
 1. Cerca dove lo senti di più: le narici? il petto? la pancia?
 2. Posa l'attenzione lì e restaci.
@@ -258,7 +257,7 @@ Sei tornato qui.`,
     esercizi: [
       anchor(
         'protocollo',
-        'Lo strumento base della pressione: SENTI → NOMINA → TORNA, i tre attrezzi in sequenza in 15-20 secondi. Quando la pressione sale, parte da solo.',
+        'Lo strumento base della pressione: SENTI → NOMINA → TORNA. Da fermo lo alleni nella versione lunga, 15-20 secondi; in campo, alla prima pausa, usi quella breve: il segnale nel corpo, il nome al pensiero, un respiro con gesto e parola.',
         'riflessione'
       ),
       {
@@ -287,12 +286,12 @@ La tempesta resta, ma l'ancora tiene: la barca non va alla deriva.`,
     esercizi: [
       anchor(
         'stacco',
-        'Lo strumento base dell’accettazione: stacchi dall’errore appena fatto, prima che ne arrivi un secondo.',
+        'Lo strumento base dell’accettazione: dopo l’errore, «è successo», un Reset e la prossima azione. Non è far finta di niente: cosa tenere per la prossima volta lo guardi dopo, al momento giusto.',
         'visualizzazione'
       ),
       anchor(
         'fatto-vs-storia',
-        'Separi quello che è successo davvero dal veleno che ci aggiungi. Tieni il fatto.',
+        'Separi quello che è successo davvero da quello che ne hai concluso tu. È una lettura a freddo, da fare dopo: non in campo.',
         'riflessione',
         6
       ),
@@ -317,11 +316,11 @@ La tempesta resta, ma l'ancora tiene: la barca non va alla deriva.`,
     principio: 'Perdono',
     week: 7,
     emoji: '🔥',
-    sottotitolo: 'Guidare il fuoco invece di subirlo.',
+    sottotitolo: 'Accorgerti quando sale, e scegliere tu la prossima cosa.',
     esercizi: [
       anchor(
         'anticipo',
-        'Lo strumento base: senti la rabbia salire un secondo prima, e scegli invece di subirla.',
+        'Lo strumento base: la tua frase, «quando sento…, allora alla prima pausa un Reset breve e la prossima azione». La ripassi a freddo su fastidi piccoli, così in partita ti viene più facile.',
         'visualizzazione'
       ),
       {
@@ -349,7 +348,7 @@ La tempesta resta, ma l'ancora tiene: la barca non va alla deriva.`,
     esercizi: [
       anchor(
         'rilascio',
-        'Lo strumento base: lasci il peso della partita di ieri sul campo, ed entri pulito.',
+        'Lo strumento base: un’espirazione comoda, un po’ più lunga, e lo zaino posato oltre la linea. Posi il peso, non la lezione.',
         'visualizzazione'
       ),
       {
@@ -359,7 +358,7 @@ La tempesta resta, ma l'ancora tiene: la barca non va alla deriva.`,
           'Il modo più fisico di lasciar andare: stringi un muscolo, poi mollalo di colpo e senti la differenza. Il corpo impara cosa vuol dire «lasciare», e la ricerca sugli atleti mostra che abbassa l’ansia da gara e la tensione muscolare.',
         durataMinuti: 4,
         tipoPratica: 'riflessione',
-        pratica: `Seduto, occhi chiusi.
+        pratica: `Seduto. Occhi aperti, lo sguardo su un punto.
 
 1. Stringi i pugni e le braccia, forte, 5 secondi… poi molla di colpo. Senti la differenza.
 2. Spalle su verso le orecchie, 5 secondi… molla.
@@ -374,7 +373,7 @@ La tempesta resta, ma l'ancora tiene: la barca non va alla deriva.`,
           'La versione lunga del Rilascio: svuoti lo zaino dei pesi che ti porti dietro, uno alla volta. Dare un nome a ciò che molli lo rende reale.',
         durataMinuti: 5,
         tipoPratica: 'visualizzazione',
-        pratica: `Occhi chiusi, qualche respiro.
+        pratica: `Occhi aperti, lo sguardo su un punto, qualche respiro.
 
 1. Immagina di camminare con uno zaino pesante sulle spalle.
 2. Aprilo. Cosa c'è dentro? Una paura, il giudizio di qualcuno, un errore, un dovere che non è tuo.

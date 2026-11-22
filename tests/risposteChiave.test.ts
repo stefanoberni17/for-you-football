@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   RISPOSTE_CHIAVE, DA_MOSTRARE, CAMPI_CARTA, campiCarta, campiDaNotion, chiavePerCampo, chiaviPerGiorno, isRispostaChiave, risposteChiaveScritte,
-  risposteChiaveTesto, testoChiave, idChiave, sorgenteChiave, testoDaModificare, testoRisposta, rispostaChiaveInfo, type RispostaRow,
+  risposteChiaveTesto, testoChiave, idChiave, sorgenteChiave, parolaDelReset, testoDaModificare, testoRisposta, rispostaChiaveInfo, type RispostaRow,
 } from '@/lib/risposteChiave';
 import { componiRisposta, guidaPer, leggiRisposta } from '@/lib/risposteGuidate';
 
@@ -12,7 +12,8 @@ const riga = (week: number, day: number, extra: Partial<RispostaRow> = {}): Risp
 describe('risposte chiave (review W11, 22/10)', () => {
   it('ogni giorno di DA_MOSTRARE richiama solo risposte chiave', () => {
     for (const [giorno, lista] of Object.entries(DA_MOSTRARE)) {
-      for (const [w, d] of lista) expect(isRispostaChiave(w, d), `${giorno} → ${w}-${d}`).toBe(true);
+      // 0-0 = le risposte del primo giorno (Gate 12, sola lettura)
+      for (const [w, d] of lista) expect(isRispostaChiave(w, d) || (w === 0 && d === 0), `${giorno} → ${w}-${d}`).toBe(true);
     }
   });
 
@@ -86,7 +87,7 @@ describe('Carta modificabile (26/10, docs/carta-modificabile.md)', () => {
   it('il Coach vede i riquadri della Carta e le versioni precedenti con la data', () => {
     const rows = [riga(1, 3, { risposta: 'Riparto qui.' })];
     const testo = risposteChiaveTesto(rows, [{ week: 1, day: 3, testo: 'Reset.', createdAt: '2026-10-01T09:00:00Z' }, { week: 4, day: 6, testo: 'x', createdAt: '2026-10-02T09:00:00Z' }]);
-    expect(testo).toContain('**Il tuo mantra** (Settimana 1, giorno 3, nella sua Carta):\n"Riparto qui."');
+    expect(testo).toContain('**La tua parola** (Settimana 1, giorno 3, nella sua Carta):\n"Riparto qui."');
     expect(testo).toContain('prima (2026-10-01): "Reset."');
     expect(testo).not.toContain('2026-10-02');
   });
@@ -154,5 +155,15 @@ describe('W12-G4: le risposte pronte dal DURANTE del Protocollo For You (22/11)'
 
   it('non entra nel contesto del Coach né in /risposte come risposta a sé', () => {
     expect(RISPOSTE_CHIAVE.some((r) => r.parte === 'durante')).toBe(false);
+  });
+});
+
+describe('la parola del Reset (22/11)', () => {
+  it('prima il mantra del Protocollo Pressione, poi una risposta corta di W1-G3, altrimenti niente', () => {
+    const protocollo = 'IL MIO SEGNALE NEL CORPO: Stomaco\nIL MIO PENSIERO CHE TORNA: Futuro\nIL MIO MANTRA: riparto qui — la dico piano';
+    expect(parolaDelReset([riga(4, 6, { risposta: protocollo }), riga(1, 3, { risposta: 'Reset' })])).toBe('Riparto qui.');
+    expect(parolaDelReset([riga(1, 3, { risposta: '«Sono qui»' })])).toBe('Sono qui.');
+    expect(parolaDelReset([riga(1, 3, { risposta: 'Ho scelto Reset, ma ogni tanto mi dimentico di dirla' })])).toBeNull();
+    expect(parolaDelReset([])).toBeNull();
   });
 });

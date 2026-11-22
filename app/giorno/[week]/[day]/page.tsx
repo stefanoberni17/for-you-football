@@ -7,7 +7,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { isDayUnlocked, isTimeLocked, riflessioneAperta, riflessioneApreAlle, DayProgress } from '@/lib/dayUnlockLogic';
 import { oraItaly } from '@/lib/dateItaly';
-import { GATE_DAY, WEEK_TOOLS } from '@/lib/constants';
+import { GATE_DAY, strumentoDelGiorno } from '@/lib/constants';
 import PracticePopup from '@/components/PracticePopup';
 import SaveErrorBanner from '@/components/SaveErrorBanner';
 import RisposteChiaveBox from '@/components/RisposteChiaveBox';
@@ -227,7 +227,7 @@ export default function GiornoPage() {
   const currentSlideData = slides[effectiveSlide - 1];
   const isLastSlide = effectiveSlide === totalSlides;
   const hasPracticeTimer = giorno?.durataMinuti > 0;
-  const weekTool = WEEK_TOOLS[weekNumber] || undefined;
+  const weekTool = strumentoDelGiorno(weekNumber, dayNumber);
   // Sulla slide della pratica il primario è "Inizia la pratica": "Continua" torna primario
   // solo dopo la pratica guidata (o se il giorno è già fatto).
   const continueIsSecondary = currentSlideData?.type === 'pratica' && hasPracticeTimer && !completed && !practiceDone;
@@ -599,7 +599,7 @@ export default function GiornoPage() {
               <div className="mt-5 flex flex-col gap-3">
                 <Button variant="hero" size="lg" fullWidth icon={<Sun size={20} aria-hidden />}
                   onClick={() => setShowPracticePopup(true)}>
-                  Reset breve e vai
+                  3 Reset e vai
                 </Button>
                 <Button variant="ghost" fullWidth onClick={() => { avviaGiornata(); setJustStarted(true); }}>
                   Vai senza Reset

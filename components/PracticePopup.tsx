@@ -10,9 +10,10 @@ import type { FormaRespiro } from '@/lib/respiroForme';
 
 type TipoPratica = 'respirazione' | 'visualizzazione' | 'riflessione' | 'giornata';
 
-// Reset breve delle giornate: 3 respiri (4" naso + 6" bocca) = 30"
+// Le giornate (G5) partono con «3 Reset» completi (4" naso + 6" bocca) = 30". Non è il Reset breve del campo
+// (un respiro comodo con gesto e parola, niente 4/6): fino al 22/11 si chiamava così per errore.
 const RESET_BREVE_SEC = 30;
-const RESET_BREVE_STEPS = ['Occhi aperti, un punto fisso, il punto sotto lo sterno.', 'Naso 4 secondi con il gesto, bocca 6 secondi con il mantra.', 'Tre respiri. Poi vai in giornata.'];
+const RESET_BREVE_STEPS = ['Occhi aperti, un punto fisso, il punto sotto lo sterno.', 'Naso 4 secondi gonfiando la pancia, con il gesto. Bocca 6 secondi, con la tua parola.', 'Tre Reset. Poi vai in giornata.'];
 
 interface PracticePopupProps {
   titolo: string;
@@ -340,7 +341,7 @@ export default function PracticePopup({
         onClose={handleSkip}
         closeLabel={isGiornata ? 'Vai senza Reset' : 'Ho già praticato da solo'}
         eyebrow={weekTool}
-        title={isGiornata ? 'Reset breve' : 'Pratica guidata'}
+        title={isGiornata ? '3 Reset' : 'Pratica guidata'}
         subtitle={titolo}
         footer={
           <>
@@ -400,7 +401,7 @@ export default function PracticePopup({
         fullscreen
         onClose={exitToSetup}
         closeLabel="Torna al setup"
-        title={isGiornata ? 'Reset breve' : (weekTool || 'Pratica in corso')}
+        title={isGiornata ? '3 Reset' : (weekTool || 'Pratica in corso')}
         subtitle={titolo}
       >
         <div className="min-h-full flex flex-col items-center justify-between gap-6 py-2">

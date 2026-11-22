@@ -67,21 +67,21 @@ export const ACTIONS_CATALOG: CatalogAction[] = [
   { id: 'cat_pre_reset', text: 'Faccio Il Reset 3 minuti prima di entrare in campo', category: 'pre-allenamento', principle: 'presenza' },
   { id: 'cat_pre_meal', text: 'Mangio bene almeno 2 ore prima di giocare', category: 'pre-allenamento', principle: null },
   { id: 'cat_pre_early', text: 'Arrivo agli allenamenti con 15 minuti di anticipo: entro nel ritmo prima del fischio', category: 'pre-allenamento', principle: 'presenza' },
-  { id: 'cat_pre_rilascio', text: 'Prima di giocare entro pulito: spalle aperte, respiro giù, la partita di ieri resta fuori', category: 'pre-allenamento', principle: 'lasciare-andare' },
+  { id: 'cat_pre_rilascio', text: 'Prima di giocare faccio Il Rilascio: espiro comodo e un po\' più lungo, la partita di ieri resta fuori', category: 'pre-allenamento', principle: 'lasciare-andare' },
 
   // ─── In campo (7) ────────────────────────────────────────────────────────
-  { id: 'cat_camp_ritmo', text: 'Quando perdo il ritmo faccio Il Reset', category: 'in-campo', principle: 'presenza' },
+  { id: 'cat_camp_ritmo', text: 'Quando perdo il ritmo, alla prima pausa faccio un Reset breve: un respiro con il gesto e la mia parola', category: 'in-campo', principle: 'presenza' },
   { id: 'cat_camp_apply', text: 'Applico Il Reset in una situazione concreta della giornata, dentro o fuori dal campo', category: 'in-campo', principle: 'presenza' },
   { id: 'cat_camp_thoughts', text: 'Noto i pensieri che mi prendono in campo: passato, futuro o giudizio', category: 'in-campo', principle: 'osservazione' },
-  { id: 'cat_camp_body', text: 'Prima di una giocata importante faccio un body check breve: piedi, respiro, spalle', category: 'in-campo', principle: 'ascolto' },
-  { id: 'cat_camp_pressure', text: 'Sotto pressione: sento → nomino → torno. Quindici secondi e sono nella prossima azione', category: 'in-campo', principle: 'ascolto-applicato' },
-  { id: 'cat_camp_giudizio', text: 'Se il mister o la tribuna mi pesano addosso, tengo il fatto e lascio cadere la storia', category: 'in-campo', principle: 'accettazione-applicata' },
+  { id: 'cat_camp_body', text: 'Nelle pause faccio un Body Check: piedi, stomaco, petto, spalle', category: 'in-campo', principle: 'ascolto' },
+  { id: 'cat_camp_pressure', text: 'Sotto pressione, alla prima pausa: sento il mio segnale, do un nome al pensiero, un respiro con gesto e parola', category: 'in-campo', principle: 'ascolto-applicato' },
+  { id: 'cat_camp_giudizio', text: 'Se in campo il mister o la tribuna mi pesano addosso, dopo, a freddo, separo il fatto da quello che ne ho concluso', category: 'in-campo', principle: 'accettazione-applicata' },
   { id: 'cat_camp_anticipo', text: 'Quando la rabbia sale, la sento un gradino prima: la nomino e scelgo io la prossima azione', category: 'in-campo', principle: 'perdono' },
 
   // ─── Dopo un errore (3) ──────────────────────────────────────────────────
   { id: 'cat_err_reset', text: 'Dopo un errore faccio un Reset breve prima dell’azione successiva', category: 'post-errore', principle: 'presenza' },
   { id: 'cat_err_eyes', text: 'Quando sbaglio non guardo a terra: respiro e cerco il prossimo pallone', category: 'post-errore', principle: null },
-  { id: 'cat_err_stacco', text: 'Dopo un errore faccio Lo Stacco: niente replay, Reset e prossima azione', category: 'post-errore', principle: 'accettazione' },
+  { id: 'cat_err_stacco', text: 'Dopo un errore faccio Lo Stacco: «è successo», un Reset alla prima pausa, prossima azione', category: 'post-errore', principle: 'accettazione' },
 
   // ─── Recupero (6) ────────────────────────────────────────────────────────
   { id: 'cat_rec_rilascio', text: 'Dopo la partita faccio Il Rilascio: poso lo zaino fuori dal campo, il risultato non entra in casa', category: 'recupero', principle: 'lasciare-andare' },
@@ -99,7 +99,7 @@ export const ACTIONS_CATALOG: CatalogAction[] = [
   // ─── Mentale (5) ─────────────────────────────────────────────────────────
   { id: 'cat_men_gratitude', text: 'Mi prendo 15 minuti al giorno per ringraziare ciò che ho — anche le difficoltà', category: 'mentale', principle: null },
   { id: 'cat_men_reading', text: 'Leggo 10 pagine o studio qualcosa che mi fa crescere come persona', category: 'mentale', principle: null },
-  { id: 'cat_men_si_interno', text: 'Quando qualcosa non va come volevo, dico un «sì» interno a ciò che è già successo — poi scelgo', category: 'mentale', principle: 'accettazione' },
+  { id: 'cat_men_si_interno', text: 'Quando qualcosa non va come volevo, mi dico «è successo», poi scelgo', category: 'mentale', principle: 'accettazione' },
   { id: 'cat_men_fatto_storia', text: 'Quando un giudizio mi brucia, lo spacco in due: il fatto e la storia che ci ho aggiunto', category: 'mentale', principle: 'accettazione-applicata' },
   { id: 'cat_men_anticipo_vita', text: 'Anche fuori dal campo, quando la frustrazione monta: sento, nomino, torno — poi rispondo', category: 'mentale', principle: 'perdono' },
 ];

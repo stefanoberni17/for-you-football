@@ -6,6 +6,7 @@ import { cachedJson } from '@/lib/clientCache';
 import { usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { WEEK_RECORD_IDS, WEEK_TOOLS, WEEK_PRINCIPLES } from '@/lib/constants';
+import { parolaDelReset, type RispostaRow } from '@/lib/risposteChiave';
 import MeditationPopup from './MeditationPopup';
 import { MeditationContext } from './MeditationContext';
 import { useCheckin } from './CheckinContext';
@@ -16,6 +17,8 @@ export default function GlobalMeditationWrapper({ children }: { children: React.
   const [userId, setUserId] = useState<string>('');
   const [mantra, setMantra] = useState<string>('');
   const [weekName, setWeekName] = useState<string>('');
+  // La parola del ragazzo per l'espirazione (22/11): dalle sue risposte, altrimenti «Reset.»
+  const [parola, setParola] = useState<string>('Reset.');
   const [manualOpen, setManualOpen] = useState(false);
 
   // Skip popup su pagine pre-app e paywall
@@ -41,6 +44,15 @@ export default function GlobalMeditationWrapper({ children }: { children: React.
         .single();
 
       const currentWeek = profileData?.current_week || 1;
+
+      // Fire-and-forget: la parola non deve ritardare il popup
+      authFetch('/api/risposte?chiavi=1')
+        .then((r) => (r.ok ? r.json() : null))
+        .then((d: { risposte?: RispostaRow[] } | null) => {
+          const p = d?.risposte ? parolaDelReset(d.risposte) : null;
+          if (p) setParola(p);
+        })
+        .catch(() => {});
 
       if (WEEK_RECORD_IDS[currentWeek]) {
         const data = await cachedJson<{ error?: string; settimana?: { mantraDashboard?: string } }>(`settimana:${currentWeek}`, () => authFetch(`/api/settimana?week=${currentWeek}`));
@@ -75,6 +87,7 @@ export default function GlobalMeditationWrapper({ children }: { children: React.
       {userId && mantra && ((shouldShowPopup && checkinDone) || (soloManuale && manualOpen)) && (
         <MeditationPopup
           mantra={mantra}
+          parola={parola}
           weekName={weekName}
           userId={userId}
           manualOpen={manualOpen}

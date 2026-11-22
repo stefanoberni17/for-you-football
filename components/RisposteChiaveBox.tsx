@@ -126,15 +126,21 @@ export default function RisposteChiaveBox({ week, day, mostraCarta, className = 
             <div className="pb-3 space-y-2">
               {testo ? (
                 <p className="text-body text-app leading-relaxed whitespace-pre-line">{testo}</p>
+              ) : c.solaLettura ? (
+                <p className="text-body-sm text-muted leading-relaxed">
+                  Quel giorno non hai scritto niente qui. Va bene lo stesso: pensa a com&apos;eri prima di iniziare.
+                </p>
               ) : (
                 <p className="text-body-sm text-muted leading-relaxed">
                   Quel giorno non hai scritto la risposta. Puoi scriverla adesso: vale lo stesso.
                 </p>
               )}
               {row?.aggiornataIl && <p className="text-caption text-faint">Aggiornata il {new Date(row.aggiornataIl).toLocaleDateString('it-IT')}{row.versioni ? ` · ${row.versioni} ${row.versioni === 1 ? 'versione' : 'versioni'}` : ''}</p>}
-              <Button variant="secondary" size="sm" icon={<PenLine size={16} aria-hidden />} onClick={() => setModifica(c)}>
-                {testo ? 'Modifica' : 'Scrivilo adesso'}
-              </Button>
+              {!c.solaLettura && (
+                <Button variant="secondary" size="sm" icon={<PenLine size={16} aria-hidden />} onClick={() => setModifica(c)}>
+                  {testo ? 'Modifica' : 'Scrivilo adesso'}
+                </Button>
+              )}
             </div>
           </details>
         );

@@ -42,7 +42,10 @@ export const DAY_COMPLETED_KEY = 'fyfDayCompletedPending';
 const todayStr = todayItaly;
 
 interface MeditationPopupProps {
+  /** La frase della settimana (Notion «Mantra Dashboard»): solo nel foglio di partenza */
   mantra: string;
+  /** La parola del ragazzo (W4-G6 o W1-G3, `parolaDelReset`): quella che dice dentro mentre espira */
+  parola?: string;
   weekName: string;
   userId: string;
   manualOpen?: boolean;
@@ -51,6 +54,7 @@ interface MeditationPopupProps {
 
 export default function MeditationPopup({
   mantra,
+  parola = 'Reset.',
   weekName,
   userId,
   manualOpen = false,
@@ -290,13 +294,14 @@ export default function MeditationPopup({
         </p>
 
         <Card variant="raised" padding="md" className="mb-6 border-forest-500/30">
-          {isFirstTime && (
-            <p className="text-overline uppercase tracking-wider font-semibold text-forest-400 text-center mb-2">
-              Il mantra della tua settimana
-            </p>
-          )}
+          <p className="text-overline uppercase tracking-wider font-semibold text-forest-400 text-center mb-2">
+            La frase della settimana
+          </p>
           <p className="font-quote text-title-2 text-forest-300 text-center leading-relaxed">
             &ldquo;{mantra}&rdquo;
+          </p>
+          <p className="text-body-sm text-muted text-center mt-3">
+            Mentre espiri, dentro: la tua parola, «{parola.replace(/\.$/, '')}».
           </p>
         </Card>
 
@@ -351,8 +356,9 @@ export default function MeditationPopup({
               </div>
             </div>
 
+            {/* Durante il respiro la SUA parola (canone W1-G3), non la frase della settimana (22/11) */}
             <p className="font-quote text-title-2 text-forest-300 text-center leading-relaxed">
-              &ldquo;{mantra}&rdquo;
+              {breathPhase === 'inhale' ? 'Unisci pollice e indice' : <>&ldquo;{parola}&rdquo;</>}
             </p>
 
             <p className="font-display text-title-1 font-bold text-app tabular-nums" aria-label={`Mancano ${timerLabel}`}>

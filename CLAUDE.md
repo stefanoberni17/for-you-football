@@ -658,7 +658,7 @@ ID: `03a29261-ad11-4758-a657-c34b4aab56f2`
 - `Domande Gate` (text) — solo per giorno 7. **Ogni domanda comincia con il suo numero a inizio riga** ("1. ", "2. "); le righe che seguono senza numero (un elenco puntato, una nota tra parentesi) vanno a capo DENTRO la stessa domanda, le righe vuote tra le domande non contano (`domandeGateDa` in `lib/gateDomande.ts`, 26/10; prima ogni riga era una domanda e l'elenco puntato della prima domanda del Gate 4 diventava cinque campi). Senza numeri si torna a una domanda per riga
 - `Tipo Giorno` (select)
 - `Contesto` (text) — **COACH-ONLY**: note di regia del giorno (passate al Coach via tool `leggi_percorso` e, dal 27/10, nel contesto di ogni messaggio per i giorni fatti della settimana in corso e quello di oggi, `lib/settimanaCoach.ts`). NON mostrato all'utente e dal 14/9 **non arriva nemmeno al client**: `senzaRegia()` in `lib/notion.ts` lo toglie (insieme a `Coach Contesto`) dalle risposte di `/api/giorno`, `/api/gate`, `/api/settimana`, `/api/settimane`. Da W5 contiene istruzioni dietro le quinte (Regole, "non anticipare", sourcing storie).
-- `Perché Funziona` (text) — **USER-FACING**: alimenta il box "💡 Perché funziona" sulla pagina pratica (giorni 1-6). Conferma scientifica leggibile di ciò che il ragazzo sta facendo (concetti reali, zero anticipazioni). Popolato W5-W8 (G1-G6); W1-W4 NON hanno più il fallback sul `Contesto` (14/9: il box resta vuoto finché Ste non scrive i 24 testi nel campo dedicato). Draft: `docs/content-w5-w8/perche-funziona.md`.
+- `Perché Funziona` (text) — **USER-FACING**: alimenta il box "💡 Perché funziona" sulla pagina pratica (giorni 1-6). Conferma scientifica leggibile di ciò che il ragazzo sta facendo (concetti reali, zero anticipazioni). Popolato in tutte le settimane (verificato nell'audit del 22/11; il fallback sul `Contesto` non esiste più dal 14/9).
 - `Domanda Pre Pratica` (text) — domanda riflessione mostrata prima della pratica
 - `Ha Check Precedente` (checkbox) / `Testo Check` (text) — check giorno precedente: dal 29/9 NON più letto dall'app (la presenza di ieri si chiede nel check-in del mattino, `daily_checkin.presence_yesterday`)
 - `Durata Inspira` (number) — secondi inspirazione (default 4 se vuoto)
@@ -688,7 +688,7 @@ export const WEEK_RECORD_IDS: Record<number, string> = {
 | 🟡 2 | 5–8 | Giocare nelle difficoltà | Accettazione (W5-6), Perdono (W7), Lasciare Andare (W8) |
 | 🟢 3 | 9–12 | Giocare libero | Ritornare al Centro |
 
-**Disponibili:** settimane 1-12 (`BETA_MAX_WEEK = 12` in `lib/constants.ts`, dal 14/9/2026; W9-12 su Notion con Stato "In arrivo", che l'app non filtra). W5-W8 hanno tutte le pagine su Notion (DB Settimane + DB Giorni) e gli id in `WEEK_RECORD_IDS`. Strumenti per settimana (`WEEK_TOOLS`): Reset/Observer/Body Check/Protocollo (W1-4) + Lo Stacco/Fatto vs Storia/L'Anticipo/Il Rilascio (W5-8). **Filo Rosso:** property su DB Settimane ("Hai imparato a tornare/vedere/…/posare") esposta da `mapSettimana.filoRosso` e mostrata in risalto su `/week-complete`. Drafts contenuti in `docs/content-w5-w8/`; export integrale CMS in `docs/cms-export/`.
+**Disponibili:** settimane 1-12 (`BETA_MAX_WEEK = 12` in `lib/constants.ts`, dal 14/9/2026; W9-12 su Notion con Stato "In arrivo", che l'app non filtra). W5-W8 hanno tutte le pagine su Notion (DB Settimane + DB Giorni) e gli id in `WEEK_RECORD_IDS`. Strumenti per settimana (`WEEK_TOOLS`): Reset/Observer/Body Check/Protocollo (W1-4) + Lo Stacco/Fatto vs Storia/L'Anticipo/Il Rilascio (W5-8) + La routine / Il Reset breve / Il Protocollo For You / La tua pratica (W9-12, dal 22/11 come Notion); il nome compare nel giorno solo da quando lo strumento è presentato (`WEEK_TOOL_DAL_GIORNO`: W5, W7, W8, W11 dal G4, W9 dal G2). **Filo Rosso:** property su DB Settimane ("Hai imparato a tornare/vedere/…/posare") esposta da `mapSettimana.filoRosso` e mostrata in risalto su `/week-complete`. Drafts contenuti in `docs/content-w5-w8/`; export integrale CMS in `docs/cms-export/`.
 
 ### Struttura giornaliera
 | Giorno | Ruolo |
@@ -699,7 +699,7 @@ export const WEEK_RECORD_IDS: Record<number, string> = {
 | 4 | ⭐ Esercizio principale (8-15 min) |
 | 5 | Applicazione in contesto diverso |
 | 6 | Riflessione |
-| 7 | 🔑 Gate — 3 domande (da W6 4) → sblocca settimana successiva |
+| 7 | 🔑 Gate — 3 domande (W6-W9 e W12 4; W10 e W11 3) → sblocca settimana successiva |
 
 ---
 
@@ -1340,7 +1340,7 @@ import { BETA_MAX_WEEK, WEEK_RECORD_IDS, GATE_DAY } from '@/lib/constants';
 - [ ] Prove sera 4 (PR #83): account nuovo → onboarding senza Telegram → home senza check-in né Reset → G1 con "Ho finito ✓" dopo il 60 % → card Telegram su "Giorno 1 completato"; account con G3 fatto → completa il giorno → "Torna alla settimana" → parte il Reset
 - [ ] Prove sera 5 (PR #83): pagamento di prova con l'email di un genitore nel campo → indirizzo richiesto da Stripe → ricevuta al genitore → "Attivazione in corso…" → home sbloccata
 - [ ] Prove sera 1: bot da un account appena collegato; `/sblocca` con id sbagliato; Vercel logs "Telegram webhook error"
-- [ ] Scrivere i 24 "Perché funziona" di W1-W4 su Notion nel campo dedicato (dal 14/9 il box in W1-W4 è vuoto: il fallback sul Contesto è stato tolto)
+- [ ] Correzioni su Notion dall'audit del 22/11 (`docs/audit-percorso-2026-11-22-per-notion.md`, alla chat dei contenuti), poi gli audio dei giorni toccati (sicuro W3-G4)
 - [ ] Audio delle pratiche con ElevenLabs (voce Stef, v4; `content/audio-scripts/README.md`): **W1-W8 online e collegati dal 26/10** (W1 con il canone nuovo: gesto sull'inspiro, mantra Reset / Riparto qui / Sono qui; W3 con il Body Check guidato zona per zona; W4 con i cinque passi del Protocollo Pressione detti a voce; W5 con lo Stacco sui tre errori; W6 con fatto o storia nelle due volte sotto gli occhi di tutti; W7 con l'Anticipo e la frase «quando, allora»; W8 con il Rilascio). Gli MP3 stanno su Supabase Storage, Notion ha solo il link. **Dal 26/10 due audio per giorno** (apertura e pratica, `W<w>-G<g>-apertura.mp3` / `-pratica.mp3`, campi `Audio Apertura` / `Audio Pratica`): codice e pipeline pronti; **dal 27/10 W1-W8 tutti in due file e collegati su Notion** (W1 rifatto sui testi nuovi, W2-W8 le registrazioni del 26/10 divise senza generare niente; per un ritocco ai testi: `content/audio-scripts/_build/check_notion.py`, poi si rigenerano solo le frasi cambiate). **Dal 27/10 anche W9-W12** (W9 G1 G2, W10 G1-G4, W12 G1-G4; W11 senza audio, come da revisione): i 46 giorni del piano hanno tutti i due audio (verificato il 16/11). Ste deve ascoltarli. Cancellare dal Dashboard i file unici vecchi (`W<w>-G<g>.mp3`, `W1-G<n>-v2.mp3`) quando vuole: nessuna pagina li usa più
 - [ ] Prova settimana gratis: account nuovo senza pagare → login → onboarding → home con il benvenuto del Coach → G1-G6 → al giorno 7 la schermata "Hai finito la settimana 1" → /pricing con il banner del Gate; chat Coach → "ti restano 9 messaggi", all'11° il messaggio di chiusura + "Sblocca Season 1"; chiudi e riapri l'app → la chat è ancora lì
 - [ ] Decidere se il Reset automatico deve tornare al mattino dal G4 (oggi: solo dopo il giorno completato, lettura letterale della review)

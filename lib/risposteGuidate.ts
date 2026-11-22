@@ -93,9 +93,9 @@ RISPOSTE_GUIDATE['1-2'] = {
 RISPOSTE_GUIDATE['11-4'] = {
   titolo: 'Il tuo Protocollo For You',
   parti: [
-    { key: 'prima', tipo: 'testo', label: 'Prima', aiuto: 'Come entri in campo: la tua routine nelle tre versioni (spogliatoio, i due secondi col piede in campo, allenamento) e le tue condizioni.', opzioni: [], righe: 5, altro: 'scelta', altroLabel: 'Prima', altroPlaceholder: 'La routine, le condizioni…' },
-    { key: 'durante', tipo: 'testo', label: 'Durante', aiuto: 'A gioco fermo i due secondi presente; le tre risposte pronte (errore, pressione, rabbia) scritte con i gesti; il Protocollo Pressione nelle due versioni.', opzioni: [], righe: 6, altro: 'scelta', altroLabel: 'Durante', altroPlaceholder: 'Errore: … Pressione: … Rabbia: …' },
-    { key: 'dopo', tipo: 'testo', label: 'Dopo', aiuto: 'Il Rilascio sulla linea e la rilettura in due minuti: cosa tengo, cosa tolgo.', opzioni: [], righe: 3, altro: 'scelta', altroLabel: 'Dopo', altroPlaceholder: 'Sulla linea… poi…' },
+    { key: 'prima', tipo: 'testo', label: 'Prima', aiuto: 'Come entri in campo: la tua routine in una riga, dal Rilascio al Reset. E quando metti il piede in campo, un Reset.', opzioni: [], righe: 3, altro: 'scelta', altroLabel: 'Prima', altroPlaceholder: 'Rilascio con la maglietta, musica, scarpe, «libero», Reset' },
+    { key: 'durante', tipo: 'testo', label: 'Durante', aiuto: 'Mentre il gioco va, la prossima giocata. A gioco fermo, un Reset breve. E le tre risposte pronte di due giorni fa, una riga ciascuna: errore, pressione o paura, rabbia.', opzioni: [], righe: 5, altro: 'scelta', altroLabel: 'Durante', altroPlaceholder: 'Errore: … Pressione: … Rabbia: …' },
+    { key: 'dopo', tipo: 'testo', label: 'Dopo', aiuto: 'Cosa fai quando esci: il Rilascio, e due minuti di rilettura.', opzioni: [], righe: 2, altro: 'scelta', altroLabel: 'Dopo', altroPlaceholder: 'Rilascio… poi due minuti di rilettura' },
     { key: 'non_funziona', tipo: 'testo', label: 'Quando non funziona', aiuto: 'Il giorno che salti tutto: il gesto più piccolo che ti rimette in moto. Il giorno che lo fai e non ti aiuta: cosa rivedi e cosa chiarisci con il Coach.', opzioni: [], righe: 4, altro: 'scelta', altroLabel: 'Quando non funziona', altroPlaceholder: 'Se salto: … Se non aiuta: …' },
     { key: 'fuori', tipo: 'testo', label: 'Fuori dal campo', aiuto: 'Una riga, se ti viene. Se non ti viene, lascia vuoto.', opzioni: [], righe: 2, altro: 'scelta', altroLabel: 'Fuori dal campo', altroPlaceholder: 'Dove altro ti serve…' },
   ],

@@ -99,6 +99,8 @@ export interface RispostaChiave {
   parte?: string;
   /** Si mostra in una riga («Il tuo momento: "…"»), non in un riquadro da aprire. */
   inline?: boolean;
+  /** Non si modifica dal riquadro (le risposte della registrazione: sono la fotografia del primo giorno). */
+  solaLettura?: boolean;
   /** Se la `parte` non è scritta, si mostra questa risposta chiave (settimana, giorno) al suo posto. */
   ripiego?: [number, number];
 }
@@ -106,7 +108,7 @@ export interface RispostaChiave {
 /** Le risposte che il percorso richiama più avanti. L'ordine è quello del percorso. */
 export const RISPOSTE_CHIAVE: RispostaChiave[] = [
   { week: 1, day: 2, label: 'Il tuo momento', quando: 'Settimana 1, giorno 2', parte: 'momento', inline: true },
-  { week: 1, day: 3, label: 'Il tuo mantra', quando: 'Settimana 1, giorno 3', carta: 'mantra' },
+  { week: 1, day: 3, label: 'La tua parola', quando: 'Settimana 1, giorno 3', carta: 'mantra' },
   { week: 3, day: 3, label: 'La tua firma del gioco libero', quando: 'Settimana 3, giorno 3', carta: 'firma' },
   { week: 3, day: 7, label: 'La tua mappa', quando: 'Settimana 3, Gate', carta: 'mappa', gateQ: 'q1' },
   { week: 4, day: 6, label: 'Il tuo Protocollo Pressione', quando: 'Settimana 4, giorno 6', carta: 'protocollo' },
@@ -128,11 +130,33 @@ export const RISPOSTE_PRONTE_DAL_PROTOCOLLO: RispostaChiave = {
   label: 'Le tue risposte pronte', quando: 'Dal tuo Protocollo For You, settimana 11',
 };
 
+/**
+ * Le risposte del primo giorno (22/11, audit: W12-G7 dice «qui sotto trovi le risposte che hai dato il primo giorno»
+ * e niente le mostrava). Sono quelle della registrazione (`profile_snapshots`, la fotografia di T0; per chi si è
+ * registrato prima `profiles`), in sola lettura: settimana e giorno 0. Mostra Carta «Onboarding», e sempre nel Gate 12.
+ */
+export const PRIMO_GIORNO: RispostaChiave = {
+  week: 0, day: 0, solaLettura: true,
+  label: 'Le tue risposte del primo giorno', quando: 'Quando ti sei registrato',
+};
+
+/** Il testo del riquadro del primo giorno, una riga per risposta (niente righe vuote). */
+export function testoPrimoGiorno(v: { situazione?: string | null; paure?: readonly string[]; obiettivi?: string | null; sogno?: string | null }): string | null {
+  const righe = [
+    v.situazione?.trim() ? `Come stavi vivendo il calcio: ${v.situazione.trim()}` : null,
+    v.paure?.length ? `Le tue paure: ${v.paure.join(', ')}` : null,
+    v.obiettivi?.trim() ? `Cosa volevi dal percorso: ${v.obiettivi.trim()}` : null,
+    v.sogno?.trim() ? `Il tuo sogno: ${v.sogno.trim()}` : null,
+  ].filter(Boolean);
+  return righe.length ? righe.join('\n\n') : null;
+}
+
 /** Gli altri valori di "Mostra Carta": risposte chiave che non sono un riquadro della Carta. */
 export const MOSTRA_ALTRE_NOTION: Record<string, RispostaChiave> = {
   Momento: RISPOSTE_CHIAVE.find((r) => r.week === 1 && r.day === 2)!,
   // W12-G4 fa ripassare la risposta pronta di UNA situazione (errore, pressione, rabbia)
   'Risposte pronte': RISPOSTE_PRONTE_DAL_PROTOCOLLO,
+  Onboarding: PRIMO_GIORNO,
 };
 
 /**
@@ -146,6 +170,11 @@ export const DA_MOSTRARE: Record<string, Array<[number, number]>> = {
   '11-4': [[9, 4], [4, 6], [10, 6], [11, 2]],
   '11-6': [[11, 4]],
   '11-7': [[11, 4], [11, 2]],
+  // 22/11 (audit): W9-G6 e il Gate 9 chiedono di riprendere la routine scritta in G4
+  '9-6': [[9, 4]],
+  '9-7': [[9, 4]],
+  // Il Gate finale chiede «le risposte del tuo primo giorno»
+  '12-7': [[0, 0]],
 };
 
 export function chiaveGiorno(week: number, day: number): string {
@@ -157,6 +186,7 @@ export function isRispostaChiave(week: number, day: number): boolean {
 }
 
 export function rispostaChiaveInfo(week: number, day: number): RispostaChiave | null {
+  if (week === 0 && day === 0) return PRIMO_GIORNO;
   return RISPOSTE_CHIAVE.find((r) => r.week === week && r.day === day) ?? null;
 }
 
@@ -352,3 +382,24 @@ Sono le cose che ha scritto e che il percorso gli chiede di riprendere (il suo m
 ${righe.join('\n\n')}
 `;
 }
+
+/**
+ * La parola che il ragazzo dice dentro sull'espirazione del Reset (22/11, audit: il popup del Reset ripeteva il
+ * «Mantra Dashboard» della settimana, ma nel canone il Reset si chiude con la SUA parola, scelta in W1-G3).
+ * Prima la parte «Il mio mantra» del Protocollo Pressione (W4-G6, la più recente), poi la risposta di W1-G3 se è
+ * davvero una parola o una frase corta (la domanda chiede anche com'è andata: una risposta lunga non si ripete
+ * dentro). Null se non c'è niente di usabile: il popup usa «Reset.».
+ */
+export function parolaDelReset(rows: readonly RispostaRow[]): string | null {
+  const pulisci = (t: string | null | undefined, maxParole: number): string | null => {
+    if (!t) return null;
+    const prima = t.split(SEP_PAROLA)[0].split('\n')[0].replace(/[«»"“”]/g, '').trim().replace(/[.!,;:\s]+$/, '');
+    if (!prima || prima.length > 30 || prima.split(/\s+/).length > maxParole) return null;
+    return `${prima.charAt(0).toUpperCase()}${prima.slice(1)}.`;
+  };
+  const w4 = rows.find((r) => r.week === 4 && r.day === 6)?.risposta || '';
+  const m = /IL MIO MANTRA:\s*(.+)/i.exec(w4);
+  return pulisci(m?.[1], 5) ?? pulisci(rows.find((r) => r.week === 1 && r.day === 3)?.risposta, 3);
+}
+
+const SEP_PAROLA = ' — ';

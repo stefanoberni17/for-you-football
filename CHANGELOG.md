@@ -2,6 +2,33 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-22 — Audit del percorso: testi, codice e audio allineati
+
+Ste, 22/11: «voglio un audit approfondito e dettagliato per vedere se tutto è in linea in tutto il percorso». Rapporto
+intero in `docs/audit-percorso-2026-11-22.md` (84 giorni, 12 settimane, 24 layer SOS, codice, 92 audio); la parte da
+fare su Notion, con l'elenco degli audio da rifare, in `docs/audit-percorso-2026-11-22-per-notion.md`. Nel codice:
+- **Gate 12:** «Le tue risposte del primo giorno» (situazione, paure, obiettivi, sogno dalla fotografia della
+  registrazione, `profile_snapshots`, ripiego `profiles`), in sola lettura: `PRIMO_GIORNO` (0-0) in `DA_MOSTRARE['12-7']` e
+  Mostra Carta «Onboarding», `loadPrimoGiorno` in `loadRisposteChiave`. Il testo di W12-G7 le prometteva «qui sotto».
+- **Fine percorso:** dopo il Gate 12 niente «La prossima si sblocca domattina», «Le prossime settimane arriveranno
+  presto», «L'ultimo blocco sta arrivando»: «Season 1 finita. La tua pratica continua…» (gate, week-complete, settimana,
+  beta-complete; beta-complete senza il confronto prima/dopo dei numeri e con la q3 del Gate finale).
+- **Strumenti e principi:** W10 «Il Reset breve», W12 «La tua pratica», principi W4 «Ascolto» e W9-W12 «Ritornare al
+  Centro», come Notion. Il nome dello strumento non compare prima del giorno che lo presenta (`WEEK_TOOL_DAL_GIORNO`:
+  W5, W7, W8, W11 al G4, W9 al G2; `strumentoDelGiorno`).
+- **Il Reset:** durante il respiro la parola del ragazzo (`parolaDelReset`: il mantra del Protocollo Pressione W4-G6, o
+  W1-G3 se è una parola), «Unisci pollice e indice» sull'inspirazione; il «Mantra Dashboard» resta come «La frase della
+  settimana» nel foglio di partenza. Le giornate (G5) partono con «3 Reset», non più chiamati «Reset breve».
+- **Risposte:** W9-G6 e Gate 9 mostrano la routine di W9-G4; gli aiuti della pagina W11-G4 chiedono solo il richiamo
+  (prima «tre versioni», «due versioni», «sulla linea»); «Le tue risposte» ha le date e i giorni saltati (W11-G3);
+  l'etichetta di W1-G3 è «La tua parola».
+- **Coach (`lib/coach-ai.ts`):** W9-W12 riscritti dai Coach Contesto di Notion (W12 settimana di pratica, confronto solo in
+  G7, W11 con il solo richiamo, W10 con il Reset breve, W9 routine dal Rilascio); tolti «la rabbia è energia da guidare»,
+  «il tuo interruttore», «due strade», cifre non più nei testi; aggiunti il Reset breve, il Protocollo Pressione breve,
+  fatto o storia a freddo, lo Stacco con «è successo».
+- **Cataloghi:** strumenti, Palestra («Attenzione divisa» → «Il corpo nelle pause», occhi aperti), giorno della partita,
+  azioni e schede SOS di riserva allineati ai testi dei giorni.
+
 ## 2026-11-22 — W12-G4: il riquadro mostra le risposte pronte, non la pagina intera
 
 Ste, 22/11: «chiede le risposte pronte per errore, pressione e rabbia, poi però mostra solo il Protocollo della settimana 11 giorno 4: prima, durante e dopo».
