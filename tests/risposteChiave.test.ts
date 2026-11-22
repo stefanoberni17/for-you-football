@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
   RISPOSTE_CHIAVE, DA_MOSTRARE, CAMPI_CARTA, campiCarta, campiDaNotion, chiavePerCampo, chiaviPerGiorno, isRispostaChiave, risposteChiaveScritte,
-  risposteChiaveTesto, testoChiave, testoDaModificare, testoRisposta, rispostaChiaveInfo, type RispostaRow,
+  risposteChiaveTesto, testoChiave, idChiave, sorgenteChiave, testoDaModificare, testoRisposta, rispostaChiaveInfo, type RispostaRow,
 } from '@/lib/risposteChiave';
 import { componiRisposta, guidaPer, leggiRisposta } from '@/lib/risposteGuidate';
 
@@ -101,8 +101,8 @@ describe('«Il tuo momento» da W1-G2 (26/10)', () => {
     expect(chiaviPerGiorno(1, 5, ['Momento'])!.map((c) => `${c.week}-${c.day}`)).toEqual(['1-2']);
     expect(chiaviPerGiorno(1, 7, ['Mantra', 'Momento'])!.map((c) => `${c.week}-${c.day}`)).toEqual(['1-2', '1-3']);
     expect(campiDaNotion(['Momento'])).toEqual([]); // non è un riquadro della Carta
-    // W12-G4: le risposte pronte di W11-G2 prima, poi la pagina intera
-    expect(chiaviPerGiorno(12, 4, ['Protocollo For You', 'Risposte pronte'])!.map((c) => `${c.week}-${c.day}`)).toEqual(['11-2', '11-4']);
+    // W12-G4: «Risposte pronte» = il DURANTE del Protocollo For You, distinto dalla pagina intera
+    expect(chiaviPerGiorno(12, 4, ['Protocollo For You', 'Risposte pronte'])!.map(idChiave)).toEqual(['11-4-durante', '11-4']);
   });
 
   it('dalla risposta guidata si prende solo il momento', () => {
@@ -122,5 +122,37 @@ describe('«Il tuo momento» da W1-G2 (26/10)', () => {
     expect(testoChiave(undefined, momento)).toBeNull();
     // senza risposta ma con il momento nella pre-pratica, Modifica lo mette già nella sua parte
     expect(testoDaModificare(riga(1, 2, { prePratica: 'in panchina' }), momento)).toBe('IL MIO MOMENTO: in panchina');
+  });
+});
+
+describe('W12-G4: le risposte pronte dal DURANTE del Protocollo For You (22/11)', () => {
+  const protocollo = componiRisposta(guidaPer(11, 4)!, {
+    prima: { altro: 'musica, scarpe, Reset' },
+    durante: { altro: 'Errore: respiro, prossima palla\nRabbia: mascella, respiro' },
+    dopo: { altro: 'Rilascio' },
+  });
+  const [chiave] = chiaviPerGiorno(12, 4, ['Risposte pronte'])!;
+
+  it('mostra solo il DURANTE, e si modifica la pagina intera', () => {
+    const rows = [riga(11, 4, { risposta: protocollo }), riga(11, 2, { risposta: 'Errore: vecchia' })];
+    const s = sorgenteChiave(rows, chiave);
+    expect(s.testo).toBe('Errore: respiro, prossima palla\nRabbia: mascella, respiro');
+    expect(s.chiave.week).toBe(11);
+    expect(s.chiave.day).toBe(4);
+    expect(testoDaModificare(s.row, s.chiave)).toBe(protocollo);
+  });
+
+  it('con il DURANTE vuoto (o una pagina senza parti) mostra le risposte di W11-G2', () => {
+    const senzaDurante = componiRisposta(guidaPer(11, 4)!, { prima: { altro: 'musica' } });
+    for (const risposta of [senzaDurante, 'una pagina scritta a mano', null]) {
+      const s = sorgenteChiave([riga(11, 4, { risposta }), riga(11, 2, { risposta: 'Errore: respiro' })], chiave);
+      expect(s.testo).toBe('Errore: respiro');
+      expect(s.chiave.day).toBe(2);
+    }
+    expect(sorgenteChiave([], chiave).testo).toBeNull();
+  });
+
+  it('non entra nel contesto del Coach né in /risposte come risposta a sé', () => {
+    expect(RISPOSTE_CHIAVE.some((r) => r.parte === 'durante')).toBe(false);
   });
 });

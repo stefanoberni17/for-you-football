@@ -2,6 +2,12 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-22 — W12-G4: il riquadro mostra le risposte pronte, non la pagina intera
+
+Ste, 22/11: «chiede le risposte pronte per errore, pressione e rabbia, poi però mostra solo il Protocollo della settimana 11 giorno 4: prima, durante e dopo».
+- «Mostra Carta» = «Risposte pronte» mostra ora il solo DURANTE del Protocollo For You (dove il ragazzo ha ripreso, e magari cambiato, le risposte di W11-G2), con il titolo «Le tue risposte pronte»; se il DURANTE è vuoto, o la pagina è scritta a mano senza le parti, la risposta di W11-G2 (`RISPOSTE_PRONTE_DAL_PROTOCOLLO` e `sorgenteChiave` in `lib/risposteChiave.ts`, test in `tests/risposteChiave.test.ts`). «Modifica» apre la risposta da cui viene il testo (la pagina intera, o W11-G2).
+- Su Notion, W12-G4: «Mostra Carta» torna a «Risposte pronte» al posto di «Protocollo For You». Pratica, apertura e audio restano come sono.
+
 ## 2026-11-17 — Mai la «settimana base»: la settimana si corregge e lo dice
 
 Ste, 17/11: «non deve mai proporre la settimana base: se uno paga deve dare un programma; se non riesce a generarlo deve evidenziare come mai e fare correzioni per renderlo generabile». E: «il mio account non mi fa più rigenerare, sbloccamelo».

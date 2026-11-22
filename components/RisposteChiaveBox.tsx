@@ -6,7 +6,7 @@ import { BookOpen, ChevronRight, PenLine } from 'lucide-react';
 import { authFetch } from '@/lib/authFetch';
 import { Button } from '@/components/ui';
 import ModificaRispostaSheet from '@/components/ModificaRispostaSheet';
-import { chiaviPerGiorno, testoChiave, testoDaModificare, type RispostaChiave, type RispostaRow } from '@/lib/risposteChiave';
+import { chiaviPerGiorno, idChiave, sorgenteChiave, testoChiave, testoDaModificare, type RispostaChiave, type RispostaRow } from '@/lib/risposteChiave';
 
 /**
  * "Le tue risposte" dentro un giorno del percorso (22/10, review W11): nei giorni elencati in
@@ -111,14 +111,14 @@ export default function RisposteChiaveBox({ week, day, mostraCarta, className = 
       {errore && <p className="text-body-sm text-muted">Non sono riuscito a caricarle. Le trovi nel Profilo, in «Le tue risposte».</p>}
       {!errore && rows === null && <p className="text-body-sm text-faint">Carico le tue risposte…</p>}
       {righeInline}
-      {!errore && rows !== null && chiavi!.map((c: RispostaChiave) => {
-        const row = rows.find((r) => r.week === c.week && r.day === c.day);
-        const testo = testoChiave(row, c);
+      {!errore && rows !== null && chiavi!.map((chiave: RispostaChiave) => {
+        // Le risposte pronte: il DURANTE del Protocollo For You, o W11-G2 se è vuoto (si modifica quella mostrata)
+        const { chiave: c, row, testo } = sorgenteChiave(rows, chiave);
         return (
-          <details key={`${c.week}-${c.day}`} className="group border-b border-divider last:border-b-0">
+          <details key={idChiave(chiave)} className="group border-b border-divider last:border-b-0">
             <summary className="min-h-[48px] flex items-center gap-2 cursor-pointer list-none select-none">
               <span className="flex-1 min-w-0">
-                <span className="block text-body font-semibold text-app">{c.label}</span>
+                <span className="block text-body font-semibold text-app">{chiave.label}</span>
                 <span className="block text-caption text-muted">{testo ? c.quando : 'Non l’hai ancora scritta'}</span>
               </span>
               <ChevronRight size={18} className="text-muted shrink-0 transition-transform group-open:rotate-90" aria-hidden />

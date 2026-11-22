@@ -84,15 +84,6 @@ export const MOSTRA_CARTA_NOTION: Record<string, CampoCarta> = {
   Mantra: 'mantra', Mappa: 'mappa', Firma: 'firma', Protocollo: 'protocollo', Cose: 'cose', 'Protocollo For You': 'protocolloForYou',
 };
 
-/** Gli altri valori di "Mostra Carta": risposte chiave che non sono un riquadro della Carta (settimana, giorno). */
-export const MOSTRA_ALTRE_NOTION: Record<string, [number, number]> = {
-  Momento: [1, 2],
-  // 15/11: W12-G4 fa ripassare la risposta pronta di UNA situazione (errore, pressione, rabbia): le tre righe di
-  // W11-G2. Con il solo Protocollo For You il ragazzo trovava la pagina intera (prima, durante, dopo…) e doveva
-  // cercarle dentro il DURANTE.
-  'Risposte pronte': [11, 2],
-};
-
 export interface RispostaChiave {
   week: number;
   day: number;
@@ -108,6 +99,8 @@ export interface RispostaChiave {
   parte?: string;
   /** Si mostra in una riga («Il tuo momento: "…"»), non in un riquadro da aprire. */
   inline?: boolean;
+  /** Se la `parte` non è scritta, si mostra questa risposta chiave (settimana, giorno) al suo posto. */
+  ripiego?: [number, number];
 }
 
 /** Le risposte che il percorso richiama più avanti. L'ordine è quello del percorso. */
@@ -123,6 +116,24 @@ export const RISPOSTE_CHIAVE: RispostaChiave[] = [
   { week: 11, day: 2, label: 'Le tue risposte pronte', quando: 'Settimana 11, giorno 2' },
   { week: 11, day: 4, label: 'Il tuo Protocollo For You', quando: 'Settimana 11, giorno 4', carta: 'protocolloForYou' },
 ];
+
+/**
+ * Le risposte pronte come le ha lasciate (22/11, Ste: «chiede le risposte pronte per errore, pressione e rabbia, poi
+ * però mostra il Protocollo intero, prima durante e dopo»). Le ha scritte in W11-G2 e riprese, magari cambiate, nel
+ * DURANTE del Protocollo For You (W11-G4): si mostra quella parte, e se è vuota la risposta di W11-G2.
+ * Non è in `RISPOSTE_CHIAVE` (Coach e /risposte hanno già le due risposte intere): solo per "Mostra Carta".
+ */
+export const RISPOSTE_PRONTE_DAL_PROTOCOLLO: RispostaChiave = {
+  week: 11, day: 4, parte: 'durante', ripiego: [11, 2],
+  label: 'Le tue risposte pronte', quando: 'Dal tuo Protocollo For You, settimana 11',
+};
+
+/** Gli altri valori di "Mostra Carta": risposte chiave che non sono un riquadro della Carta. */
+export const MOSTRA_ALTRE_NOTION: Record<string, RispostaChiave> = {
+  Momento: RISPOSTE_CHIAVE.find((r) => r.week === 1 && r.day === 2)!,
+  // W12-G4 fa ripassare la risposta pronta di UNA situazione (errore, pressione, rabbia)
+  'Risposte pronte': RISPOSTE_PRONTE_DAL_PROTOCOLLO,
+};
 
 /**
  * In quale giorno del percorso si mostrano quali risposte chiave (chiave "week-day").
@@ -171,16 +182,38 @@ export function chiaviPerGiorno(week: number, day: number, mostraCarta?: readonl
   const lista = DA_MOSTRARE[chiaveGiorno(week, day)];
   const altre = (mostraCarta ?? [])
     .map((v) => MOSTRA_ALTRE_NOTION[String(v).trim()])
-    .filter((wd): wd is [number, number] => !!wd)
-    .map(([w, d]) => rispostaChiaveInfo(w, d))
     .filter((c): c is RispostaChiave => !!c);
   const daNotion = [...altre, ...campiDaNotion(mostraCarta).map(chiavePerCampo)];
   if (!lista && !daNotion.length) return null;
   const out: RispostaChiave[] = [];
   for (const c of [...(lista ?? []).map(([w, d]) => rispostaChiaveInfo(w, d)), ...daNotion]) {
-    if (c && !out.some((x) => x.week === c.week && x.day === c.day)) out.push(c);
+    if (c && !out.some((x) => idChiave(x) === idChiave(c))) out.push(c);
   }
   return out;
+}
+
+/** Identifica una risposta chiave in un elenco: la parte conta (il DURANTE non è la pagina intera). */
+export function idChiave(c: Pick<RispostaChiave, 'week' | 'day' | 'parte'>): string {
+  return `${c.week}-${c.day}${c.parte ? `-${c.parte}` : ''}`;
+}
+
+/**
+ * Da dove si legge una risposta chiave da mostrare: la sua riga, o quella del `ripiego` se la sua parte non è
+ * scritta (con il ripiego vale solo la parte etichettata: una pagina scritta a mano senza parti non è il DURANTE).
+ * La chiave che esce è quella da modificare.
+ */
+export function sorgenteChiave(rows: readonly RispostaRow[], chiave: RispostaChiave): { chiave: RispostaChiave; row: RispostaRow | undefined; testo: string | null } {
+  const row = rows.find((r) => r.week === chiave.week && r.day === chiave.day);
+  if (!chiave.ripiego) return { chiave, row, testo: testoChiave(row, chiave) };
+  const guida = guidaPer(chiave.week, chiave.day);
+  const risposta = (row?.risposta || '').trim();
+  const parte = guida && chiave.parte && etichettata(guida, risposta) ? leggiRisposta(guida, risposta)[chiave.parte]?.altro?.trim() : '';
+  if (parte) return { chiave, row, testo: parte };
+  const [w, d] = chiave.ripiego;
+  const info = rispostaChiaveInfo(w, d);
+  const rowRip = rows.find((r) => r.week === w && r.day === d);
+  if (!info) return { chiave, row, testo: null };
+  return { chiave: info, row: rowRip, testo: testoChiave(rowRip, info) };
 }
 
 /** Una riga del gate o del giorno, come la restituisce /api/risposte. */
