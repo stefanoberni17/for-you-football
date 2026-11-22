@@ -9,7 +9,9 @@
   },
   "private": true,
   "dependencies": {
+    "@remotion/captions": "4.0.545",
     "@remotion/cli": "4.0.545",
+    "@remotion/google-fonts": "4.0.545",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "remotion": "4.0.545"
