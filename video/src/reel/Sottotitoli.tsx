@@ -39,10 +39,6 @@ const Pagina: React.FC<{ page: TikTokPage; chiave: Set<string> }> = ({ page, chi
           columnGap: 4,
           rowGap: 4,
           maxWidth: 940,
-          padding: "14px 22px",
-          borderRadius: 26,
-          // Fondo verde foresta scuro: si legge anche sulla maglia bianca.
-          background: "rgba(11, 31, 20, 0.62)",
           opacity: entrata,
           transform: `translateY(${(1 - entrata) * 14}px)`,
         }}
@@ -62,7 +58,7 @@ const Pagina: React.FC<{ page: TikTokPage; chiave: Set<string> }> = ({ page, chi
                   fontSize: 94,
                   padding: "0 6px",
                   color: attiva ? stile.verde : stile.verdeChiaro,
-                  textShadow: stile.ombra,
+                  ...stile.contorno,
                 }}
               >
                 {testo}
@@ -81,7 +77,7 @@ const Pagina: React.FC<{ page: TikTokPage; chiave: Set<string> }> = ({ page, chi
                 background: attiva ? stile.verde : "transparent",
                 borderRadius: 14,
                 padding: "0 10px",
-                textShadow: attiva ? "none" : stile.ombra,
+                ...(attiva ? {} : stile.contorno),
               }}
             >
               {testo}

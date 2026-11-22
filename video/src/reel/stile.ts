@@ -13,5 +13,9 @@ export const stile = {
   verdeChiaro: "#8fe0b3", // forest-300: le parole chiave in corsivo
   scuro: "#0b1f14", // testo sul verde
   bianco: "#ffffff",
-  ombra: "0 4px 18px rgba(0,0,0,0.55), 0 2px 4px rgba(0,0,0,0.6)",
+  // Contorno nero pieno: si legge su qualsiasi sfondo senza fondo grigio dietro.
+  contorno: {
+    WebkitTextStroke: "12px #000000",
+    paintOrder: "stroke fill",
+  } as React.CSSProperties,
 };
