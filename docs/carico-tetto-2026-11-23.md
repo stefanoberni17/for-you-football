@@ -128,6 +128,10 @@ a settimana. Dopo stop facciamo con facoltativa eventualmente.»
 - Nel prompt del planner e della chat la sezione «TETTO PER PARTE» (`partiTesto`); nella card Carico dell'hub le tre righe
   (`partiRighe`). `PLANNER_V2_PROMPT_VERSION = 'v2.54-carico-per-parte'`. Il vecchio tetto unico resta solo per i
   contesti senza parti.
+- **Due più una facoltativa** (Ste, 23/11: «non possiamo fare 2 + 1 facoltativo come detto?»): se il ragazzo ha chiesto
+  più giornate, oltre il pavimento di una parte passa una seduta in più, segnata **facoltativa** dal server
+  (`FACOLTATIVE_OLTRE_PAVIMENTO` = 1, `conFacoltativeOltrePavimento`, riga `NOTA_OLTRE_PAVIMENTO`). Ste questa settimana:
+  due sedute di parte alta più una facoltativa.
 - **Non fatto (non deciso):** minuti calibrati (punto 5), un limite in più per l'off season (punto 6).
 
 Il caso di Ste con il codice nuovo: parte alta una seduta a settimana nelle ultime tre → questa settimana due sedute di
