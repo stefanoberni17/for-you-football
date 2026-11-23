@@ -141,14 +141,14 @@ describe('resolveSafetyReview: il contenimento scade da solo', () => {
 });
 
 describe('prompt del Coach: linguaggio rev. 19/09', () => {
-  it('gli strumenti W9-W10 si chiamano "La routine" e "Due secondi per tornare presente"', () => {
+  it('gli strumenti W9-W10 si chiamano "La routine" e "Il Reset breve" (22/11, come Notion)', () => {
     expect(WEEK_TOOLS[9]).toBe('La routine');
-    expect(WEEK_TOOLS[10]).toBe('Due secondi per tornare presente');
+    expect(WEEK_TOOLS[10]).toBe('Il Reset breve');
     expect(SYSTEM_PROMPT).toContain('MAI "la strada"');
   });
 
   it('le settimane 10-12 sono nel prompt', () => {
-    expect(SYSTEM_PROMPT).toContain('DUE SECONDI PER TORNARE PRESENTE');
+    expect(SYSTEM_PROMPT).toContain('RESET BREVE');
     expect(SYSTEM_PROMPT).toContain('PROTOCOLLO FOR YOU');
     expect(SYSTEM_PROMPT).toContain('REGOLA DEL CONFRONTO');
   });

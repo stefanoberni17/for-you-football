@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { authFetch } from '@/lib/authFetch';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { BETA_MAX_WEEK, WEEK_PRINCIPLES, WEEK_TOOLS } from '@/lib/constants';
+import { BETA_MAX_WEEK, TOTAL_WEEKS, WEEK_PRINCIPLES, WEEK_TOOLS } from '@/lib/constants';
 import { Hourglass, Target, Wrench } from 'lucide-react';
 import { AppLoader, Button, SectionTitle } from '@/components/ui';
 
@@ -38,6 +38,8 @@ export default function WeekCompletePage() {
 
   const nextWeek = weekNumber + 1;
   const nextAvailable = nextWeek <= BETA_MAX_WEEK;
+  // Dopo la settimana 12: niente «prossime settimane» (Coach Contesto W12: nessuna Season 2 promessa)
+  const fineSeason = weekNumber >= TOTAL_WEEKS;
   const principio = WEEK_PRINCIPLES[weekNumber];
   const strumento = WEEK_TOOLS[weekNumber];
 
@@ -49,7 +51,7 @@ export default function WeekCompletePage() {
         <div className="text-center mb-8">
           <div className="text-8xl mb-4" aria-hidden>🏆</div>
           <h1 className="font-display text-display font-bold text-white mb-2">
-            Settimana {weekNumber} completata!
+            {fineSeason ? 'Season 1 finita' : `Settimana ${weekNumber} completata!`}
           </h1>
           <p className="text-white text-body">
             Hai fatto tutto. Ogni giorno, anche i più duri.
@@ -96,7 +98,7 @@ export default function WeekCompletePage() {
         </div>
 
         {/* Missione per la settimana successiva */}
-        {missione && (
+        {missione && !fineSeason && (
           <div className="bg-white/10 backdrop-blur-sm rounded-card p-5 mb-5 border border-white/20">
             <SectionTitle
               title={`La tua missione per la ${nextAvailable ? `Settimana ${nextWeek}` : 'prossima fase'}`}
@@ -125,11 +127,20 @@ export default function WeekCompletePage() {
             <>
               <div className="bg-white/10 border border-white/20 rounded-card p-5 text-center">
                 <div className="flex justify-center mb-2 text-forest-100" aria-hidden><Hourglass size={28} /></div>
-                <p className="text-white font-bold text-body mb-1">Hai completato tutte le settimane disponibili!</p>
+                <p className="text-white font-bold text-body mb-1">
+                  {fineSeason ? 'Le dodici settimane sono finite.' : 'Hai fatto tutte le settimane aperte.'}
+                </p>
                 <p className="text-white text-body leading-relaxed">
-                  Le prossime settimane arriveranno presto. Stai facendo un lavoro straordinario.
+                  {fineSeason
+                    ? 'La tua pratica continua: il tuo Protocollo, il Reset, e il Coach quando ti serve.'
+                    : 'Intanto la tua pratica continua: il Reset, i tuoi strumenti, e il Coach quando ti serve.'}
                 </p>
               </div>
+              {fineSeason && (
+                <Button variant="hero" size="lg" fullWidth onClick={() => router.push('/carta')}>
+                  Apri la tua Carta
+                </Button>
+              )}
               <Button variant="inverse" size="lg" fullWidth onClick={() => router.push('/')}>
                 Torna alla Home
               </Button>

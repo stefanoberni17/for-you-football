@@ -246,8 +246,8 @@ export default function SettimanaPage() {
           </p>
           {!nextWeekAvailable && (
             <Card variant="accent" padding="sm" className="mt-4 text-body-sm text-forest-300 flex items-center gap-2 text-left">
-              <Lock className="w-4 h-4 shrink-0" aria-hidden="true" />
-              <span>Le prossime settimane arriveranno presto. Stai facendo un ottimo lavoro!</span>
+              <Check className="w-4 h-4 shrink-0" aria-hidden="true" />
+              <span>Le dodici settimane sono finite. La tua pratica continua: il Reset, il tuo Protocollo, e il Coach quando ti serve.</span>
             </Card>
           )}
         </div>
@@ -279,7 +279,7 @@ export default function SettimanaPage() {
                 ? `La Settimana ${nextWeekNumber} ti aspetta.`
                 : nextWeekAvailable
                 ? `La Settimana ${nextWeekNumber} si apre domattina.`
-                : 'Hai finito tutte le settimane disponibili. Le prossime arrivano presto.'}
+                : 'Le dodici settimane sono finite. La tua pratica continua: il Reset, il tuo Protocollo, e il Coach quando ti serve.'}
             </p>
             {nextWeekUnlocked ? (
               <Button variant="primary" size="lg" fullWidth iconRight={<ChevronRight size={20} aria-hidden />} href={`/settimana/${nextWeekNumber}`}>

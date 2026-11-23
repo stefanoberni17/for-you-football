@@ -5,7 +5,7 @@ import { authFetch } from '@/lib/authFetch';
 import { useParams, useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { isDayUnlocked, DayProgress } from '@/lib/dayUnlockLogic';
-import { GATE_DAY } from '@/lib/constants';
+import { GATE_DAY, TOTAL_WEEKS } from '@/lib/constants';
 import SaveErrorBanner from '@/components/SaveErrorBanner';
 import RisposteChiaveBox from '@/components/RisposteChiaveBox';
 import { chiaviPerGiorno } from '@/lib/risposteChiave';
@@ -18,6 +18,8 @@ export default function GatePage() {
   const params = useParams();
   const router = useRouter();
   const weekNumber = parseInt(params.week as string);
+  // Dopo il Gate 12 niente «prossima settimana» (Coach Contesto W12: nessuna Season 2 promessa)
+  const ultimaSettimana = weekNumber >= TOTAL_WEEKS;
 
   const [loading, setLoading] = useState(true);
   const [paywall, setPaywall] = useState(false);
@@ -200,13 +202,16 @@ export default function GatePage() {
     return (
       <main className="min-h-screen bg-gradient-to-b from-forest-600 to-forest-800 flex flex-col items-center justify-center p-6 text-white">
         <div className="text-7xl mb-6" aria-hidden>🏆</div>
-        <h1 className="font-display text-title-1 font-bold mb-2 text-center">Settimana {weekNumber} completata!</h1>
+        <h1 className="font-display text-title-1 font-bold mb-2 text-center">
+          {ultimaSettimana ? 'Season 1 finita' : `Settimana ${weekNumber} completata!`}
+        </h1>
         <p className="text-white text-center mb-2 text-body">Hai superato il Gate</p>
         <p className="text-white text-body text-center mb-8 max-w-xs leading-relaxed">
-          Ogni settimana è un mattone. La prossima si sblocca domattina —
-          oggi hai chiuso il cerchio.
+          {ultimaSettimana
+            ? 'La tua pratica continua: il tuo Protocollo, il Reset, e il Coach quando ti serve.'
+            : 'Ogni settimana è un mattone. La prossima si sblocca domattina: oggi hai chiuso il cerchio.'}
         </p>
-        {giorno?.missioneSettimana && (
+        {giorno?.missioneSettimana && !ultimaSettimana && (
           <div className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-card px-5 py-4 mb-8 max-w-sm text-center">
             <p className="text-forest-100 text-overline font-bold uppercase tracking-wider mb-1.5 inline-flex items-center gap-1.5">
               <Target size={14} aria-hidden /> La tua missione per la prossima settimana
@@ -260,7 +265,7 @@ export default function GatePage() {
           <SectionTitle
             title="Le domande del Gate"
             icon={<PenLine size={18} />}
-            subtitle={completed ? 'Le tue risposte' : `Rispondi a ${questions.length > 1 ? `tutte e ${questions.length}` : 'tutto'} per sbloccare la settimana successiva`}
+            subtitle={completed ? 'Le tue risposte' : `Rispondi a ${questions.length > 1 ? `tutte e ${questions.length}` : 'tutto'}${ultimaSettimana ? ' per chiudere la Season' : ' per aprire la settimana successiva'}`}
           />
 
           {completed && righe ? righe.map((r, i) => (

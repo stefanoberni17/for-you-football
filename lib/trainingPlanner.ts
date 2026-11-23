@@ -27,7 +27,7 @@ import type { Dolore, Limitazioni } from './trainingDolore';
 import { loadDolore, loadLimitazioni, loadStatoDolore } from './trainingDoloreServer';
 import type { StatoDolore } from './doloreFasi';
 import { bloccoById } from './trainingBlocks';
-import { loadResoconti } from './trainingResocontoServer';
+import { loadResoconti, loadSquadraPerSettimana } from './trainingResocontoServer';
 import { giorniPartita, parsePartitaAbituale, parseSquadra, squadraTesto, type SquadraSettimana } from './trainingSquadra';
 import { livelliPerQualita, type LivelliQualita } from './trainingLivelli';
 import { loadSesso } from './sessoServer';
@@ -365,8 +365,16 @@ export async function loadPlannerContext(userId: string, opzioni: { feedback?: b
   const misurata = squadraMisurata(resoconti, { squadra, squadraDurataMin: profile?.training_squadra_durata_min != null ? Number(profile.training_squadra_durata_min) : null, giorni: { trainingDays, matchDays } });
   // M11 (26/10): scarico, ri-test e tetto dai dati. Prima il carico senza scarico (settimane e ultimo scarico), poi la
   // condizione dell'atleta (ultime 2 settimane), poi il ciclo; il carico finale porta il tetto personale e lo scarico
-  const inputCarico = await loadCaricoInput(userId, setRpe);
-  const carico0 = calcolaCarico({ ...inputCarico, oggi, lunedi: mondayOfThisWeekRome(), squadraSettimanale, squadraMisurata: misurata });
+  // 23/11: la squadra di ogni settimana passata (resoconti, calendario, abitudine), non quella di questa settimana per tutte
+  const [inputCarico, squadraStorica] = await Promise.all([
+    loadCaricoInput(userId, setRpe),
+    loadSquadraPerSettimana(userId, {
+      lunedi: mondayOfThisWeekRome(), squadraCorrente: squadraSettimanale, squadra,
+      abitudine: { trainingDays: giorniSquadra([], squadra), matchDays: partitaAbituale ? [partitaAbituale] : [] },
+      squadraDurataMin: profile?.training_squadra_durata_min != null ? Number(profile.training_squadra_durata_min) : null, offSeason: faseSetup === 'off_season',
+    }),
+  ]);
+  const carico0 = calcolaCarico({ ...inputCarico, oggi, lunedi: mondayOfThisWeekRome(), squadraSettimanale, squadraMisurata: misurata, squadraPerSettimana: squadraStorica });
   const condizione = conFeedback ? condizioneAtleta({ checkins: checkins14 || [], sedute: completions, resoconti, oggi }) : undefined;
   if (conFeedback) {
     ciclo = cicloDaiDati(ciclo, {
@@ -374,7 +382,7 @@ export async function loadPlannerContext(userId: string, opzioni: { feedback?: b
       scaricoInCorso: pianoRow?.plan?.scarico === true, ultimoTest,
     });
   }
-  const carico = calcolaCarico({ ...inputCarico, oggi, lunedi: mondayOfThisWeekRome(), isDeload: ciclo.isDeload, squadraSettimanale, squadraMisurata: misurata, condizione });
+  const carico = calcolaCarico({ ...inputCarico, oggi, lunedi: mondayOfThisWeekRome(), isDeload: ciclo.isDeload, squadraSettimanale, squadraMisurata: misurata, condizione, squadraPerSettimana: squadraStorica });
 
   const rows: TestResultRow[] = (results || []).map((r: { test_id: string; valore: number; livello_calcolato: string; punteggio_calcolato: number; dettaglio?: Record<string, unknown> | null }) => ({
     test_id: r.test_id, valore: Number(r.valore),
@@ -434,12 +442,14 @@ export async function loadCarico(userId: string, isDeload: boolean, setRpe?: Set
 export const famigliaBlocco = (id: string): string | null => bloccoById(id)?.famiglia ?? null;
 
 /** Le letture del carico (completamenti 35 giorni, piani 49 giorni con `week_start`, log per serie): `calcolaCarico` poi gira quante volte serve. */
-export async function loadCaricoInput(userId: string, setRpe?: SetRpeRow[]): Promise<{ completions: CompletionRow[]; setRpe: SetRpeRow[]; plans: PlanRow[] }> {
+export async function loadCaricoInput(userId: string, setRpe?: SetRpeRow[]): Promise<{ completions: CompletionRow[]; setRpe: SetRpeRow[]; plans: PlanRow[]; sedutePrima: boolean }> {
   const since = new Date(Date.now() - 35 * 24 * 3600 * 1000).toISOString();
   const selCompletions = (cols: string) => supabaseAdmin.from('training_session_completions').select(cols)
     .eq('user_id', userId).gte('completed_at', since).order('completed_at', { ascending: false }).limit(60);
-  const [complRes, { data: plans }] = await Promise.all([
+  // 23/11: una seduta prima dei 35 giorni = non è uno che comincia (chi comincia fa le giornate che chiede, chi riparte no)
+  const [complRes, { data: prima }, { data: plans }] = await Promise.all([
     selCompletions('session_key, plan_id, feedback, completed_at, rpe, durata_reale_sec'),
+    supabaseAdmin.from('training_session_completions').select('session_key').eq('user_id', userId).lt('completed_at', since).limit(1),
     supabaseAdmin.from('training_plans').select('id, plan, week_start')
       .eq('user_id', userId).gte('created_at', new Date(Date.now() - 49 * 24 * 3600 * 1000).toISOString())
       .order('created_at', { ascending: false }).limit(20),
@@ -457,7 +467,7 @@ export async function loadCaricoInput(userId: string, setRpe?: SetRpeRow[]): Pro
       rpe = (logs || []) as SetRpeRow[];
     } catch { rpe = []; }
   }
-  return { completions: (completions || []) as unknown as CompletionRow[], setRpe: rpe, plans: (plans || []) as PlanRow[] };
+  return { completions: (completions || []) as unknown as CompletionRow[], setRpe: rpe, plans: (plans || []) as PlanRow[], sedutePrima: (prima || []).length > 0 };
 }
 
 // Blocco "storico serie" condiviso tra planner v1/v2 e chat: una riga per esercizio con suggerimento

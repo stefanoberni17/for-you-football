@@ -1,8 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
-import { GATE_DAY } from '@/lib/constants';
+import { GATE_DAY, PLAYER_FEARS, SPORT_FEARS } from '@/lib/constants';
 import { queryDatabase, mapGiorno } from '@/lib/notion';
 import { righeGate } from '@/lib/gateStorico';
-import { RISPOSTE_CHIAVE, gateLista, gateRisposte, rispostaChiaveInfo, type RispostaRow, type VersionePrecedente } from '@/lib/risposteChiave';
+import { RISPOSTE_CHIAVE, gateLista, gateRisposte, rispostaChiaveInfo, testoPrimoGiorno, type RispostaRow, type VersionePrecedente } from '@/lib/risposteChiave';
 
 /**
  * Le risposte scritte durante il percorso, lette dal server (per /api/risposte e per il Coach).
@@ -105,13 +105,63 @@ export async function loadRisposte(userId: string, filtro?: Array<[number, numbe
   return rows;
 }
 
+/**
+ * I giorni del percorso fatti, con la data (22/11, audit: W11-G3 chiede di scorrere le risposte «e guardare le
+ * date… i giorni saltati», ma «Le tue risposte» mostrava solo i giorni con qualcosa di scritto e nessuna data).
+ * Fail-soft: [].
+ */
+export async function loadGiorniFatti(userId: string): Promise<Array<{ week: number; day: number; completedAt: string | null }>> {
+  try {
+    const { data, error } = await supabaseAdmin.from('user_day_progress').select('week_number, day_number, completed_at')
+      .eq('user_id', userId).eq('completed', true)
+      .order('week_number', { ascending: true }).order('day_number', { ascending: true });
+    if (error || !data) return [];
+    return (data as Array<{ week_number: number; day_number: number; completed_at: string | null }>)
+      .map((r) => ({ week: r.week_number, day: r.day_number, completedAt: r.completed_at }));
+  } catch {
+    return [];
+  }
+}
+
 /** Solo le risposte chiave (per il Coach e per il box nel giorno). Fail-soft: [] su errore. */
 export async function loadRisposteChiave(userId: string): Promise<RispostaRow[]> {
   try {
-    return await loadRisposte(userId, RISPOSTE_CHIAVE.map((r) => [r.week, r.day] as [number, number]));
+    const [righe, primo] = await Promise.all([
+      loadRisposte(userId, RISPOSTE_CHIAVE.map((r) => [r.week, r.day] as [number, number])),
+      loadPrimoGiorno(userId),
+    ]);
+    return primo ? [...righe, primo] : righe;
   } catch (e) {
     console.error('loadRisposteChiave:', (e as Error).message);
     return [];
+  }
+}
+
+/**
+ * Le risposte del primo giorno (22/11) come riga 0-0 per il riquadro del Gate 12: dalla fotografia della
+ * registrazione (`profile_snapshots`, la più vecchia), altrimenti da `profiles` (chi si è registrato prima dello
+ * snapshot). Le paure con le etichette del suo sport. Fail-soft: null.
+ */
+export async function loadPrimoGiorno(userId: string): Promise<RispostaRow | null> {
+  try {
+    const [{ data: snap }, { data: prof }] = await Promise.all([
+      supabaseAdmin.from('profile_snapshots').select('current_situation, biggest_fear, goals, dream, snapshot_at')
+        .eq('user_id', userId).order('snapshot_at', { ascending: true }).limit(1).maybeSingle(),
+      supabaseAdmin.from('profiles').select('current_situation, biggest_fear, goals, dream, sport, created_at')
+        .eq('user_id', userId).maybeSingle(),
+    ]);
+    const fonte = (snap ?? prof) as { current_situation?: string | null; biggest_fear?: string | null; goals?: string | null; dream?: string | null } | null;
+    if (!fonte) return null;
+    const opzioni = SPORT_FEARS[(prof as { sport?: string } | null)?.sport || 'calcio'] || PLAYER_FEARS;
+    const paure = (fonte.biggest_fear || '').split(',').map((v) => v.trim()).filter(Boolean)
+      .map((v) => opzioni.find((f) => f.value === v)?.label || v);
+    const testo = testoPrimoGiorno({ situazione: fonte.current_situation, paure, obiettivi: fonte.goals, sogno: fonte.dream });
+    if (!testo) return null;
+    const quando = (snap as { snapshot_at?: string } | null)?.snapshot_at ?? (prof as { created_at?: string } | null)?.created_at ?? null;
+    return { week: 0, day: 0, domanda: null, risposta: testo, prePratica: null, gate: null, completedAt: quando };
+  } catch (e) {
+    console.error('loadPrimoGiorno:', (e as Error).message);
+    return null;
   }
 }
 

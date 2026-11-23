@@ -21,7 +21,7 @@ interface PlanItem { esercizio_id: string; serie: number; quantita: number; recu
   per_lato?: boolean;
   test_in_seduta?: { tipo: 'skill' | 'test' | 'lift'; id: string; nome: string; unita: 'reps' | 'secondi' | 'cm' | 'kg'; gruppo: string; soglia?: number; prep?: number | null; perche?: string }; // ri-test in seduta (26/10)
 }
-interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; apertura_min?: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; qualita: string; durataMin: number; nota?: string }[]; proposte?: { tipo: 'yoga-recupero' | 'togli' | 'aggiungi' | 'leggera'; motivo: string }[]; avviso_partita?: string; spostamenti?: Spostamento[] }
+interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; apertura_min?: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; qualita: string; durataMin: number; nota?: string }[]; proposte?: { tipo: 'yoga-recupero' | 'togli' | 'aggiungi' | 'leggera'; motivo: string }[]; avviso_partita?: string; spostamenti?: Spostamento[]; facoltativa?: boolean }
 
 type Phase = 'preview' | 'playing' | 'feedback' | 'done';
 
@@ -346,6 +346,8 @@ export default function SessionePage() {
         <Testata indietro={{ onClick: () => router.push('/allenamento'), label: 'Allenamento' }}
           sopra={`${DAY_NAMES[giorno]} · ${TIPO_LABEL[sessione.tipo] ?? 'Seduta'}`} titolo={sessione.titolo} className="mb-1" />
         <p className="text-body-sm text-muted tabular-nums mb-3">~{durataLabel(sessione.durata_min)} · {righeVisibili} esercizi{sessione.apertura_min ? ` · +${sessione.apertura_min}' di apertura, se hai tempo` : ''}</p>
+        {/* 23/11: ripartenza dopo uno stop, la seduta oltre la seconda è facoltativa */}
+        {sessione.facoltativa && <p className="text-body-sm text-muted leading-relaxed mb-3">Facoltativa: si riparte dopo una pausa. Falla se ti senti bene, altrimenti va bene anche saltarla.</p>}
         {!!sessione.proposte?.length && (
           <Card variant="accent" padding="sm" className="mb-4">
             <p className="text-label font-semibold text-forest-300 mb-1">Dal tuo resoconto</p>

@@ -498,3 +498,39 @@ export function votiTesto(resoconti: readonly Resoconto[]): string {
   const deboli = r.voti.deboli.length ? ` Punti deboli ricorrenti (≤ ${VOTO_DEBOLE_MAX} su almeno ${VOTO_DEBOLE_MIN_N} resoconti): ${r.voti.deboli.map((d) => `${VOTI_ETICHETTE[d.voce]} ${d.media}`).join(', ')}.` : '';
   return `\nVoti che si è dato il ragazzo (media di ${r.voti.conVoti} resoconti): tecnica ${r.voti.tecnica ?? '—'}, fisico ${r.voti.fisico ?? '—'}.${deboli} Sono il SUO giudizio, non un test: usali per scegliere tra blocchi equivalenti (un tiro basso → il mazzo di tecnica pesca i tiri; resistenza bassa → la resistenza nella giornata libera; velocità bassa → rapidità nei complementi), mai per violare le regole, i tetti o gli obiettivi; se un punto debole è ricorrente, dillo nel messaggio e invita al test di quella qualità.`;
 }
+
+/**
+ * La squadra di OGNI settimana (23/11, Ste: «contare con la squadra compresa»). Prima il carico usava la squadra di
+ * questa settimana anche per quelle passate: chi si fermava (infortunio, vacanza) perdeva tutta la squadra fatta prima,
+ * e il tetto scendeva al minimo. Per ogni lunedì:
+ * - con la risposta di quella settimana (`user_calendario_settimane`): i suoi giorni, il resoconto al posto della stima
+ *   dove c'è, più i resoconti di giorni fuori dal calendario; risposta vuota = 0 (salvo resoconti);
+ * - senza risposta ma con dei resoconti: solo i resoconti (sono la settimana vera, l'abitudine può essere vecchia);
+ * - senza niente: l'abitudine del setup (giorni squadra e partita abituale), 0 in off season.
+ */
+export function squadraPerSettimana(opt: {
+  lunedis: readonly string[];
+  risposte: ReadonlyMap<string, { trainingDays: readonly number[]; matchDays: readonly number[] }>;
+  abitudine: { trainingDays: readonly number[]; matchDays: readonly number[] };
+  resoconti: readonly Resoconto[];
+  squadra?: SquadraSettimana | null;
+  squadraDurataMin: number | null;
+  offSeason: boolean;
+}): Record<string, number> {
+  const durata = opt.squadraDurataMin && opt.squadraDurataMin > 0 ? opt.squadraDurataMin : 90;
+  const out: Record<string, number> = {};
+  for (const l of opt.lunedis) {
+    const fine = addDays(l, 6);
+    const res = opt.resoconti.filter((r) => r.data >= l && r.data <= fine);
+    const reale = (r: Resoconto) => (r.durata_min ?? (r.tipo === 'partita' ? 90 : durata)) * r.rpe;
+    const risposta = opt.risposte.get(l);
+    const giorni = risposta ?? (res.length || opt.offSeason ? null : opt.abitudine);
+    let tot = res.reduce((a, r) => a + reale(r), 0);
+    if (giorni) {
+      for (const d of giorni.trainingDays) if (!res.some((r) => r.tipo === 'squadra' && dowDi(r.data) === d)) tot += durata * (opt.squadra?.[d]?.rpe ?? RPE_SQUADRA);
+      for (const d of giorni.matchDays) if (!res.some((r) => r.tipo === 'partita' && dowDi(r.data) === d)) tot += 90 * RPE_PARTITA;
+    }
+    out[l] = Math.round(tot);
+  }
+  return out;
+}

@@ -2,12 +2,63 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-23 — Corpo: carico per parte, si sale di una seduta a settimana
+
+Ste, 23/11: «Come mai mi fa solo 1 giorno?». La settimana costruita dalle regole (Claude fuori tempo con due piani
+oltre il tetto) aveva una sola seduta: cosce dietro ferme (solo parte alta), niente squadra questa settimana, una
+seduta a settimana con l'app nelle ultime tre → cronico ~160 AU, tetto duro al minimo di 300 AU, e una seduta di
+parte alta ne vale ~230. Il piano base saltava gli altri giorni senza dirlo (`if (!scelta) continue`). Ora i giorni
+saltati perché ogni seduta sforava il tetto finiscono nelle rinunce (`giorniSenzaSedutaPerCarico` in
+`lib/trainingRinunce.ts`): «Mercoledì e Venerdì senza seduta: nelle ultime settimane hai fatto poche sedute con l'app,
+e il carico si alza un passo alla volta per non farti male». Test con il caso di Ste in `tests/trainingRinunce.test.ts`.
+
+Poi, con le decisioni di Ste della sera (`docs/carico-tetto-2026-11-23.md`): il carico in **tre parti** (parte alta,
+gambe e corsa con la squadra, tecnica), la **squadra di ogni settimana** (resoconti, calendario, abitudine) al posto di
+quella di questa settimana per tutte, il **tetto per parte** (+30 % sulla media di 4 settimane o la più carica), il
+**pavimento di una seduta in più a settimana** fino alle giornate che il ragazzo vuole fare, e la **ripartenza dopo uno
+stop** con le sedute oltre la seconda facoltative; chi comincia da zero fa le giornate che ha chiesto (Ste: «per chi
+comincia nuovo fai le giornate che chiede»). Prima con una seduta a settimana il tetto non arrivava mai a due.
+`PLANNER_V2_PROMPT_VERSION = 'v2.54-carico-per-parte'`. Test in `tests/caricoParti.test.ts`.
+
+## 2026-11-22 — Audit del percorso: testi, codice e audio allineati
+
+Ste, 22/11: «voglio un audit approfondito e dettagliato per vedere se tutto è in linea in tutto il percorso». Rapporto
+intero in `docs/audit-percorso-2026-11-22.md` (84 giorni, 12 settimane, 24 layer SOS, codice, 92 audio); la parte da
+fare su Notion, con l'elenco degli audio da rifare, in `docs/audit-percorso-2026-11-22-per-notion.md`. Nel codice:
+- **Gate 12:** «Le tue risposte del primo giorno» (situazione, paure, obiettivi, sogno dalla fotografia della
+  registrazione, `profile_snapshots`, ripiego `profiles`), in sola lettura: `PRIMO_GIORNO` (0-0) in `DA_MOSTRARE['12-7']` e
+  Mostra Carta «Onboarding», `loadPrimoGiorno` in `loadRisposteChiave`. Il testo di W12-G7 le prometteva «qui sotto».
+- **Fine percorso:** dopo il Gate 12 niente «La prossima si sblocca domattina», «Le prossime settimane arriveranno
+  presto», «L'ultimo blocco sta arrivando»: «Season 1 finita. La tua pratica continua…» (gate, week-complete, settimana,
+  beta-complete; beta-complete senza il confronto prima/dopo dei numeri e con la q3 del Gate finale).
+- **Strumenti e principi:** W10 «Il Reset breve», W12 «La tua pratica», principi W4 «Ascolto» e W9-W12 «Ritornare al
+  Centro», come Notion. Il nome dello strumento non compare prima del giorno che lo presenta (`WEEK_TOOL_DAL_GIORNO`:
+  W5, W7, W8, W11 al G4, W9 al G2; `strumentoDelGiorno`).
+- **Il Reset:** durante il respiro la parola del ragazzo (`parolaDelReset`: il mantra del Protocollo Pressione W4-G6, o
+  W1-G3 se è una parola), «Unisci pollice e indice» sull'inspirazione; il «Mantra Dashboard» resta come «La frase della
+  settimana» nel foglio di partenza. Le giornate (G5) partono con «3 Reset», non più chiamati «Reset breve».
+- **Risposte:** W9-G6 e Gate 9 mostrano la routine di W9-G4; gli aiuti della pagina W11-G4 chiedono solo il richiamo
+  (prima «tre versioni», «due versioni», «sulla linea»); «Le tue risposte» ha le date e i giorni saltati (W11-G3);
+  l'etichetta di W1-G3 è «La tua parola».
+- **Coach (`lib/coach-ai.ts`):** W9-W12 riscritti dai Coach Contesto di Notion (W12 settimana di pratica, confronto solo in
+  G7, W11 con il solo richiamo, W10 con il Reset breve, W9 routine dal Rilascio); tolti «la rabbia è energia da guidare»,
+  «il tuo interruttore», «due strade», cifre non più nei testi; aggiunti il Reset breve, il Protocollo Pressione breve,
+  fatto o storia a freddo, lo Stacco con «è successo».
+- **Cataloghi:** strumenti, Palestra («Attenzione divisa» → «Il corpo nelle pause», occhi aperti), giorno della partita,
+  azioni e schede SOS di riserva allineati ai testi dei giorni.
+
+## 2026-11-22 — W12-G4: il riquadro mostra le risposte pronte, non la pagina intera
+
+Ste, 22/11: «chiede le risposte pronte per errore, pressione e rabbia, poi però mostra solo il Protocollo della settimana 11 giorno 4: prima, durante e dopo».
+- «Mostra Carta» = «Risposte pronte» mostra ora il solo DURANTE del Protocollo For You (dove il ragazzo ha ripreso, e magari cambiato, le risposte di W11-G2), con il titolo «Le tue risposte pronte»; se il DURANTE è vuoto, o la pagina è scritta a mano senza le parti, la risposta di W11-G2 (`RISPOSTE_PRONTE_DAL_PROTOCOLLO` e `sorgenteChiave` in `lib/risposteChiave.ts`, test in `tests/risposteChiave.test.ts`). «Modifica» apre la risposta da cui viene il testo (la pagina intera, o W11-G2).
+- Su Notion, W12-G4: «Mostra Carta» torna a «Risposte pronte» al posto di «Protocollo For You». Pratica, apertura e audio restano come sono.
+
 ## 2026-11-17 — Mai la «settimana base»: la settimana si corregge e lo dice
 
 Ste, 17/11: «non deve mai proporre la settimana base: se uno paga deve dare un programma; se non riesce a generarlo deve evidenziare come mai e fare correzioni per renderlo generabile». E: «il mio account non mi fa più rigenerare, sbloccamelo».
 - Regole MORBIDE e DURE (`lib/trainingRinunce.ts`, test in `tests/trainingRinunce.test.ts`): morbide = la settimana è meno completa del richiesto (obiettivo in una sola giornata, aspetto che manca, giornate in meno, recupero che non ci sta); dure = sicurezza e metodo (partita, carico, livello, tetti, sprint, attrezzi). Le morbide si accettano e si dicono al ragazzo (`WeekPlan.rinunce`, card «Per farla stare nelle regole di questa settimana ho dovuto:»); con una dura esce la giornata che la causa, o una giornata alla volta se è della settimana intera (il carico). Prima bastava una morbida per buttare il piano di Claude e consegnare la «settimana base» (l'ultimo caso di Ste: «Forza parte alta in una sola giornata»).
 - Le sedute costruite dalle regole portano il nome del blocco e «Costruita dalle regole del preparatore sui tuoi obiettivi», non più «Seduta base». Niente più «Questa volta ho preparato una settimana base» nell'hub né nel replay del mese.
-- Se nessuna settimana è possibile (nessun giorno libero, tutte le giornate contro una regola di sicurezza) il piano esce vuoto con `non_generabile` e i motivi, l'hub lo dice e Ste riceve un avviso su Telegram («serve il tuo intervento»); Ste è avvisato anche quando la settimana l'hanno costruita le regole perché il planner AI non ce l'ha fatta. Cosa fare in quel caso (chiedere al ragazzo o intervento di Ste) è ancora da decidere.
+- Se nessuna settimana è possibile (nessun giorno libero, tutte le giornate contro una regola di sicurezza) il piano esce vuoto con `non_generabile` e i motivi, l'hub lo dice e Ste riceve un avviso su Telegram («serve il tuo intervento»); Ste è avvisato anche quando la settimana l'hanno costruita le regole perché il planner AI non ce l'ha fatta. Cosa fare in quel caso: tutte e due (Ste, 17/11: «va bene entrambe»): l'app dice al ragazzo cosa può cambiare e Ste è avvisato per sistemarla a mano.
 - Tetto delle rigenerazioni: le settimane non riuscite (`generato_da = 'fallback'`) non contano più (`contaNelTetto` in `lib/trainingRequest.ts`); resta un tetto di 15 piani a settimana su tutto (`PIANI_MAX_TOTALI_SETTIMANA`) per non spendere all'infinito in chiamate al modello.
 - Account di Ste sbloccato a mano il 17/11: le cinque settimane vuote di quel giorno marcate fuori dal tetto (`fuori_tetto` nel JSON del piano).
 - Maschera «Rifai la settimana»: con la settimana confermata vuota non ripropone più squadra e partita dei giorni abituali.

@@ -17,7 +17,7 @@ import { isFaticaAlta, isPeriodoScarso, isTestaAltrove, validatePlan, type PlanI
 import { todayRome, feedbackSeduteBlock, loadFocusSetup, loadPlannerContext, mondayOfThisWeekRome, percorsoMentaleTesto, storicoSerieBlock, type PlannerContext } from './trainingPlanner';
 import { distrettiZona, doloreAttivo, doloreTesto, limitazioniTesto } from './trainingDolore';
 import { bloccoAmmesso, faseTesto, intensiFuori, itemsSenzaZona, qualitaSullaZona, zonaGambe } from './doloreFasi';
-import { caricoPianificato, DELOAD_RPE, caricoTesto } from './trainingLoad';
+import { caricoPianificato, caricoPianificatoPerParte, DELOAD_RPE, caricoTesto, PARTE_LABEL, PARTI_CARICO, SEDUTE_DOPO_STOP, sedutaHaParte } from './trainingLoad';
 import { squadraTesto } from './trainingSquadra';
 import { blocchiDisponibili, bloccoById, bloccoHaCarichiPesanti, bloccoRiga, expandBlocco, famiglie, type Blocco } from './trainingBlocks';
 import { esercizioById } from './trainingCatalog';
@@ -28,7 +28,7 @@ import { adattaPiano, LEGGERO_SCALA, progressioniTesto } from './trainingProgres
 import { MAX_DURATA_PER_FASE, SETUP_SELECT, mapSetup, maxSeduteFisiche, maxSeduteTotali, type PreferenzeSetup, type TrainingSetup } from './trainingSetup';
 import { limaCarichi } from './trainingCarico';
 import { riparaPiano } from './trainingRiparazione';
-import { giornataTolta, rinunceDa, violazioneMorbida } from './trainingRinunce';
+import { giornataTolta, giorniSenzaSedutaPerCarico, parteDellaViolazione, rinunceDa, violazioneMorbida } from './trainingRinunce';
 import { calcolaMese, MESE_SETTIMANE, meseRigheAtleta, meseTesto, type Mese, type RispostaMese, type SettimanaMese } from './trainingMese';
 import { addDays } from './carta';
 import { caricoMaxPct, contaSprintPesanti, SPRINT_MASSIMALI_IDS, CONVIVENZE_BLOCCHI_VIETATE, CONVIVENZE_SCONSIGLIATE, FINESTRA_PARTITA, giorniAllaPartita, giorniDallaPartita, QUALITA_FISICHE, SPRINT_MAX_VICINO_PARTITA, type ContestoV2 } from './trainingRulesV2';
@@ -56,7 +56,7 @@ import { bloccoCopre, bloccoRiscaldamentoVelocita, filtraVelocitaPliometria, isP
 import { esercizioV2ById, LIVELLO_ORDINE } from './trainingCatalogV2';
 import type { Spostamento } from './spostamenti';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.53-ragazze';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.54-carico-per-parte';
 /** Piano base: candidati fisici provati per giornata (ognuno passa dal validatore con la settimana fin lì), per obiettivo, e leggeri in coda. */
 const FALLBACK_CANDIDATI_MAX = 18;
 const FALLBACK_PER_OBIETTIVO = 3;
@@ -602,7 +602,7 @@ async function loadDaRecuperare(userId: string): Promise<ContextV2['daRecuperare
   // Si recuperano solo le giornate dove si LAVORA (blocchi fisici: forza, esplosività, velocità, resistenza).
   // Una giornata di fascia, tecnica o recupero saltata non è un buco nella progressione (Ste, 21/9)
   return (ultimo.sedute || [])
-    .filter((s) => !fattiScorsa.has(s.giorno) && s.blocchi && s.blocchi.length > 0 && (s.tipo === 'fisica' || s.tipo === 'mix'))
+    .filter((s) => !fattiScorsa.has(s.giorno) && !s.facoltativa && s.blocchi && s.blocchi.length > 0 && (s.tipo === 'fisica' || s.tipo === 'mix'))
     .map((s) => ({ titolo: s.titolo, blocchi: s.blocchi!.map((b) => b.id), giorno: s.giorno }))
     .filter((r) => !fattiQuesta.has(chiave(r.blocchi)));
 }
@@ -1323,8 +1323,25 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
   // (cronico +15%, deload 75%, ACWR a rischio 105%) — session-RPE calibrato sui log dell'atleta
   const c = ctx.base.carico;
   const previsto = caricoPianificato({ sedute: settimana }, c.calibrazione, ctx.base.ciclo.isDeload ? DELOAD_RPE : 1);
-  // Rifiuto solo oltre il tetto DURO (ACWR 1.5 sul totale); il tetto "guida" resta nel prompt (21/9)
-  if (c.tettoDuro !== null && previsto > c.tettoDuro)
+  // 23/11 (Ste): il tetto per PARTE (parte alta, gambe e corsa con la squadra, tecnica), dai dati delle 4 settimane, con il
+  // pavimento di progressione (si sale di una seduta a settimana, fino alle sedute che il ragazzo vuole fare). Dopo uno
+  // stop nessun taglio: le sedute oltre la seconda diventano facoltative (`rifinisci` in generaPianoV2)
+  if (c.parti) {
+    if (!c.dopoStop && !c.inizio) {
+      const fattore = ctx.base.ciclo.isDeload ? DELOAD_RPE : 1;
+      const perParte = caricoPianificatoPerParte({ sedute: settimana }, c.calibrazione, fattore);
+      const volute = seduteRichieste(ctx) ?? ctx.maxSeduteFisiche;
+      for (const parte of PARTI_CARICO) {
+        const info = c.parti[parte];
+        const nSedute = Math.min(info.pavimentoSedute, volute);
+        // Pavimento in SEDUTE: fino a nSedute di questa parte la settimana passa comunque (ognuna nel tempo del setup);
+        // oltre, decide il tetto dai dati
+        const quante = settimana.filter((x) => sedutaHaParte(x, parte)).length;
+        if (quante > nSedute && perParte[parte] > info.tetto)
+          errors.push(`carico settimanale previsto ~${perParte[parte]} AU per ${PARTE_LABEL[parte]}: ${quante} sedute oltre il tetto di ${info.tetto} AU (ultime 4 settimane: media ${info.media}, la più carica ${info.massima}${info.squadra ? `, squadra di questa settimana ${info.squadra}` : ''}; si sale di una seduta a settimana: questa settimana fino a ${nSedute} sedute di ${PARTE_LABEL[parte]}${info.fermo ? `, non sale perché ${info.fermo}` : ''}) — togli una seduta di ${PARTE_LABEL[parte]}`);
+      }
+    }
+  } else if (c.tettoDuro !== null && previsto > c.tettoDuro)
     errors.push(`carico settimanale previsto ~${previsto} AU: porterebbe il rapporto acuto/cronico oltre 1.5 (tetto ${c.tettoDuro} AU; cronico ${c.cronico}, ACWR ${c.acwr}${ctx.base.ciclo.isDeload ? ', settimana di scarico' : ''}) — togli un blocco principale o usa le varianti short (target ${c.target!.min}-${c.target!.max} AU)`);
   return { plan: { sedute, messaggio: testoPerAtleta(p.messaggio?.slice(0, 500)) }, errors };
 }
@@ -1822,6 +1839,7 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
   const incompleta = (v: string) => /^(obiettivo |settimana equilibrata|manca |l'atleta ha chiesto \d+ giornate|piano vuoto)/.test(v);
   const nuovi = (dopo: string[], prima: string[]) => dopo.filter((v) => !prima.includes(v) && !incompleta(v));
   const sedute: SedutaLLM[] = [];
+  const saltatiPerCarico: { g: number; v: string }[] = [];
   let k = 0; // le giornate fisiche scorrono gli obiettivi in ordine, i recuperi non consumano un obiettivo
   let iFis = 0; // indice tra le sole giornate fisiche (i recuperi occupano posti fisici)
   for (const { d: g, fisico } of giorni) {
@@ -1848,7 +1866,8 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
     const oltreIlTetto = (c: { blocco: Blocco; principale: boolean }) => nuoviCon(c).some((v) => v.startsWith('carico settimanale previsto'));
     const minima = menoViolazioni();
     const scelta = cands.find(passa) ?? recuperoLeggero() ?? (minima && !oltreIlTetto(minima) ? minima : undefined);
-    if (!scelta) continue;
+    // 23/11 (Ste: «come mai mi fa solo 1 giorno?»): il giorno saltato per il tetto di carico si dice al ragazzo
+    if (!scelta) { if (minima && oltreIlTetto(minima)) saltatiPerCarico.push({ g, v: nuoviCon(minima).find((v) => v.startsWith('carico settimanale previsto'))! }); continue; }
     const s = seduta(g, scelta.blocco, scelta.principale);
     if (!s.blocchi.length) continue;
     sedute.push(s);
@@ -1888,7 +1907,10 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
       }
       // Violazione della settimana intera: via una giornata alla volta, prima l'ultima fisica (le leggere costano poco)
       const fisica = (x: SedutaLLM) => x.blocchi.some((id) => { const b = bloccoDi(ctx, id); return !!b && !isApertura(b) && QUALITA_FISICHE.has(b.qualita); });
-      const via = [...restanti].reverse().find(fisica) ?? restanti[restanti.length - 1];
+      // Tetto per parte (23/11): esce l'ultima seduta di QUELLA parte (con la parte alta piena non si toglie la tecnica)
+      const parte = parteDellaViolazione(dure[0]);
+      const haLaParte = (x: SedutaLLM) => !!parte && sedutaHaParte({ tipo: 'fisica', blocchi: x.blocchi.map((id) => bloccoDi(ctx, id)).filter((b): b is Blocco => !!b).map((b) => ({ id: b.id, nome: b.nome, qualita: b.qualita, durataMin: b.durataMin })) }, parte);
+      const via = [...restanti].reverse().find(haLaParte) ?? [...restanti].reverse().find(fisica) ?? restanti[restanti.length - 1];
       tolte.push(giornataTolta(DAY_NAMES[via.giorno] ?? `Giorno ${via.giorno}`, dure[0]));
       restanti = restanti.filter((x) => x !== via);
     }
@@ -1916,7 +1938,9 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
   if (!esito.plan?.sedute.length) {
     return { plan: { sedute: [], messaggio: MSG }, violazioni: esito.dure.length ? esito.dure : ['nessun giorno libero per allenarsi'], tenute: [], rinunce: esito.rinunce };
   }
-  return { plan: conProgressioni(esito.plan, ctx, vctx), violazioni: [], tenute: [], rinunce: esito.rinunce };
+  const saltati = saltatiPerCarico.filter((x) => !esito.plan!.sedute.some((y) => y.giorno === x.g));
+  const caricoRiga = giorniSenzaSedutaPerCarico(saltati.map((x) => DAY_NAMES[x.g] ?? `Giorno ${x.g}`), saltati[0]?.v);
+  return { plan: conProgressioni(esito.plan, ctx, vctx), violazioni: [], tenute: [], rinunce: [...(caricoRiga ? [caricoRiga] : []), ...esito.rinunce] };
 }
 
 /** Il giorno a cui si riferisce una violazione ("seduta del giorno 3: …", "seduta di Giovedì: …"); null se è della settimana intera. */
@@ -2061,6 +2085,23 @@ function preferenzeTesto(ctx: ContextV2, richiesta?: string): string {
   return `\n# PREFERENZE DEL SETUP (regole dure: il validatore le controlla)\n${righe.join('\n')}`;
 }
 
+/** La riga per il ragazzo quando la settimana riparte dopo uno stop (23/11). */
+export const NOTA_DOPO_STOP = `Si riparte dopo una pausa: le prime ${SEDUTE_DOPO_STOP} sedute sono quelle da fare, le altre sono facoltative, se ti senti bene. La settimana prossima si sale da quello che hai fatto.`;
+
+/**
+ * Dopo uno stop (aveva già fatto sedute con l'app, nessuna nelle ultime 2 settimane complete) le sedute oltre la seconda
+ * restano ma diventano facoltative (Ste, 23/11). Chi comincia adesso fa le giornate che ha chiesto (`inizio`). Le sedute dei giorni passati contano tra le prime due.
+ */
+export function conFacoltativeDopoStop(ctx: ContextV2, plan: WeekPlan): WeekPlan {
+  if (!ctx.base.carico?.dopoStop || !plan.sedute.length) return plan;
+  const passate = (ctx.sedutePassate ?? []).length;
+  const ordinate = [...plan.sedute].sort((a, b) => a.giorno - b.giorno);
+  const libere = Math.max(0, SEDUTE_DOPO_STOP - passate);
+  const facoltative = new Set(ordinate.slice(libere).map((x) => x.giorno));
+  if (!facoltative.size) return plan;
+  return { ...plan, sedute: plan.sedute.map((x) => (facoltative.has(x.giorno) && x.giorno >= ctx.base.oggiDow ? { ...x, facoltativa: true } : x)) };
+}
+
 export interface EsitoPianoV2 { plan: WeekPlan; generatoDa: 'llm' | 'fallback'; ctx: ContextV2; violazioni?: string[]; ibrido?: boolean }
 
 export async function generateWeekPlanV2(userId: string, richiesta?: string, vincoli: Vincoli = {}, livello?: LivelloFisico | null): Promise<EsitoPianoV2> {
@@ -2145,7 +2186,9 @@ export async function generaPianoV2(
   // M11 (26/10): il piano di una settimana di scarico porta `scarico: true`: da lì partono la distanza tra gli scarichi e il ri-test
   const rifinisci = (plan: WeekPlan, aggiustamenti: string[]): WeekPlan => {
     const mancanti = obiettiviMancanti(ctx, plan);
-    const notaTot = [nota, mancanti].filter(Boolean).join(' ');
+    plan = conFacoltativeDopoStop(ctx, plan);
+    const ripartenza = plan.sedute.some((x) => x.facoltativa) ? NOTA_DOPO_STOP : null;
+    const notaTot = [nota, ripartenza, mancanti].filter(Boolean).join(' ');
     return { ...plan, scritto_il: todayRome(), ...(notaTot ? { nota: notaTot } : {}), ...(aggiustamenti.length ? { aggiustamenti } : {}), ...(ctx.base.ciclo.isDeload ? { scarico: true } : {}) };
   };
   // Dolore a fasce (17/11): se con la zona ferma non resta niente di adatto, la settimana vuota è la risposta giusta,

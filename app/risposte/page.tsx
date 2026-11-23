@@ -29,6 +29,8 @@ export default function RispostePage() {
   const [errore, setErrore] = useState(false);
   const [settimane, setSettimane] = useState<Record<number, Settimana>>({});
   const [modifica, setModifica] = useState<RispostaRow | null>(null);
+  // I giorni fatti con la data (22/11): si vedono anche quelli senza risposta e quelli saltati
+  const [giorniFatti, setGiorniFatti] = useState<Map<string, string | null>>(new Map());
   // La settimana in vista: un numero, oppure 'chiave' per le sole risposte chiave di tutto il percorso
   const [filtro, setFiltro] = useState<number | 'chiave' | null>(null);
 
@@ -48,6 +50,9 @@ export default function RispostePage() {
       if (!res || !res.ok) { setErrore(true); setLoading(false); return; }
       const data = await res.json();
       setRows(Array.isArray(data?.risposte) ? data.risposte : []);
+      if (Array.isArray(data?.giorni)) {
+        setGiorniFatti(new Map((data.giorni as Array<{ week: number; day: number; completedAt: string | null }>).map((g) => [`${g.week}-${g.day}`, g.completedAt])));
+      }
       setLoading(false);
     })();
   }, [router]);
@@ -60,7 +65,13 @@ export default function RispostePage() {
     lista.push(r);
     perSettimana.set(r.week, lista);
   }
+  // Anche le settimane con giorni fatti e niente di scritto
+  for (const k of giorniFatti.keys()) {
+    const w = Number(k.split('-')[0]);
+    if (!perSettimana.has(w)) perSettimana.set(w, []);
+  }
   const settimaneOrdinate = [...perSettimana.keys()].sort((a, b) => b - a);
+  const dataBreve = (iso: string | null | undefined) => (iso ? new Date(iso).toLocaleDateString('it-IT', { day: 'numeric', month: 'numeric', timeZone: 'Europe/Rome' }) : null);
   const chiaviScritte = rows.filter((r) => rispostaChiaveInfo(r.week, r.day));
   const vista = filtro ?? settimaneOrdinate[0] ?? null;
   // Le sezioni da mostrare: una settimana sola, oppure le chiave raggruppate per settimana
@@ -111,13 +122,33 @@ export default function RispostePage() {
                 title={`Settimana ${week}`}
                 subtitle={s ? [s.titolo, s.strumento].filter(Boolean).join(' · ') : undefined}
               />
+              {vista !== 'chiave' && giorniFatti.size > 0 && (
+                <ol aria-label="I giorni della settimana, con la data in cui li hai fatti" className="grid grid-cols-7 gap-1">
+                  {[1, 2, 3, 4, 5, 6, 7].map((d) => {
+                    const k = `${week}-${d}`;
+                    const fatto = giorniFatti.has(k);
+                    return (
+                      <li key={d} className={`rounded-btn px-1 py-2 text-center ${fatto ? 'bg-surface-2' : 'border border-dashed border-divider'}`}>
+                        <p className="text-caption font-semibold text-muted">{d === GATE_DAY ? 'Gate' : `G${d}`}</p>
+                        <p className={`text-body-sm tabular-nums ${fatto ? 'text-app' : 'text-faint'}`}>{fatto ? dataBreve(giorniFatti.get(k)) ?? 'fatto' : '—'}</p>
+                      </li>
+                    );
+                  })}
+                </ol>
+              )}
+              {vista !== 'chiave' && giorni.length === 0 && (
+                <p className="text-body text-muted">Questa settimana non hai scritto risposte: qui sopra vedi i giorni che hai fatto.</p>
+              )}
               {giorni.map((r) => {
                 const chiave = rispostaChiaveInfo(r.week, r.day);
                 const isGate = r.day === GATE_DAY;
                 return (
                   <Card key={`${r.week}-${r.day}`} padding="md" className={chiave ? 'border-forest-500/40' : ''}>
                     <div id={`g-${r.week}-${r.day}`} className="flex items-center gap-2 mb-2 flex-wrap scroll-mt-20">
-                      <p className="text-body-lg font-semibold text-app flex-1">{isGate ? 'Gate' : `Giorno ${r.day}`}</p>
+                      <p className="text-body-lg font-semibold text-app flex-1">
+                        {isGate ? 'Gate' : `Giorno ${r.day}`}
+                        {dataBreve(r.completedAt) && <span className="text-body-sm font-normal text-muted"> · {dataBreve(r.completedAt)}</span>}
+                      </p>
                       {chiave && <Badge tone="accent" icon={<Star size={12} aria-hidden />}>{chiave.label}</Badge>}
                       {isGate && !chiave && <Badge tone="neutral" icon={<Key size={12} aria-hidden />}>Chiusura</Badge>}
                     </div>

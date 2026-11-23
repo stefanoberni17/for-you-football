@@ -69,7 +69,7 @@ export default function BetaCompletePage() {
         .filter(Boolean)
         .map((v: string) => fearOptions.find(f => f.value === v)?.label || v);
 
-      const [{ data: gates }, { count: completedCount }, { data: checkins }] = await Promise.all([
+      const [{ data: gates }, { count: completedCount }] = await Promise.all([
         supabase
           .from('user_day_progress')
           .select('week_number, gate_answers')
@@ -81,30 +81,21 @@ export default function BetaCompletePage() {
           .select('*', { count: 'exact', head: true })
           .eq('user_id', uid)
           .eq('completed', true),
-        supabase
-          .from('daily_checkin')
-          .select('date, mental_state')
-          .eq('user_id', uid)
-          .order('date', { ascending: true }),
       ]);
 
-      const gateW1Answers = gates?.find(g => g.week_number === 1)?.gate_answers;
       const gateFinalAnswers = gates?.find(g => g.week_number === BETA_MAX_WEEK)?.gate_answers;
-
-      const mentals = (checkins || [])
-        .filter(c => c.mental_state !== null)
-        .map(c => c.mental_state as number);
-      const avg = (arr: number[]) =>
-        arr.length ? Math.round((arr.reduce((a, b) => a + b, 0) / arr.length) * 10) / 10 : null;
 
       setMirror({
         situazioneIniziale: situazioneT0 || null,
         paure,
-        gateW1: gateW1Answers?.q3 || gateW1Answers?.q2 || null,
-        gateFinal: gateFinalAnswers?.q2 || gateFinalAnswers?.q3 || gateFinalAnswers?.q1 || null,
+        // 22/11: la q3 del Gate 1 oggi è «c'è qualcosa del Reset da chiarire?»: niente prima/dopo dal Gate 1.
+        // Dal Gate finale la q3 («cosa diresti oggi a te stesso di allora?») e la q1 (la pratica che continua).
+        gateW1: null,
+        gateFinal: gateFinalAnswers?.q3 || gateFinalAnswers?.q1 || null,
         giorniCompletati: completedCount || 0,
-        mentalePrima: mentals.length >= 6 ? avg(mentals.slice(0, 7)) : null,
-        mentaleDopo: mentals.length >= 6 ? avg(mentals.slice(-7)) : null,
+        // Il confronto dei numeri «prima → dopo» è tolto (W12: non deve trovare per forza una differenza)
+        mentalePrima: null,
+        mentaleDopo: null,
       });
     };
     load();
@@ -124,7 +115,7 @@ export default function BetaCompletePage() {
   };
 
   const mirrorPrompt =
-    'Ho appena riletto quello che avevo scritto all\'inizio del percorso e le risposte dei miei gate. Vorrei riflettere con te su cosa è cambiato in queste settimane.';
+    'Ho appena riletto quello che avevo scritto il primo giorno e la mia risposta al Gate finale. Vorrei rileggerle con te.';
 
   const hasMirrorContent =
     mirror && (mirror.situazioneIniziale || mirror.gateW1 || mirror.gateFinal);
@@ -135,16 +126,15 @@ export default function BetaCompletePage() {
         <Card className="text-center">
           <div className="text-6xl mb-4" aria-hidden>🏆</div>
           <h1 className="font-display text-title-1 font-bold text-app mb-2">
-            Ce l&apos;hai fatta, {name}.
+            Dodici settimane, {name}.
           </h1>
           <p className="text-body text-muted leading-relaxed">
-            Hai completato tutte le {BETA_MAX_WEEK} settimane disponibili.
-            Hai costruito lo strumento — Presenza, Osservazione, Ascolto, Protocollo Pressione —
-            e hai imparato a giocare nelle difficoltà: Accettazione, Lasciare Andare, Perdono.
+            Hai costruito lo strumento (presenza, osservazione, ascolto, il Protocollo Pressione),
+            hai giocato nelle difficoltà (accettazione, perdono, lasciare andare)
+            e hai messo in fila il tuo metodo, nel tuo Protocollo For You.
           </p>
           <p className="text-body text-muted leading-relaxed mt-3">
-            L&apos;ultimo blocco — Giocare libero, il ritorno al centro — sta arrivando.
-            Ti scriveremo non appena sarà disponibile.
+            La tua pratica continua: il tuo Protocollo, il Reset, e il Coach quando ti serve.
           </p>
         </Card>
 
@@ -153,8 +143,8 @@ export default function BetaCompletePage() {
           <Card className="space-y-5">
             <SectionTitle
               size="lg"
-              title="Il tuo prima e dopo"
-              subtitle="Non te lo diciamo noi, com'è andata. Te lo dicono le tue parole."
+              title="Le tue parole"
+              subtitle="Il primo giorno e il Gate finale. Non te lo diciamo noi, com'è andata."
             />
 
             {(mirror.situazioneIniziale || mirror.paure.length > 0) && (
@@ -189,7 +179,7 @@ export default function BetaCompletePage() {
             {mirror.gateFinal && (
               <Card variant="accent" padding="sm">
                 <p className="text-overline font-bold text-forest-300 uppercase tracking-wider mb-2">
-                  Fine Settimana {BETA_MAX_WEEK} — hai scritto:
+                  Al Gate finale hai scritto:
                 </p>
                 <p className="font-quote text-body-lg text-forest-100 leading-relaxed">
                   &ldquo;{mirror.gateFinal}&rdquo;
@@ -215,8 +205,8 @@ export default function BetaCompletePage() {
 
             <div className="border-t border-divider pt-4">
               <p className="text-body text-app leading-relaxed mb-3">
-                Rileggi il ragazzo che ha scritto quelle righe.{' '}
-                <strong>Cosa sa adesso, che lui non sapeva?</strong>
+                Rileggile con calma, come se fossero di un compagno che stimi.
+                Non devi trovarci per forza una differenza: guarda solo cosa noti.
               </p>
               <Button
                 variant="primary"
@@ -235,7 +225,7 @@ export default function BetaCompletePage() {
           <SectionTitle
             size="lg"
             title="Cosa ti resta"
-            subtitle="Il percorso si ferma qui (per ora). Gli strumenti no — sono tuoi."
+            subtitle="Le dodici settimane finiscono qui. Gli strumenti restano tuoi."
             className="mb-4"
           />
           <div className="space-y-3">

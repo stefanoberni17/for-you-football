@@ -42,8 +42,8 @@ export const BISOGNI: { id: Bisogno; etichetta: string; sotto: string; pratiche:
     pratiche: ['respiro-triangolo', 'respiro-sigh', 'protocollo', 'ancora', 'reset', 'body-check', 'fare-spazio'],
   },
   {
-    id: 'concentrazione', etichetta: 'Più concentrazione', sotto: 'Vuoi essere dentro dal primo minuto',
-    pratiche: ['respiro-quadrato', 'attenzione-divisa', 'conteggio', 'cinque-sensi', 'dove-senti-il-respiro'],
+    id: 'concentrazione', etichetta: 'Più concentrazione', sotto: 'Vuoi essere presente dal primo minuto',
+    pratiche: ['respiro-quadrato', 'conteggio', 'cinque-sensi', 'dove-senti-il-respiro'],
   },
   {
     id: 'pensieri', etichetta: 'Meno pensieri', sotto: 'La testa corre già alla partita',
@@ -54,7 +54,7 @@ export const BISOGNI: { id: Bisogno; etichetta: string; sotto: string; pratiche:
     pratiche: ['tensione-rilascio', 'body-check', 'respiro-sigh', 'dove-senti-il-respiro'],
   },
   {
-    id: 'calma', etichetta: 'Testa fredda', sotto: 'Partita tesa, rischi di accenderti', daSettimana: 7, // con L'Anticipo
+    id: 'calma', etichetta: 'Testa fredda', sotto: 'Partita tesa, rischi di accenderti', daSettimana: 7, // con L'Anticipo: si ripassa la frase «quando sento…, allora…» (la pratica dello strumento)
     pratiche: ['anticipo', 'cavalca-impulso', 'respiro-sigh'],
   },
 ];

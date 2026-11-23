@@ -84,15 +84,6 @@ export const MOSTRA_CARTA_NOTION: Record<string, CampoCarta> = {
   Mantra: 'mantra', Mappa: 'mappa', Firma: 'firma', Protocollo: 'protocollo', Cose: 'cose', 'Protocollo For You': 'protocolloForYou',
 };
 
-/** Gli altri valori di "Mostra Carta": risposte chiave che non sono un riquadro della Carta (settimana, giorno). */
-export const MOSTRA_ALTRE_NOTION: Record<string, [number, number]> = {
-  Momento: [1, 2],
-  // 15/11: W12-G4 fa ripassare la risposta pronta di UNA situazione (errore, pressione, rabbia): le tre righe di
-  // W11-G2. Con il solo Protocollo For You il ragazzo trovava la pagina intera (prima, durante, dopo…) e doveva
-  // cercarle dentro il DURANTE.
-  'Risposte pronte': [11, 2],
-};
-
 export interface RispostaChiave {
   week: number;
   day: number;
@@ -108,12 +99,16 @@ export interface RispostaChiave {
   parte?: string;
   /** Si mostra in una riga («Il tuo momento: "…"»), non in un riquadro da aprire. */
   inline?: boolean;
+  /** Non si modifica dal riquadro (le risposte della registrazione: sono la fotografia del primo giorno). */
+  solaLettura?: boolean;
+  /** Se la `parte` non è scritta, si mostra questa risposta chiave (settimana, giorno) al suo posto. */
+  ripiego?: [number, number];
 }
 
 /** Le risposte che il percorso richiama più avanti. L'ordine è quello del percorso. */
 export const RISPOSTE_CHIAVE: RispostaChiave[] = [
   { week: 1, day: 2, label: 'Il tuo momento', quando: 'Settimana 1, giorno 2', parte: 'momento', inline: true },
-  { week: 1, day: 3, label: 'Il tuo mantra', quando: 'Settimana 1, giorno 3', carta: 'mantra' },
+  { week: 1, day: 3, label: 'La tua parola', quando: 'Settimana 1, giorno 3', carta: 'mantra' },
   { week: 3, day: 3, label: 'La tua firma del gioco libero', quando: 'Settimana 3, giorno 3', carta: 'firma' },
   { week: 3, day: 7, label: 'La tua mappa', quando: 'Settimana 3, Gate', carta: 'mappa', gateQ: 'q1' },
   { week: 4, day: 6, label: 'Il tuo Protocollo Pressione', quando: 'Settimana 4, giorno 6', carta: 'protocollo' },
@@ -123,6 +118,46 @@ export const RISPOSTE_CHIAVE: RispostaChiave[] = [
   { week: 11, day: 2, label: 'Le tue risposte pronte', quando: 'Settimana 11, giorno 2' },
   { week: 11, day: 4, label: 'Il tuo Protocollo For You', quando: 'Settimana 11, giorno 4', carta: 'protocolloForYou' },
 ];
+
+/**
+ * Le risposte pronte come le ha lasciate (22/11, Ste: «chiede le risposte pronte per errore, pressione e rabbia, poi
+ * però mostra il Protocollo intero, prima durante e dopo»). Le ha scritte in W11-G2 e riprese, magari cambiate, nel
+ * DURANTE del Protocollo For You (W11-G4): si mostra quella parte, e se è vuota la risposta di W11-G2.
+ * Non è in `RISPOSTE_CHIAVE` (Coach e /risposte hanno già le due risposte intere): solo per "Mostra Carta".
+ */
+export const RISPOSTE_PRONTE_DAL_PROTOCOLLO: RispostaChiave = {
+  week: 11, day: 4, parte: 'durante', ripiego: [11, 2],
+  label: 'Le tue risposte pronte', quando: 'Dal tuo Protocollo For You, settimana 11',
+};
+
+/**
+ * Le risposte del primo giorno (22/11, audit: W12-G7 dice «qui sotto trovi le risposte che hai dato il primo giorno»
+ * e niente le mostrava). Sono quelle della registrazione (`profile_snapshots`, la fotografia di T0; per chi si è
+ * registrato prima `profiles`), in sola lettura: settimana e giorno 0. Mostra Carta «Onboarding», e sempre nel Gate 12.
+ */
+export const PRIMO_GIORNO: RispostaChiave = {
+  week: 0, day: 0, solaLettura: true,
+  label: 'Le tue risposte del primo giorno', quando: 'Quando ti sei registrato',
+};
+
+/** Il testo del riquadro del primo giorno, una riga per risposta (niente righe vuote). */
+export function testoPrimoGiorno(v: { situazione?: string | null; paure?: readonly string[]; obiettivi?: string | null; sogno?: string | null }): string | null {
+  const righe = [
+    v.situazione?.trim() ? `Come stavi vivendo il calcio: ${v.situazione.trim()}` : null,
+    v.paure?.length ? `Le tue paure: ${v.paure.join(', ')}` : null,
+    v.obiettivi?.trim() ? `Cosa volevi dal percorso: ${v.obiettivi.trim()}` : null,
+    v.sogno?.trim() ? `Il tuo sogno: ${v.sogno.trim()}` : null,
+  ].filter(Boolean);
+  return righe.length ? righe.join('\n\n') : null;
+}
+
+/** Gli altri valori di "Mostra Carta": risposte chiave che non sono un riquadro della Carta. */
+export const MOSTRA_ALTRE_NOTION: Record<string, RispostaChiave> = {
+  Momento: RISPOSTE_CHIAVE.find((r) => r.week === 1 && r.day === 2)!,
+  // W12-G4 fa ripassare la risposta pronta di UNA situazione (errore, pressione, rabbia)
+  'Risposte pronte': RISPOSTE_PRONTE_DAL_PROTOCOLLO,
+  Onboarding: PRIMO_GIORNO,
+};
 
 /**
  * In quale giorno del percorso si mostrano quali risposte chiave (chiave "week-day").
@@ -135,6 +170,11 @@ export const DA_MOSTRARE: Record<string, Array<[number, number]>> = {
   '11-4': [[9, 4], [4, 6], [10, 6], [11, 2]],
   '11-6': [[11, 4]],
   '11-7': [[11, 4], [11, 2]],
+  // 22/11 (audit): W9-G6 e il Gate 9 chiedono di riprendere la routine scritta in G4
+  '9-6': [[9, 4]],
+  '9-7': [[9, 4]],
+  // Il Gate finale chiede «le risposte del tuo primo giorno»
+  '12-7': [[0, 0]],
 };
 
 export function chiaveGiorno(week: number, day: number): string {
@@ -146,6 +186,7 @@ export function isRispostaChiave(week: number, day: number): boolean {
 }
 
 export function rispostaChiaveInfo(week: number, day: number): RispostaChiave | null {
+  if (week === 0 && day === 0) return PRIMO_GIORNO;
   return RISPOSTE_CHIAVE.find((r) => r.week === week && r.day === day) ?? null;
 }
 
@@ -171,16 +212,38 @@ export function chiaviPerGiorno(week: number, day: number, mostraCarta?: readonl
   const lista = DA_MOSTRARE[chiaveGiorno(week, day)];
   const altre = (mostraCarta ?? [])
     .map((v) => MOSTRA_ALTRE_NOTION[String(v).trim()])
-    .filter((wd): wd is [number, number] => !!wd)
-    .map(([w, d]) => rispostaChiaveInfo(w, d))
     .filter((c): c is RispostaChiave => !!c);
   const daNotion = [...altre, ...campiDaNotion(mostraCarta).map(chiavePerCampo)];
   if (!lista && !daNotion.length) return null;
   const out: RispostaChiave[] = [];
   for (const c of [...(lista ?? []).map(([w, d]) => rispostaChiaveInfo(w, d)), ...daNotion]) {
-    if (c && !out.some((x) => x.week === c.week && x.day === c.day)) out.push(c);
+    if (c && !out.some((x) => idChiave(x) === idChiave(c))) out.push(c);
   }
   return out;
+}
+
+/** Identifica una risposta chiave in un elenco: la parte conta (il DURANTE non è la pagina intera). */
+export function idChiave(c: Pick<RispostaChiave, 'week' | 'day' | 'parte'>): string {
+  return `${c.week}-${c.day}${c.parte ? `-${c.parte}` : ''}`;
+}
+
+/**
+ * Da dove si legge una risposta chiave da mostrare: la sua riga, o quella del `ripiego` se la sua parte non è
+ * scritta (con il ripiego vale solo la parte etichettata: una pagina scritta a mano senza parti non è il DURANTE).
+ * La chiave che esce è quella da modificare.
+ */
+export function sorgenteChiave(rows: readonly RispostaRow[], chiave: RispostaChiave): { chiave: RispostaChiave; row: RispostaRow | undefined; testo: string | null } {
+  const row = rows.find((r) => r.week === chiave.week && r.day === chiave.day);
+  if (!chiave.ripiego) return { chiave, row, testo: testoChiave(row, chiave) };
+  const guida = guidaPer(chiave.week, chiave.day);
+  const risposta = (row?.risposta || '').trim();
+  const parte = guida && chiave.parte && etichettata(guida, risposta) ? leggiRisposta(guida, risposta)[chiave.parte]?.altro?.trim() : '';
+  if (parte) return { chiave, row, testo: parte };
+  const [w, d] = chiave.ripiego;
+  const info = rispostaChiaveInfo(w, d);
+  const rowRip = rows.find((r) => r.week === w && r.day === d);
+  if (!info) return { chiave, row, testo: null };
+  return { chiave: info, row: rowRip, testo: testoChiave(rowRip, info) };
 }
 
 /** Una riga del gate o del giorno, come la restituisce /api/risposte. */
@@ -319,3 +382,24 @@ Sono le cose che ha scritto e che il percorso gli chiede di riprendere (il suo m
 ${righe.join('\n\n')}
 `;
 }
+
+/**
+ * La parola che il ragazzo dice dentro sull'espirazione del Reset (22/11, audit: il popup del Reset ripeteva il
+ * «Mantra Dashboard» della settimana, ma nel canone il Reset si chiude con la SUA parola, scelta in W1-G3).
+ * Prima la parte «Il mio mantra» del Protocollo Pressione (W4-G6, la più recente), poi la risposta di W1-G3 se è
+ * davvero una parola o una frase corta (la domanda chiede anche com'è andata: una risposta lunga non si ripete
+ * dentro). Null se non c'è niente di usabile: il popup usa «Reset.».
+ */
+export function parolaDelReset(rows: readonly RispostaRow[]): string | null {
+  const pulisci = (t: string | null | undefined, maxParole: number): string | null => {
+    if (!t) return null;
+    const prima = t.split(SEP_PAROLA)[0].split('\n')[0].replace(/[«»"“”]/g, '').trim().replace(/[.!,;:\s]+$/, '');
+    if (!prima || prima.length > 30 || prima.split(/\s+/).length > maxParole) return null;
+    return `${prima.charAt(0).toUpperCase()}${prima.slice(1)}.`;
+  };
+  const w4 = rows.find((r) => r.week === 4 && r.day === 6)?.risposta || '';
+  const m = /IL MIO MANTRA:\s*(.+)/i.exec(w4);
+  return pulisci(m?.[1], 5) ?? pulisci(rows.find((r) => r.week === 1 && r.day === 3)?.risposta, 3);
+}
+
+const SEP_PAROLA = ' — ';

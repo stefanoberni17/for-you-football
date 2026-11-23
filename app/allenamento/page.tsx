@@ -34,7 +34,7 @@ import SetupCampo from '@/components/SetupCampo';
 
 export interface RomboPoint { key: string; label: string; gruppo?: string; score: number | null; scoreIniziale?: number | null; delta?: number | null; fatti: number; totali: number; nonValutabili?: number; punte?: string[] }
 export interface PlanItem { esercizio_id: string; serie: number; quantita: number; recupero_sec: number; schema?: string; nota?: string }
-export interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; apertura_min?: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; leggero?: boolean; nota?: string }[]; posticipata_da?: number; spostata_da?: number; spostamenti?: Spostamento[]; recupero?: boolean; proposte?: { tipo: string; motivo: string }[]; avviso_partita?: string }
+export interface PlanSession { giorno: number; titolo: string; tipo: string; durata_min: number; apertura_min?: number; items: PlanItem[]; spiegazione?: string; blocchi?: { id: string; nome: string; leggero?: boolean; nota?: string }[]; posticipata_da?: number; spostata_da?: number; spostamenti?: Spostamento[]; recupero?: boolean; facoltativa?: boolean; proposte?: { tipo: string; motivo: string }[]; avviso_partita?: string }
 export interface TrainingState {
   name: string | null;
   painHold: boolean;
@@ -76,6 +76,7 @@ export interface TrainingState {
     stato: 'insufficiente' | 'poco' | 'ok' | 'alto' | 'rischio'; statoLabel: string;
     target: { min: number; max: number } | null; squadraStimato: number;
     condizioneRiga?: string | null; // tetto personale (26/10): "Sei stanco: il tuo tetto scende del 15 % (…)"
+    partiRighe?: string[]; // 23/11: parte alta, gambe e corsa (squadra compresa), tecnica
   };
   // Allenamenti con la squadra descritti dall'atleta (facoltativo, migration 023)
   squadra?: SquadraSettimana;
@@ -452,8 +453,9 @@ export default function AllenamentoHub() {
               <CardPlay funzione="allenamentoCorpo" href={`/allenamento/sessione/${s.giorno}`} label={s.stato === 'recuperabile' ? 'Recupera la seduta' : 'Inizia la seduta'}
                 sopra={`${s.stato === 'oggi' ? `Oggi · ${DAY_NAMES_IT[dow]}` : `Da recuperare · era ${DAY_NAMES_IT[s.giorno]}`} · ~${durataLabel(s.durataMin)}`}
                 titolo={s.titolo} />
-              {(s.recupero || s.proposte.length > 0) && (
+              {(s.recupero || s.facoltativa || s.proposte.length > 0) && (
                 <div className="flex flex-wrap gap-1.5 px-1">
+                  {s.facoltativa && <Badge tone="info">Facoltativa</Badge>}
                   {s.recupero && <Badge tone="info">Recupero</Badge>}
                   {s.proposte.includes('togli') && <Badge tone="info">Serie facoltative</Badge>}
                   {s.proposte.includes('aggiungi') && <Badge tone="info">Serie in più, se vuoi</Badge>}
@@ -665,8 +667,9 @@ export default function AllenamentoHub() {
               titolo={diOggi.titolo} />
           )}
           <p className="line-clamp-1 px-1 text-body-sm text-muted">{descrizioneSeduta(diOggi)}</p>
-          {(diOggi.recupero || leggera || diOggi.posticipata_da || proposteOggi.length > 0 || diOggi.avviso_partita || diOggi.spostata_da) && (
+          {(diOggi.recupero || diOggi.facoltativa || leggera || diOggi.posticipata_da || proposteOggi.length > 0 || diOggi.avviso_partita || diOggi.spostata_da) && (
             <div className="flex flex-wrap gap-1.5 px-1">
+              {diOggi.facoltativa && <Badge tone="info" className={badge}>Facoltativa</Badge>}
               {diOggi.avviso_partita && <Badge tone="warn">Vicina alla partita</Badge>}
               {diOggi.recupero && <Badge tone="info" className={badge}>Recupero</Badge>}
               {leggera && <Badge tone="info" className={badge}>Più leggera</Badge>}
@@ -817,6 +820,7 @@ export default function AllenamentoHub() {
                 const titolo = s ? s.titolo : partita ? 'Partita' : squadra ? 'Con la squadra' : 'Riposo';
                 const origine = s ? origineSpostamento(s) : null;
                 const sotto = [
+                  s?.facoltativa ? 'Facoltativa' : null,
                   origine ? `Spostata, era ${DAY_NAMES_IT[origine.da].toLowerCase()}` : null,
                   s && partita ? 'Partita' : null,
                   s && squadra ? 'Squadra' : null,
@@ -1045,6 +1049,12 @@ export default function AllenamentoHub() {
                   {carico.squadraStimato > 0 && <> · squadra stimata +{carico.squadraStimato}</>}
                 </p>
                 {carico.acwr !== null && <p className="text-body-sm text-muted mt-1 tabular-nums">Rapporto carico {carico.acwr}</p>}
+                {/* 23/11 (Ste): il tetto si conta per parte; la squadra pesa su gambe e corsa, mai sulla parte alta */}
+                {!!carico.partiRighe?.length && (
+                  <ul className="mt-2 space-y-1">
+                    {carico.partiRighe.map((r) => <li key={r} className="text-body-sm text-muted leading-snug tabular-nums">· {r}</li>)}
+                  </ul>
+                )}
                 <p className="text-body-sm text-muted mt-2">Gli allenamenti con la squadra si descrivono nel <button type="button" onClick={() => cambiaVista('setup')} className="font-semibold text-forest-400">setup</button>.</p>
               </details>
             </Card>

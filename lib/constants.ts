@@ -77,20 +77,20 @@ export const BLOCKS = [
   { id: 3, name: 'Giocare libero', weeks: [9, 10, 11, 12], color: 'green' },
 ] as const;
 
-// Principi per settimana
+// Principi per settimana (22/11: come il campo Principio di Notion; W9-W12 «Ritornare al Centro»)
 export const WEEK_PRINCIPLES: Record<number, string> = {
   1: 'Presenza',
   2: 'Osservazione',
   3: 'Ascolto',
-  4: 'Ascolto applicato',
+  4: 'Ascolto',
   5: 'Accettazione',
   6: 'Accettazione',
   7: 'Perdono',
   8: 'Lasciare Andare',
   9: 'Ritornare al Centro',
-  10: 'Ritornare al Centro applicato',
-  11: 'Libertà',
-  12: 'La Via',
+  10: 'Ritornare al Centro',
+  11: 'Ritornare al Centro',
+  12: 'Ritornare al Centro',
 };
 
 // Strumenti per settimana (Blocco 1 + Blocco 2 + Blocco 3)
@@ -104,10 +104,20 @@ export const WEEK_TOOLS: Record<number, string> = {
   7: "L'Anticipo",
   8: 'Il Rilascio',
   9: 'La routine',                      // rev. 19/09 (Ste): mai "la strada"
-  10: 'Due secondi per tornare presente', // rev. 19/09: "C'è qualcuno a casa" tolto il 13/09
+  10: 'Il Reset breve',                 // 22/11: come Notion (prima «Due secondi per tornare presente»)
   11: 'Il Protocollo For You',
-  12: 'Giocare libero',
+  12: 'La tua pratica',                 // 22/11: W12 non ha uno strumento nuovo (Notion: «Nessuno nuovo»)
 };
+
+// Il giorno in cui lo strumento della settimana viene presentato (22/11, audit): prima di quel giorno la pagina
+// del giorno e il popup della pratica non ne scrivono il nome (in W5, W7, W8 e W11 arriva al G4, in W9 al G2).
+// Le settimane non elencate lo presentano al G1.
+export const WEEK_TOOL_DAL_GIORNO: Record<number, number> = { 5: 4, 7: 4, 8: 4, 9: 2, 11: 4 };
+
+export function strumentoDelGiorno(week: number, day: number): string | undefined {
+  if (day < (WEEK_TOOL_DAL_GIORNO[week] ?? 1)) return undefined;
+  return WEEK_TOOLS[week] || undefined;
+}
 
 // ─── Sport supportati ────────────────────────────────────────────────────────
 
