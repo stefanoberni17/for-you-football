@@ -1,3 +1,5 @@
+import { TETTO_DURO_MIN_AU, type CaricoInfo } from './trainingLoad';
+
 /**
  * Mai la «settimana base» (Ste, 17/11: «se uno paga deve dare un programma; se non riesce a generarlo deve
  * evidenziare come mai e fare correzioni per renderlo generabile»).
@@ -48,4 +50,17 @@ export function rinunceDa(violazioni: readonly string[]): string[] {
 export function giornataTolta(nomeGiorno: string, v: string): string {
   if (v.startsWith('carico settimanale previsto')) return `${nomeGiorno}: una seduta in meno, per non andare oltre il carico che reggi questa settimana.`;
   return `${nomeGiorno}: seduta tolta (${motivoBreve(v)}).`;
+}
+
+/**
+ * I giorni rimasti senza seduta perché ogni seduta possibile portava la settimana oltre il tetto di carico (23/11,
+ * Ste: «come mai mi fa solo 1 giorno?»: il piano base li saltava senza dirlo). Una riga sola per tutti i giorni.
+ */
+export function giorniSenzaSedutaPerCarico(nomiGiorni: readonly string[], carico?: Pick<CaricoInfo, 'tettoDuro'> | null): string | null {
+  if (!nomiGiorni.length) return null;
+  const elenco = nomiGiorni.length === 1 ? nomiGiorni[0] : `${nomiGiorni.slice(0, -1).join(', ')} e ${nomiGiorni[nomiGiorni.length - 1]}`;
+  const poco = carico?.tettoDuro != null && carico.tettoDuro <= TETTO_DURO_MIN_AU;
+  return poco
+    ? `${elenco} senza seduta: nelle ultime settimane hai fatto poche sedute con l'app, e il carico si alza un passo alla volta per non farti male.`
+    : `${elenco} senza seduta, per non andare oltre il carico che reggi questa settimana.`;
 }

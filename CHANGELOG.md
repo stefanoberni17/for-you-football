@@ -2,6 +2,17 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-23 — Corpo: i giorni saltati per il carico si dicono
+
+Ste, 23/11: «Come mai mi fa solo 1 giorno?». La settimana costruita dalle regole (Claude fuori tempo con due piani
+oltre il tetto) aveva una sola seduta: cosce dietro ferme (solo parte alta), niente squadra questa settimana, una
+seduta a settimana con l'app nelle ultime tre → cronico ~160 AU, tetto duro al minimo di 300 AU, e una seduta di
+parte alta ne vale ~230. Il piano base saltava gli altri giorni senza dirlo (`if (!scelta) continue`). Ora i giorni
+saltati perché ogni seduta sforava il tetto finiscono nelle rinunce (`giorniSenzaSedutaPerCarico` in
+`lib/trainingRinunce.ts`): «Mercoledì e Venerdì senza seduta: nelle ultime settimane hai fatto poche sedute con l'app,
+e il carico si alza un passo alla volta per non farti male». Test con il caso di Ste in `tests/trainingRinunce.test.ts`.
+Aperto per Ste: con una seduta a settimana il cronico resta ~230 e il tetto non arriva mai a due sedute (trappola).
+
 ## 2026-11-22 — Audit del percorso: testi, codice e audio allineati
 
 Ste, 22/11: «voglio un audit approfondito e dettagliato per vedere se tutto è in linea in tutto il percorso». Rapporto

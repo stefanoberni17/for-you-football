@@ -28,7 +28,7 @@ import { adattaPiano, LEGGERO_SCALA, progressioniTesto } from './trainingProgres
 import { MAX_DURATA_PER_FASE, SETUP_SELECT, mapSetup, maxSeduteFisiche, maxSeduteTotali, type PreferenzeSetup, type TrainingSetup } from './trainingSetup';
 import { limaCarichi } from './trainingCarico';
 import { riparaPiano } from './trainingRiparazione';
-import { giornataTolta, rinunceDa, violazioneMorbida } from './trainingRinunce';
+import { giornataTolta, giorniSenzaSedutaPerCarico, rinunceDa, violazioneMorbida } from './trainingRinunce';
 import { calcolaMese, MESE_SETTIMANE, meseRigheAtleta, meseTesto, type Mese, type RispostaMese, type SettimanaMese } from './trainingMese';
 import { addDays } from './carta';
 import { caricoMaxPct, contaSprintPesanti, SPRINT_MASSIMALI_IDS, CONVIVENZE_BLOCCHI_VIETATE, CONVIVENZE_SCONSIGLIATE, FINESTRA_PARTITA, giorniAllaPartita, giorniDallaPartita, QUALITA_FISICHE, SPRINT_MAX_VICINO_PARTITA, type ContestoV2 } from './trainingRulesV2';
@@ -1822,6 +1822,7 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
   const incompleta = (v: string) => /^(obiettivo |settimana equilibrata|manca |l'atleta ha chiesto \d+ giornate|piano vuoto)/.test(v);
   const nuovi = (dopo: string[], prima: string[]) => dopo.filter((v) => !prima.includes(v) && !incompleta(v));
   const sedute: SedutaLLM[] = [];
+  const saltatiPerCarico: number[] = [];
   let k = 0; // le giornate fisiche scorrono gli obiettivi in ordine, i recuperi non consumano un obiettivo
   let iFis = 0; // indice tra le sole giornate fisiche (i recuperi occupano posti fisici)
   for (const { d: g, fisico } of giorni) {
@@ -1848,7 +1849,8 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
     const oltreIlTetto = (c: { blocco: Blocco; principale: boolean }) => nuoviCon(c).some((v) => v.startsWith('carico settimanale previsto'));
     const minima = menoViolazioni();
     const scelta = cands.find(passa) ?? recuperoLeggero() ?? (minima && !oltreIlTetto(minima) ? minima : undefined);
-    if (!scelta) continue;
+    // 23/11 (Ste: «come mai mi fa solo 1 giorno?»): il giorno saltato per il tetto di carico si dice al ragazzo
+    if (!scelta) { if (minima && oltreIlTetto(minima)) saltatiPerCarico.push(g); continue; }
     const s = seduta(g, scelta.blocco, scelta.principale);
     if (!s.blocchi.length) continue;
     sedute.push(s);
@@ -1916,7 +1918,8 @@ export function fallbackPianoBlocchi(ctx: ContextV2, seme?: { piano: PianoLLM; v
   if (!esito.plan?.sedute.length) {
     return { plan: { sedute: [], messaggio: MSG }, violazioni: esito.dure.length ? esito.dure : ['nessun giorno libero per allenarsi'], tenute: [], rinunce: esito.rinunce };
   }
-  return { plan: conProgressioni(esito.plan, ctx, vctx), violazioni: [], tenute: [], rinunce: esito.rinunce };
+  const caricoRiga = giorniSenzaSedutaPerCarico(saltatiPerCarico.filter((g) => !esito.plan!.sedute.some((x) => x.giorno === g)).map((g) => DAY_NAMES[g] ?? `Giorno ${g}`), ctx.base.carico);
+  return { plan: conProgressioni(esito.plan, ctx, vctx), violazioni: [], tenute: [], rinunce: [...(caricoRiga ? [caricoRiga] : []), ...esito.rinunce] };
 }
 
 /** Il giorno a cui si riferisce una violazione ("seduta del giorno 3: …", "seduta di Giovedì: …"); null se è della settimana intera. */
