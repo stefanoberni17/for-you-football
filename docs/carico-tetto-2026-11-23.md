@@ -118,7 +118,10 @@ a settimana. Dopo stop facciamo con facoltativa eventualmente.»
   (o della maschera). Il +1 non c'è se la settimana scorsa il voto medio era 8 o più, se è stanco o nello scarico.
   Oltre il pavimento decide il tetto. Il validatore (`expandPiano`) lo controlla parte per parte; il piano base toglie
   l'ultima seduta di quella parte e lo dice (`giornataTolta`, `giorniSenzaSedutaPerCarico`).
-- **Dopo uno stop** (nessuna seduta dell'app nelle 2 settimane complete prima, anche chi comincia): nessun taglio per il
+- **Chi comincia** (nessuna seduta dell'app, mai; Ste: «per chi comincia nuovo fai le giornate che chiede»): le giornate
+  che ha chiesto, senza tetto e senza facoltative (`CaricoInfo.inizio`; le sedute oltre i 35 giorni letti le guarda
+  `loadCaricoInput.sedutePrima`). Dalla settimana dopo vale il pavimento.
+- **Dopo uno stop** (aveva già fatto sedute, nessuna nelle 2 settimane complete prima): nessun taglio per il
   carico, le sedute oltre la seconda sono **facoltative** (`PlanSession.facoltativa`, `conFacoltativeDopoStop`, riga
   `NOTA_DOPO_STOP`), con il segno «Facoltativa» nell'hub e nella pagina della seduta; una facoltativa saltata non si
   recupera la settimana dopo.

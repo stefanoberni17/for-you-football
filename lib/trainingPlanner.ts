@@ -442,12 +442,14 @@ export async function loadCarico(userId: string, isDeload: boolean, setRpe?: Set
 export const famigliaBlocco = (id: string): string | null => bloccoById(id)?.famiglia ?? null;
 
 /** Le letture del carico (completamenti 35 giorni, piani 49 giorni con `week_start`, log per serie): `calcolaCarico` poi gira quante volte serve. */
-export async function loadCaricoInput(userId: string, setRpe?: SetRpeRow[]): Promise<{ completions: CompletionRow[]; setRpe: SetRpeRow[]; plans: PlanRow[] }> {
+export async function loadCaricoInput(userId: string, setRpe?: SetRpeRow[]): Promise<{ completions: CompletionRow[]; setRpe: SetRpeRow[]; plans: PlanRow[]; sedutePrima: boolean }> {
   const since = new Date(Date.now() - 35 * 24 * 3600 * 1000).toISOString();
   const selCompletions = (cols: string) => supabaseAdmin.from('training_session_completions').select(cols)
     .eq('user_id', userId).gte('completed_at', since).order('completed_at', { ascending: false }).limit(60);
-  const [complRes, { data: plans }] = await Promise.all([
+  // 23/11: una seduta prima dei 35 giorni = non è uno che comincia (chi comincia fa le giornate che chiede, chi riparte no)
+  const [complRes, { data: prima }, { data: plans }] = await Promise.all([
     selCompletions('session_key, plan_id, feedback, completed_at, rpe, durata_reale_sec'),
+    supabaseAdmin.from('training_session_completions').select('session_key').eq('user_id', userId).lt('completed_at', since).limit(1),
     supabaseAdmin.from('training_plans').select('id, plan, week_start')
       .eq('user_id', userId).gte('created_at', new Date(Date.now() - 49 * 24 * 3600 * 1000).toISOString())
       .order('created_at', { ascending: false }).limit(20),
@@ -465,7 +467,7 @@ export async function loadCaricoInput(userId: string, setRpe?: SetRpeRow[]): Pro
       rpe = (logs || []) as SetRpeRow[];
     } catch { rpe = []; }
   }
-  return { completions: (completions || []) as unknown as CompletionRow[], setRpe: rpe, plans: (plans || []) as PlanRow[] };
+  return { completions: (completions || []) as unknown as CompletionRow[], setRpe: rpe, plans: (plans || []) as PlanRow[], sedutePrima: (prima || []).length > 0 };
 }
 
 // Blocco "storico serie" condiviso tra planner v1/v2 e chat: una riga per esercizio con suggerimento

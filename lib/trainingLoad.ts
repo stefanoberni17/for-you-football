@@ -84,8 +84,10 @@ export interface CaricoInfo {
    * e i test che non hanno le parti).
    */
   parti?: Record<ParteCarico, CaricoParte>;
-  /** Nessuna seduta dell'app nelle ultime 2 settimane complete (anche un ragazzo nuovo): si riparte con 2 sedute, le altre facoltative. */
+  /** Ha già fatto sedute con l'app, ma nessuna nelle ultime 2 settimane complete: si riparte con 2 sedute, le altre facoltative. */
   dopoStop?: boolean;
+  /** Nessuna seduta dell'app, mai: chi comincia fa le giornate che ha chiesto, senza tetto di carico (Ste, 23/11). */
+  inizio?: boolean;
 }
 
 // ─── Carico per parte (23/11) ───────────────────────────────────────────────
@@ -237,6 +239,8 @@ export function calcolaCarico(input: {
    * `squadraPerSettimana` in lib/trainingResoconto). Senza, vale `squadraSettimanale` per tutte (come prima).
    */
   squadraPerSettimana?: Record<string, number>;
+  /** Ci sono sedute dell'app prima della finestra letta (35 giorni): non è uno che comincia. */
+  sedutePrima?: boolean;
 }): CaricoInfo {
   const { oggi, lunedi } = input;
   const S = Math.max(0, Math.round(input.squadraSettimanale ?? 0));
@@ -333,10 +337,10 @@ export function calcolaCarico(input: {
     // settimana leggera (due sedute da 30' a fatica 5). La guida resta quella dei dati
     tettoDuro = Math.max(tettoDuro, TETTO_DURO_MIN_AU);
   }
-  const { parti, dopoStop } = calcolaParti({ completions: input.completions, planById, rpeBySession, oggi, lunedi, S, isDeload: !!input.isDeload, condizione: input.condizione, squadraPerSettimana: input.squadraPerSettimana });
+  const { parti, dopoStop, inizio } = calcolaParti({ sedutePrima: !!input.sedutePrima, completions: input.completions, planById, rpeBySession, oggi, lunedi, S, isDeload: !!input.isDeload, condizione: input.condizione, squadraPerSettimana: input.squadraPerSettimana });
   // M11: l'ultima settimana di scarico salvata (il piano porta `scarico: true`), per la distanza tra uno scarico e l'altro e il ri-test
   const ultimoScarico = input.plans.filter((p) => p.plan?.scarico && p.week_start).map((p) => String(p.week_start).slice(0, 10)).sort().pop() ?? null;
-  return { sedute, settimane, acuto, cronico, acwr, stato, giorniStorico, calibrazione, target, tetto, tettoDuro, squadra: S, squadraMisurati: misurati.length, squadraAcuto: sAcuto, ultimoScarico, condizione: input.condizione, parti, dopoStop };
+  return { sedute, settimane, acuto, cronico, acwr, stato, giorniStorico, calibrazione, target, tetto, tettoDuro, squadra: S, squadraMisurati: misurati.length, squadraAcuto: sAcuto, ultimoScarico, condizione: input.condizione, parti, dopoStop, inizio };
 }
 
 /** Il carico di una seduta fatta (stessa cascata di `calcolaCarico`: minuti veri o del piano, voto, serie, giudizio, 6). */
@@ -356,8 +360,8 @@ function caricoFatto(c: CompletionRow, s: PlanSession | undefined, logs: number[
  */
 function calcolaParti(p: {
   completions: CompletionRow[]; planById: Map<string, WeekPlan>; rpeBySession: Map<string, number[]>; oggi: string; lunedi: string;
-  S: number; isDeload: boolean; condizione?: CondizioneCarico; squadraPerSettimana?: Record<string, number>;
-}): { parti: Record<ParteCarico, CaricoParte>; dopoStop: boolean } {
+  S: number; isDeload: boolean; condizione?: CondizioneCarico; squadraPerSettimana?: Record<string, number>; sedutePrima: boolean;
+}): { parti: Record<ParteCarico, CaricoParte>; dopoStop: boolean; inizio: boolean } {
   const lunedis = Array.from({ length: SETTIMANE_PARTI }, (_, i) => addDays(p.lunedi, -7 * (SETTIMANE_PARTI - i)));
   const app: Record<ParteCarico, number[]> = { alta: lunedis.map(() => 0), gambe: lunedis.map(() => 0), tecnica: lunedis.map(() => 0) };
   const sedute: Record<ParteCarico, number[]> = { alta: lunedis.map(() => 0), gambe: lunedis.map(() => 0), tecnica: lunedis.map(() => 0) };
@@ -378,8 +382,10 @@ function calcolaParti(p: {
     if (c.rpe != null) voti[w].push(c.rpe);
   }
   const squadraDi = (l: string) => Math.max(0, Math.round(p.squadraPerSettimana?.[l] ?? p.S));
-  // Stop: nessuna seduta dell'app nelle ultime due settimane complete (anche chi comincia adesso)
-  const dopoStop = [SETTIMANE_PARTI - 1, SETTIMANE_PARTI - 2].every((w) => PARTI_CARICO.every((parte) => sedute[parte][w] === 0));
+  // Chi comincia (nessuna seduta dell'app, mai) fa le giornate che ha chiesto; lo stop è di chi aveva già cominciato
+  const inizio = !p.sedutePrima && !p.completions.some((c) => romeDate(c.completed_at) <= p.oggi);
+  const vuote = [SETTIMANE_PARTI - 1, SETTIMANE_PARTI - 2].every((w) => PARTI_CARICO.every((parte) => sedute[parte][w] === 0));
+  const dopoStop = !inizio && vuote;
   const ultimaVoti = voti[SETTIMANE_PARTI - 1];
   const ultimaDura = ultimaVoti.length > 0 && ultimaVoti.reduce((a, b) => a + b, 0) / ultimaVoti.length >= VOTO_FERMA_PROGRESSIONE;
   const stanco = p.condizione?.stato === 'stanco';
@@ -402,7 +408,7 @@ function calcolaParti(p: {
       pavimentoSedute: Math.max(1, piena + (fermo ? 0 : 1)), fermo,
     };
   }
-  return { parti, dopoStop };
+  return { parti, dopoStop, inizio };
 }
 
 /**
@@ -441,6 +447,7 @@ export const STATO_LABEL: Record<StatoCarico, string> = {
 /** Le tre parti del carico per l'hub, in parole (23/11). `volute` = le sedute che il ragazzo vuole fare (setup), o null. */
 export function partiRighe(c: CaricoInfo, volute: number | null): string[] {
   if (!c.parti) return [];
+  if (c.inizio) return ['Si comincia: questa settimana le giornate che hai chiesto. Da qui si sale una seduta alla volta.'];
   if (c.dopoStop) return [`Si riparte dopo una pausa: ${SEDUTE_DOPO_STOP} sedute da fare, le altre facoltative.`];
   return PARTI_CARICO.map((p) => {
     const x = c.parti![p];
@@ -454,6 +461,7 @@ export function partiRighe(c: CaricoInfo, volute: number | null): string[] {
 /** Le tre parti del carico per i prompt (23/11): il validatore controlla queste, non il tetto unico. */
 export function partiTesto(c: CaricoInfo): string {
   if (!c.parti) return '';
+  if (c.inizio) return `\nPRIMA SETTIMANA CON L'APP (nessuna seduta fatta finora): nessun tetto di carico, fai le giornate che ha chiesto nel setup; da qui il tetto sale una seduta alla volta.`;
   if (c.dopoStop) return `\nRIPARTENZA DOPO UNA PAUSA (nessuna seduta dell'app nelle ultime 2 settimane): nessun tetto di carico, ma le sedute oltre la ${SEDUTE_DOPO_STOP}ª le segna il server come FACOLTATIVE. Metti per prime le due più importanti; nel messaggio dillo in una riga.`;
   const righe = PARTI_CARICO.map((p) => {
     const x = c.parti![p];

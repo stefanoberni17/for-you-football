@@ -16,7 +16,8 @@ Poi, con le decisioni di Ste della sera (`docs/carico-tetto-2026-11-23.md`): il 
 gambe e corsa con la squadra, tecnica), la **squadra di ogni settimana** (resoconti, calendario, abitudine) al posto di
 quella di questa settimana per tutte, il **tetto per parte** (+30 % sulla media di 4 settimane o la più carica), il
 **pavimento di una seduta in più a settimana** fino alle giornate che il ragazzo vuole fare, e la **ripartenza dopo uno
-stop** con le sedute oltre la seconda facoltative. Prima con una seduta a settimana il tetto non arrivava mai a due.
+stop** con le sedute oltre la seconda facoltative; chi comincia da zero fa le giornate che ha chiesto (Ste: «per chi
+comincia nuovo fai le giornate che chiede»). Prima con una seduta a settimana il tetto non arrivava mai a due.
 `PLANNER_V2_PROMPT_VERSION = 'v2.54-carico-per-parte'`. Test in `tests/caricoParti.test.ts`.
 
 ## 2026-11-22 — Audit del percorso: testi, codice e audio allineati

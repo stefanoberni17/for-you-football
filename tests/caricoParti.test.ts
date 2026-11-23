@@ -53,10 +53,17 @@ describe('le tre parti del carico', () => {
     expect(scarico.parti!.alta.pavimentoSedute).toBe(1);
   });
 
-  it('dopo due settimane senza sedute (o all\'inizio) è una ripartenza', () => {
+  it('dopo due settimane senza sedute è una ripartenza; chi comincia non è uno stop (Ste, 23/11)', () => {
     const c = calcolaCarico({ completions: [fatta('a', '2026-10-27')], setRpe: [], plans: [piano('a')], oggi: LUN, lunedi: LUN, squadraSettimanale: 0 });
     expect(c.dopoStop).toBe(true);
-    expect(calcolaCarico({ completions: [], setRpe: [], plans: [], oggi: LUN, lunedi: LUN }).dopoStop).toBe(true);
+    expect(c.inizio).toBe(false);
+    const nuovo = calcolaCarico({ completions: [], setRpe: [], plans: [], oggi: LUN, lunedi: LUN });
+    expect(nuovo.inizio).toBe(true);
+    expect(nuovo.dopoStop).toBe(false);
+    // sedute più vecchie della finestra letta: è uno che riparte, non uno che comincia
+    const vecchio = calcolaCarico({ completions: [], setRpe: [], plans: [], oggi: LUN, lunedi: LUN, sedutePrima: true });
+    expect(vecchio.inizio).toBe(false);
+    expect(vecchio.dopoStop).toBe(true);
   });
 });
 
@@ -79,9 +86,17 @@ describe('la squadra di ogni settimana', () => {
 });
 
 describe('ripartenza dopo uno stop: le sedute oltre la seconda sono facoltative', () => {
-  it('piano base senza storico: tre giornate, la terza facoltativa, e la riga che lo dice', async () => {
-    const marco = SCENARI.find((x) => x.id === 'marco')!.atleta;
+  const marco = SCENARI.find((x) => x.id === 'marco')!.atleta;
+  it('chi comincia fa le giornate che ha chiesto, nessuna facoltativa', async () => {
     const ctx = contextFinto({ ...marco, storico: { plans: [], completions: [] } });
+    expect(ctx.base.carico.inizio).toBe(true);
+    const e = await generaPianoV2(ctx, undefined, {}, { senzaClaude: true });
+    expect(e.plan.sedute.length).toBe(3);
+    expect(e.plan.sedute.some((x) => x.facoltativa)).toBe(false);
+  });
+  it('chi riparte dopo uno stop: tre giornate, la terza facoltativa, e la riga che lo dice', async () => {
+    const ctx = contextFinto({ ...marco, storico: { plans: [], completions: [] } });
+    ctx.base.carico = { ...ctx.base.carico, inizio: false, dopoStop: true };
     expect(ctx.base.carico.dopoStop).toBe(true);
     const e = await generaPianoV2(ctx, undefined, {}, { senzaClaude: true });
     const ordinate = [...e.plan.sedute].sort((a, b) => a.giorno - b.giorno);

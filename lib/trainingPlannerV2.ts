@@ -1327,7 +1327,7 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
   // pavimento di progressione (si sale di una seduta a settimana, fino alle sedute che il ragazzo vuole fare). Dopo uno
   // stop nessun taglio: le sedute oltre la seconda diventano facoltative (`rifinisci` in generaPianoV2)
   if (c.parti) {
-    if (!c.dopoStop) {
+    if (!c.dopoStop && !c.inizio) {
       const fattore = ctx.base.ciclo.isDeload ? DELOAD_RPE : 1;
       const perParte = caricoPianificatoPerParte({ sedute: settimana }, c.calibrazione, fattore);
       const volute = seduteRichieste(ctx) ?? ctx.maxSeduteFisiche;
@@ -2089,8 +2089,8 @@ function preferenzeTesto(ctx: ContextV2, richiesta?: string): string {
 export const NOTA_DOPO_STOP = `Si riparte dopo una pausa: le prime ${SEDUTE_DOPO_STOP} sedute sono quelle da fare, le altre sono facoltative, se ti senti bene. La settimana prossima si sale da quello che hai fatto.`;
 
 /**
- * Dopo uno stop (nessuna seduta dell'app nelle ultime 2 settimane complete, anche chi comincia adesso) le sedute oltre
- * la seconda restano ma diventano facoltative (Ste, 23/11). Le sedute dei giorni passati contano tra le prime due.
+ * Dopo uno stop (aveva già fatto sedute con l'app, nessuna nelle ultime 2 settimane complete) le sedute oltre la seconda
+ * restano ma diventano facoltative (Ste, 23/11). Chi comincia adesso fa le giornate che ha chiesto (`inizio`). Le sedute dei giorni passati contano tra le prime due.
  */
 export function conFacoltativeDopoStop(ctx: ContextV2, plan: WeekPlan): WeekPlan {
   if (!ctx.base.carico?.dopoStop || !plan.sedute.length) return plan;
