@@ -26,6 +26,17 @@ Remotion è gratuito per persone singole e aziende fino a 3 dipendenti (licenza 
 7. Controllo su alcuni fotogrammi: `npx remotion still <nome> out.png --frame=N --browser-executable=/opt/pw-browsers/chromium`.
 8. Render: `npx remotion render <nome> out.mp4 --browser-executable=/opt/pw-browsers/chromium --crf=18`.
 
+## Video di esercizi per YouTube e l'app
+
+Decisioni di Ste del 23/11/2026, valgono per tutti i prossimi:
+- **Flusso:** riconoscere l'esercizio dai fotogrammi → proporre il testo della voce → ok di Ste → montaggio (voce "Stef" su Eleven v4, sottotitoli, sottofondo all'8 %) → descrizione YouTube. Un video alla volta.
+- **Preparazione:** `SENZA_SFONDO=1 scripts/prepara.sh` (solo colore e voce: lo sfondo sfocato sfoca anche l'attrezzo a terra).
+- **Durata:** corti, circa 20-25", solo le ripetizioni buone (via inizio, cambi di posizione, fine).
+- **Titoli normali**, descrittivi, senza frasi a effetto ("il trucco", "quasi nessuno lo fa"): esercizio + per chi + serie con numero, es. "Kettlebell swing per calciatori | Forza da calciatore #1". Serie: "Forza da calciatore" (kettlebell e forza), "Tecnica con la pallina" (palleggi e passaggi con la pallina da tennis).
+- **Descrizione:** cosa allena, come si fa, errori da evitare, poi la riga "Ogni settimana un esercizio nuovo per giocare meglio: iscriviti per non perderli.", poi "For You Football: il mental training per calciatori.", hashtag e tag. Mai "iscriviti" nel titolo.
+- **Commento da fissare:** una domanda semplice sull'esercizio, per far partire i commenti.
+- **Playlist:** una per serie.
+
 ## Comandi
 
 ```bash
