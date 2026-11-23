@@ -394,6 +394,7 @@ export interface PlanSession {
   spostamenti?: Spostamento[]; // 10/11 (lib/spostamenti): la storia degli spostamenti (generazione, calendario, posticipo), per spiegarli accanto al testo del preparatore
   spostata_da?: number;      // M8 (26/10, lib/trainingCalendario): il server l'ha spostata perché il calendario è cambiato (giorno di prima)
   recupero?: boolean;        // riproposta uguale perché saltata la settimana precedente
+  facoltativa?: boolean;     // 23/11: ripartenza dopo uno stop, le sedute oltre la seconda sono facoltative (Ste: «dopo stop facciamo con facoltativa»)
   proposte?: { tipo: 'yoga-recupero' | 'togli' | 'aggiungi' | 'leggera'; motivo: string }[]; // dal resoconto (19/10): il programma propone, il ragazzo sceglie
 }
 export interface WeekPlan {

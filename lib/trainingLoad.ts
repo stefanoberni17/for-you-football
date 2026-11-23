@@ -78,6 +78,91 @@ export interface CaricoInfo {
   ultimoScarico: string | null;
   /** Tetto personale (Ste, 26/10, lib/trainingCondizione): stanco → target e tetto ×0,85 (tetto duro ×0,9), fresco → ×1,15. */
   condizione?: CondizioneCarico;
+  /**
+   * 23/11 (Ste: «vanno suddivisi i carichi: palestra, tecnica, squadra, che comprende resistenza, sprint, parte bassa ma
+   * non parte alta»): il tetto si conta per parte. È questo che il validatore controlla (`tettoDuro` resta per i piani
+   * e i test che non hanno le parti).
+   */
+  parti?: Record<ParteCarico, CaricoParte>;
+  /** Nessuna seduta dell'app nelle ultime 2 settimane complete (anche un ragazzo nuovo): si riparte con 2 sedute, le altre facoltative. */
+  dopoStop?: boolean;
+}
+
+// ─── Carico per parte (23/11) ───────────────────────────────────────────────
+export type ParteCarico = 'alta' | 'gambe' | 'tecnica';
+export const PARTI_CARICO: readonly ParteCarico[] = ['alta', 'gambe', 'tecnica'];
+export const PARTE_LABEL: Record<ParteCarico, string> = { alta: 'parte alta', gambe: 'gambe e corsa', tecnica: 'tecnica' };
+
+export interface CaricoParte {
+  /** Le 4 settimane complete prima di questa, dalla più vecchia: app, squadra (solo gambe e corsa), totale, sedute dell'app. */
+  settimane: { lunedi: string; app: number; squadra: number; totale: number; sedute: number }[];
+  media: number;            // media dei totali delle 4 settimane
+  massima: number;          // la settimana più carica delle 4 («l'hai già retta»)
+  squadra: number;          // squadra di QUESTA settimana (solo gambe e corsa)
+  /** Tetto dell'app per questa parte dai dati: max(+30 % sulla media, la più carica) − squadra di questa settimana. */
+  tetto: number;
+  /** Sedute dell'app con questa parte che la progressione ammette comunque: la settimana più piena delle ultime 3, più una. */
+  pavimentoSedute: number;
+  /** Perché il pavimento non sale di una (settimana scorsa dura, stanco, scarico), o null. */
+  fermo: string | null;
+}
+
+/** Aumento sulla media delle 4 settimane: oltre +30 % c'è l'unico segnale che i dati sostengono (Fredette 2022, docs/ricerca-metodo-2026-10.md §4). */
+export const AUMENTO_SETTIMANA_MAX = 1.3;
+export const SETTIMANE_PARTI = 4;
+/** Voto medio delle sedute della settimana scorsa da cui il pavimento non sale (seduta «dura» della scala). */
+export const VOTO_FERMA_PROGRESSIONE = 8;
+/** Dopo uno stop: le prime due sedute sono quelle da fare, le altre facoltative (Ste, 23/11). */
+export const SEDUTE_DOPO_STOP = 2;
+/** Una seduta «ha» una parte se almeno questa quota del suo carico è di quella parte (l'apertura non fa una seduta di gambe). */
+export const QUOTA_PARTE_SEDUTA = 0.25;
+
+const APERTURE_CARICO: ReadonlySet<string> = new Set(['fascia-training-rolling-and-fascia-adhesion', 'fascia-foundations-1', 'apertura-breve', 'risc-velocita']);
+
+/** La parte di una qualità; null = riscaldamento, mobilità, test, apertura: vanno con la parte principale della seduta. */
+export function parteDiQualita(q: string): ParteCarico | null {
+  if (q === 'forza-parte-alta' || q === 'core') return 'alta';
+  if (q.startsWith('tecnica-')) return 'tecnica';
+  if (q === 'forza-parte-bassa' || q === 'forza-esplosiva' || q === 'velocita' || q === 'fascia-prevenzione' || q.startsWith('pliometria-') || q.startsWith('resistenza-')) return 'gambe';
+  return null;
+}
+
+/** Quote del carico di una seduta per parte (somma 1): sui blocchi, minuti × fatica attesa della qualità. */
+export function quotePerParte(s: Pick<PlanSession, 'blocchi' | 'tipo'>): Record<ParteCarico, number> {
+  const q: Record<ParteCarico, number> = { alta: 0, gambe: 0, tecnica: 0 };
+  let neutro = 0;
+  for (const b of s.blocchi ?? []) {
+    const w = (b.durataMin || 0) * (RPE_QUALITA[b.qualita as QualitaV2] ?? 5);
+    const p = APERTURE_CARICO.has(b.id) ? null : parteDiQualita(b.qualita);
+    if (p) q[p] += w; else neutro += w;
+  }
+  const tot = q.alta + q.gambe + q.tecnica;
+  if (tot <= 0) {
+    // Piani v1 o giornate senza blocchi di una parte: dal tipo
+    const p: ParteCarico = s.tipo === 'tecnica' || s.tipo === 'skill' ? 'tecnica' : 'gambe';
+    return { alta: 0, gambe: 0, tecnica: 0, [p]: 1 } as Record<ParteCarico, number>;
+  }
+  // Il neutro (riscaldamento, apertura, mobilità) va alla parte principale della seduta
+  const principale = PARTI_CARICO.reduce((a, b) => (q[b] > q[a] ? b : a), 'alta' as ParteCarico);
+  q[principale] += neutro;
+  const t = tot + neutro;
+  return { alta: q.alta / t, gambe: q.gambe / t, tecnica: q.tecnica / t };
+}
+
+/** Carico pianificato per parte (stessa stima di `caricoPianificato`, divisa con le quote della seduta). */
+export function caricoPianificatoPerParte(plan: WeekPlan, calibrazione = 1, fattoreRpe = 1): Record<ParteCarico, number> {
+  const out: Record<ParteCarico, number> = { alta: 0, gambe: 0, tecnica: 0 };
+  for (const s of plan.sedute) {
+    const c = ((s.durata_min || 0) + (s.apertura_min || 0)) * rpeAttesoSeduta(s) * calibrazione * fattoreRpe;
+    const q = quotePerParte(s);
+    for (const p of PARTI_CARICO) out[p] += c * q[p];
+  }
+  return { alta: Math.round(out.alta), gambe: Math.round(out.gambe), tecnica: Math.round(out.tecnica) };
+}
+
+/** La seduta (di un piano) ha questa parte? */
+export function sedutaHaParte(s: Pick<PlanSession, 'blocchi' | 'tipo'>, p: ParteCarico): boolean {
+  return quotePerParte(s)[p] >= QUOTA_PARTE_SEDUTA;
 }
 /** Quanto serve al carico della condizione dell'atleta (il resto sta in lib/trainingCondizione). */
 export interface CondizioneCarico { stato: 'stanco' | 'normale' | 'fresco'; fattore: number; fattoreTettoDuro: number; motivi: string[] }
@@ -147,6 +232,11 @@ export function calcolaCarico(input: {
   squadraMisurata?: { data: string; reale: number; stima: number }[];
   /** Tetto personale (26/10): target e tetto ×fattore, tetto duro ×fattoreTettoDuro. */
   condizione?: CondizioneCarico;
+  /**
+   * 23/11: la squadra di OGNI settimana (lunedì → AU: resoconti, calendario di quella settimana o abitudine,
+   * `squadraPerSettimana` in lib/trainingResoconto). Senza, vale `squadraSettimanale` per tutte (come prima).
+   */
+  squadraPerSettimana?: Record<string, number>;
 }): CaricoInfo {
   const { oggi, lunedi } = input;
   const S = Math.max(0, Math.round(input.squadraSettimanale ?? 0));
@@ -243,9 +333,76 @@ export function calcolaCarico(input: {
     // settimana leggera (due sedute da 30' a fatica 5). La guida resta quella dei dati
     tettoDuro = Math.max(tettoDuro, TETTO_DURO_MIN_AU);
   }
+  const { parti, dopoStop } = calcolaParti({ completions: input.completions, planById, rpeBySession, oggi, lunedi, S, isDeload: !!input.isDeload, condizione: input.condizione, squadraPerSettimana: input.squadraPerSettimana });
   // M11: l'ultima settimana di scarico salvata (il piano porta `scarico: true`), per la distanza tra uno scarico e l'altro e il ri-test
   const ultimoScarico = input.plans.filter((p) => p.plan?.scarico && p.week_start).map((p) => String(p.week_start).slice(0, 10)).sort().pop() ?? null;
-  return { sedute, settimane, acuto, cronico, acwr, stato, giorniStorico, calibrazione, target, tetto, tettoDuro, squadra: S, squadraMisurati: misurati.length, squadraAcuto: sAcuto, ultimoScarico, condizione: input.condizione };
+  return { sedute, settimane, acuto, cronico, acwr, stato, giorniStorico, calibrazione, target, tetto, tettoDuro, squadra: S, squadraMisurati: misurati.length, squadraAcuto: sAcuto, ultimoScarico, condizione: input.condizione, parti, dopoStop };
+}
+
+/** Il carico di una seduta fatta (stessa cascata di `calcolaCarico`: minuti veri o del piano, voto, serie, giudizio, 6). */
+function caricoFatto(c: CompletionRow, s: PlanSession | undefined, logs: number[] | undefined): number {
+  const durataMin = durataRealeMin(c) ?? (s?.durata_min && s.durata_min > 0 ? s.durata_min + (s.apertura_min || 0) : 45);
+  const rpe = c.rpe != null && c.rpe >= 1 && c.rpe <= 10 ? c.rpe
+    : logs && logs.length ? logs.reduce((a, b) => a + b, 0) / logs.length
+    : c.feedback && RPE_FEEDBACK[c.feedback] ? RPE_FEEDBACK[c.feedback] : 6;
+  return durataMin * rpe;
+}
+
+/**
+ * Le tre parti del carico (23/11, Ste): parte alta (solo l'app), gambe e corsa (l'app più la squadra: resistenza, sprint,
+ * parte bassa), tecnica (solo l'app). Per ognuna: le 4 settimane complete prima di questa, il tetto dai dati
+ * (+30 % sulla media o la settimana più carica, meno la squadra di questa settimana) e il pavimento di progressione
+ * (la settimana più piena delle ultime 3, più una seduta, se la settimana scorsa non è stata dura e non è stanco).
+ */
+function calcolaParti(p: {
+  completions: CompletionRow[]; planById: Map<string, WeekPlan>; rpeBySession: Map<string, number[]>; oggi: string; lunedi: string;
+  S: number; isDeload: boolean; condizione?: CondizioneCarico; squadraPerSettimana?: Record<string, number>;
+}): { parti: Record<ParteCarico, CaricoParte>; dopoStop: boolean } {
+  const lunedis = Array.from({ length: SETTIMANE_PARTI }, (_, i) => addDays(p.lunedi, -7 * (SETTIMANE_PARTI - i)));
+  const app: Record<ParteCarico, number[]> = { alta: lunedis.map(() => 0), gambe: lunedis.map(() => 0), tecnica: lunedis.map(() => 0) };
+  const sedute: Record<ParteCarico, number[]> = { alta: lunedis.map(() => 0), gambe: lunedis.map(() => 0), tecnica: lunedis.map(() => 0) };
+  const voti: number[][] = lunedis.map(() => []);
+  for (const c of p.completions) {
+    const data = romeDate(c.completed_at);
+    const w = lunedis.findIndex((l) => data >= l && data <= addDays(l, 6));
+    if (w < 0) continue;
+    const giorno = Number(c.session_key.split('#')[1]);
+    const plan = c.plan_id ? p.planById.get(c.plan_id) : undefined;
+    const s = plan?.sedute.find((x) => x.giorno === giorno);
+    const carico = caricoFatto(c, s, p.rpeBySession.get(c.session_key));
+    const q = quotePerParte(s ?? { tipo: 'fisica' });
+    for (const parte of PARTI_CARICO) {
+      app[parte][w] += carico * q[parte];
+      if (q[parte] >= QUOTA_PARTE_SEDUTA) sedute[parte][w] += 1;
+    }
+    if (c.rpe != null) voti[w].push(c.rpe);
+  }
+  const squadraDi = (l: string) => Math.max(0, Math.round(p.squadraPerSettimana?.[l] ?? p.S));
+  // Stop: nessuna seduta dell'app nelle ultime due settimane complete (anche chi comincia adesso)
+  const dopoStop = [SETTIMANE_PARTI - 1, SETTIMANE_PARTI - 2].every((w) => PARTI_CARICO.every((parte) => sedute[parte][w] === 0));
+  const ultimaVoti = voti[SETTIMANE_PARTI - 1];
+  const ultimaDura = ultimaVoti.length > 0 && ultimaVoti.reduce((a, b) => a + b, 0) / ultimaVoti.length >= VOTO_FERMA_PROGRESSIONE;
+  const stanco = p.condizione?.stato === 'stanco';
+  const fermo = p.isDeload ? 'settimana di scarico' : stanco ? 'sei stanco' : ultimaDura ? 'la settimana scorsa è stata dura' : null;
+  const parti = {} as Record<ParteCarico, CaricoParte>;
+  for (const parte of PARTI_CARICO) {
+    const settimane = lunedis.map((l, i) => {
+      const sq = parte === 'gambe' ? squadraDi(l) : 0;
+      return { lunedi: l, app: Math.round(app[parte][i]), squadra: sq, totale: Math.round(app[parte][i] + sq), sedute: sedute[parte][i] };
+    });
+    const media = Math.round(settimane.reduce((a, x) => a + x.totale, 0) / settimane.length);
+    const massima = Math.max(0, ...settimane.map((x) => x.totale));
+    const squadra = parte === 'gambe' ? squadraDi(p.lunedi) : 0;
+    let tot = Math.max(media * AUMENTO_SETTIMANA_MAX, massima);
+    if (p.isDeload) tot *= 0.75;
+    tot *= p.condizione?.fattoreTettoDuro ?? 1;
+    const piena = Math.max(0, ...settimane.slice(-3).map((x) => x.sedute));
+    parti[parte] = {
+      settimane, media, massima, squadra, tetto: Math.max(0, Math.round(tot - squadra)),
+      pavimentoSedute: Math.max(1, piena + (fermo ? 0 : 1)), fermo,
+    };
+  }
+  return { parti, dopoStop };
 }
 
 /**
@@ -281,15 +438,40 @@ export const STATO_LABEL: Record<StatoCarico, string> = {
   rischio: 'Troppo in fretta: settimana più leggera',
 };
 
+/** Le tre parti del carico per l'hub, in parole (23/11). `volute` = le sedute che il ragazzo vuole fare (setup), o null. */
+export function partiRighe(c: CaricoInfo, volute: number | null): string[] {
+  if (!c.parti) return [];
+  if (c.dopoStop) return [`Si riparte dopo una pausa: ${SEDUTE_DOPO_STOP} sedute da fare, le altre facoltative.`];
+  return PARTI_CARICO.map((p) => {
+    const x = c.parti![p];
+    const n = volute ? Math.min(volute, x.pavimentoSedute) : x.pavimentoSedute;
+    const nome = PARTE_LABEL[p].charAt(0).toUpperCase() + PARTE_LABEL[p].slice(1);
+    const squadra = p === 'gambe' ? ', squadra compresa' : '';
+    return `${nome}: media ${x.media} a settimana${squadra}, la più carica ${x.massima}; questa settimana almeno ${n === 1 ? '1 seduta' : `${n} sedute`}${x.fermo ? ` (non si sale: ${x.fermo})` : ''}.`;
+  });
+}
+
+/** Le tre parti del carico per i prompt (23/11): il validatore controlla queste, non il tetto unico. */
+export function partiTesto(c: CaricoInfo): string {
+  if (!c.parti) return '';
+  if (c.dopoStop) return `\nRIPARTENZA DOPO UNA PAUSA (nessuna seduta dell'app nelle ultime 2 settimane): nessun tetto di carico, ma le sedute oltre la ${SEDUTE_DOPO_STOP}ª le segna il server come FACOLTATIVE. Metti per prime le due più importanti; nel messaggio dillo in una riga.`;
+  const righe = PARTI_CARICO.map((p) => {
+    const x = c.parti![p];
+    const storia = x.settimane.map((w) => `${w.totale}${w.squadra ? ` (squadra ${w.squadra})` : ''}`).join(' → ');
+    return `- ${PARTE_LABEL[p]}: ultime 4 settimane ${storia}; tetto app ${x.tetto} AU${x.squadra ? ` (squadra di questa settimana ${x.squadra} già tolta)` : ''}; comunque fino a ${x.pavimentoSedute} sedute di questa parte (si sale di una a settimana${x.fermo ? `, ferma: ${x.fermo}` : ''}).`;
+  });
+  return `\nTETTO PER PARTE (il validatore rifiuta oltre, parte per parte; la squadra conta solo su gambe e corsa, mai sulla parte alta):\n${righe.join('\n')}`;
+}
+
 /** Blocco testo per i prompt del planner e del preparatore AI. */
 export function caricoTesto(c: CaricoInfo): string {
   const sett = c.settimane.map((s) => `${s.lunedi.slice(5)}: ${s.carico} AU (${s.sedute} sedute)${s.corrente ? ' ← in corso' : ''}`).join(' · ');
   const squadra = c.squadra ? ` Squadra stimata (dal calendario): ~${c.squadra} AU/settimana in più, costante.` : '';
   if (c.acwr === null) {
-    return `\n# CARICO TOTALE (session-RPE: durata × RPE)\nStorico app ${c.giorniStorico} giorni: ${sett}. Servono almeno ${MIN_GIORNI_STORICO} giorni per il rapporto acuto/cronico: nessun tetto, resta prudente (settimana simile alla precedente).${squadra}`;
+    return `\n# CARICO TOTALE (session-RPE: durata × RPE)\nStorico app ${c.giorniStorico} giorni: ${sett}. Servono almeno ${MIN_GIORNI_STORICO} giorni per il rapporto acuto/cronico: resta prudente (settimana simile alla precedente).${squadra}${partiTesto(c)}`;
   }
   const cond = c.condizione && c.condizione.stato !== 'normale'
     ? ` Tetto PERSONALE: l'atleta è ${c.condizione.stato.toUpperCase()} (${c.condizione.motivi.join('; ')}) → target e tetto ${c.condizione.fattore < 1 ? 'abbassati' : 'alzati'} del ${Math.round(Math.abs(c.condizione.fattore - 1) * 100)} %${c.condizione.fattoreTettoDuro < 1 ? ', tetto duro abbassato' : ''}; nel messaggio dillo in una riga.`
     : '';
-  return `\n# CARICO TOTALE (session-RPE: durata × RPE — calcolato dai dati)\nSettimane app: ${sett}${squadra}\nAcuto app (ultimi 7gg / ultima settimana): ${c.acuto} AU · cronico app: ${c.cronico} AU · ACWR sul totale app+squadra ${c.acwr} → ${c.stato.toUpperCase()}\nTARGET app per questa settimana: ${c.target!.min}-${c.target!.max} AU, guida fino a ${c.tetto} AU (il validatore rifiuta solo oltre ${c.tettoDuro} AU: rapporto acuto/cronico a ${ACWR_SOGLIE.alto}). RPE reale/atteso: ${c.calibrazione}.${cond}`;
+  return `\n# CARICO TOTALE (session-RPE: durata × RPE — calcolato dai dati)\nSettimane app: ${sett}${squadra}\nAcuto app (ultimi 7gg / ultima settimana): ${c.acuto} AU · cronico app: ${c.cronico} AU · ACWR sul totale app+squadra ${c.acwr} → ${c.stato.toUpperCase()}\nTARGET app per questa settimana: ${c.target!.min}-${c.target!.max} AU, guida fino a ${c.tetto} AU ${c.parti ? '' : ` (il validatore rifiuta solo oltre ${c.tettoDuro} AU: rapporto acuto/cronico a ${ACWR_SOGLIE.alto})`}. RPE reale/atteso: ${c.calibrazione}.${cond}${partiTesto(c)}`;
 }

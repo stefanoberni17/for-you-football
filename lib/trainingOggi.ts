@@ -33,6 +33,7 @@ export interface SedutaOggi {
   descrizione: string;        // "Fascia + Forza parte alta" (nomi senza codici) o "8 esercizi"
   stato: StatoSeduta;
   recupero: boolean;
+  facoltativa: boolean;       // 23/11: ripartenza dopo uno stop
   proposte: string[];         // 'togli' | 'aggiungi' | … dal resoconto
 }
 
@@ -105,7 +106,7 @@ export async function loadCampoOggi(userId: string): Promise<CampoOggi> {
     ? ([...((planAdattato as { sedute?: PlanSession[] }).sedute || [])].sort((a, b) => a.giorno - b.giorno)).map((s) => ({
       giorno: s.giorno, titolo: s.titolo, tipo: s.tipo, durataMin: s.durata_min, aperturaMin: s.apertura_min ?? 0,
       descrizione: descrizioneSeduta(s), stato: statoSeduta(s.giorno, oggiDow, fatti.has(s.giorno)),
-      recupero: !!s.recupero, proposte: (s.proposte ?? []).map((p) => p.tipo),
+      recupero: !!s.recupero, facoltativa: !!s.facoltativa, proposte: (s.proposte ?? []).map((p) => p.tipo),
     }))
     : [];
   const seduta = sedute.find((s) => s.stato === 'oggi') ?? sedute.find((s) => s.stato === 'recuperabile') ?? null;

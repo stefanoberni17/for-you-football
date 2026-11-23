@@ -1,6 +1,6 @@
 import { calendarioDellaSettimana } from '@/lib/settimanaServer';
 import { NextRequest, NextResponse } from 'next/server';
-import { loadResoconti } from '@/lib/trainingResocontoServer';
+import { loadResoconti, loadSquadraPerSettimana } from '@/lib/trainingResocontoServer';
 import { resocontiDaChiedere, squadraMisurata } from '@/lib/trainingResoconto';
 import { pianoPerLettura } from '@/lib/trainingLettura';
 import { giorniAllaPartita, giorniDallaPartita } from '@/lib/trainingRulesV2';
@@ -20,7 +20,7 @@ import { NOME_LIVELLO, sedutePerLivello } from '@/lib/listino';
 import { getConsents } from '@/lib/consent';
 import { LADDER_AREE, buildAmrapCircuit, buildRombo, buildRomboBase, fasciaFromResults, isFaticaAlta, ladderForArea, placementFromResults, type TestResultRow } from '@/lib/trainingEngine';
 import { cicloInfo, famigliaBlocco, loadCaricoInput, todayRome, mondayOfThisWeekRome, oggiDowRome } from '@/lib/trainingPlanner';
-import { calcolaCarico, caricoSquadraStimato, STATO_LABEL } from '@/lib/trainingLoad';
+import { calcolaCarico, caricoSquadraStimato, partiRighe, STATO_LABEL } from '@/lib/trainingLoad';
 import { giorniPartita } from '@/lib/trainingSquadra';
 import { zoneTeseRicorrenti } from '@/lib/trainingFascia';
 import { TESTS, esercizioById } from '@/lib/trainingCatalog';
@@ -248,8 +248,16 @@ export async function GET(request: NextRequest) {
     }));
     // M11 (26/10): scarico, ri-test e tetto dai dati, come nel planner. Il carico senza scarico dà le settimane e l'ultimo
     // scarico salvato; la condizione (ultime 2 settimane) dà il fattore personale; il ciclo decide scarico e ri-test
-    const inputCarico = await loadCaricoInput(userId);
-    const carico0 = calcolaCarico({ ...inputCarico, oggi, lunedi: mondayOfThisWeekRome(), squadraSettimanale: squadraStimato, squadraMisurata: misurata });
+    // 23/11: la squadra di ogni settimana passata, non quella di questa settimana per tutte
+    const [inputCarico, squadraStorica] = await Promise.all([
+      loadCaricoInput(userId),
+      loadSquadraPerSettimana(userId, {
+        lunedi: mondayOfThisWeekRome(), squadraCorrente: squadraStimato, squadra,
+        abitudine: { trainingDays: giorniSquadra([], squadra), matchDays: partitaAbituale ? [partitaAbituale] : [] },
+        squadraDurataMin: setup.squadraDurataMin, offSeason: setup.fase === 'off_season',
+      }),
+    ]);
+    const carico0 = calcolaCarico({ ...inputCarico, oggi, lunedi: mondayOfThisWeekRome(), squadraSettimanale: squadraStimato, squadraMisurata: misurata, squadraPerSettimana: squadraStorica });
     const condizione = conFeedback ? condizioneAtleta({ checkins: checkins14 || [], sedute: feedbackRecenti, resoconti, oggi }) : undefined;
     if (conFeedback) ciclo = cicloDaiDati(ciclo, {
       carico: carico0, sedute: feedbackRecenti, lunedi: mondayOfThisWeekRome(), condizione: condizione!, famiglia: famigliaBlocco,
@@ -257,7 +265,7 @@ export async function GET(request: NextRequest) {
       ultimoTest: ultimaTestSession?.completed_at || (results && results.length > 0 ? results[0].created_at ?? null : null),
       famiglieAlTetto: famiglieAlTetto(memoria).map((m) => m.famiglia),
     });
-    const carico = calcolaCarico({ ...inputCarico, oggi, lunedi: mondayOfThisWeekRome(), isDeload: ciclo.isDeload, squadraSettimanale: squadraStimato, squadraMisurata: misurata, condizione });
+    const carico = calcolaCarico({ ...inputCarico, oggi, lunedi: mondayOfThisWeekRome(), isDeload: ciclo.isDeload, squadraSettimanale: squadraStimato, squadraMisurata: misurata, condizione, squadraPerSettimana: squadraStorica });
     // Il piano della settimana con i resoconti applicati (serie facoltative, giorni più leggeri): il piano salvato non cambia
     const matchDaysEff = giorniPartita(calendar?.match_days || [], partitaAbituale, calendar?.confermata);
     const trainingDaysEff = giorniSquadra(calendar?.training_days || [], squadra, calendar?.confermata);
@@ -395,7 +403,7 @@ export async function GET(request: NextRequest) {
       // Ciclo mensile: dall'ultima batteria/ri-test chiusa (fallback: ultimo risultato test)
       ciclo,
       // Carico totale (session-RPE) ultime 4 settimane + stima squadra dal calendario
-      carico: { ...carico, statoLabel: STATO_LABEL[carico.stato], squadraStimato, condizioneRiga: carico.condizione ? condizioneRiga(carico.condizione) : null },
+      carico: { ...carico, statoLabel: STATO_LABEL[carico.stato], squadraStimato, partiRighe: partiRighe(carico, setup.sedute ?? null), condizioneRiga: carico.condizione ? condizioneRiga(carico.condizione) : null },
       // Allenamenti con la squadra descritti dall'atleta (facoltativo, migration 023): sforzo e qualità per giorno
       squadra,
       // Settimana squadra caricata dall'utente (per la maschera: si vede prima di scegliere i giorni)

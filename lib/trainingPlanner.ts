@@ -27,7 +27,7 @@ import type { Dolore, Limitazioni } from './trainingDolore';
 import { loadDolore, loadLimitazioni, loadStatoDolore } from './trainingDoloreServer';
 import type { StatoDolore } from './doloreFasi';
 import { bloccoById } from './trainingBlocks';
-import { loadResoconti } from './trainingResocontoServer';
+import { loadResoconti, loadSquadraPerSettimana } from './trainingResocontoServer';
 import { giorniPartita, parsePartitaAbituale, parseSquadra, squadraTesto, type SquadraSettimana } from './trainingSquadra';
 import { livelliPerQualita, type LivelliQualita } from './trainingLivelli';
 import { loadSesso } from './sessoServer';
@@ -365,8 +365,16 @@ export async function loadPlannerContext(userId: string, opzioni: { feedback?: b
   const misurata = squadraMisurata(resoconti, { squadra, squadraDurataMin: profile?.training_squadra_durata_min != null ? Number(profile.training_squadra_durata_min) : null, giorni: { trainingDays, matchDays } });
   // M11 (26/10): scarico, ri-test e tetto dai dati. Prima il carico senza scarico (settimane e ultimo scarico), poi la
   // condizione dell'atleta (ultime 2 settimane), poi il ciclo; il carico finale porta il tetto personale e lo scarico
-  const inputCarico = await loadCaricoInput(userId, setRpe);
-  const carico0 = calcolaCarico({ ...inputCarico, oggi, lunedi: mondayOfThisWeekRome(), squadraSettimanale, squadraMisurata: misurata });
+  // 23/11: la squadra di ogni settimana passata (resoconti, calendario, abitudine), non quella di questa settimana per tutte
+  const [inputCarico, squadraStorica] = await Promise.all([
+    loadCaricoInput(userId, setRpe),
+    loadSquadraPerSettimana(userId, {
+      lunedi: mondayOfThisWeekRome(), squadraCorrente: squadraSettimanale, squadra,
+      abitudine: { trainingDays: giorniSquadra([], squadra), matchDays: partitaAbituale ? [partitaAbituale] : [] },
+      squadraDurataMin: profile?.training_squadra_durata_min != null ? Number(profile.training_squadra_durata_min) : null, offSeason: faseSetup === 'off_season',
+    }),
+  ]);
+  const carico0 = calcolaCarico({ ...inputCarico, oggi, lunedi: mondayOfThisWeekRome(), squadraSettimanale, squadraMisurata: misurata, squadraPerSettimana: squadraStorica });
   const condizione = conFeedback ? condizioneAtleta({ checkins: checkins14 || [], sedute: completions, resoconti, oggi }) : undefined;
   if (conFeedback) {
     ciclo = cicloDaiDati(ciclo, {
@@ -374,7 +382,7 @@ export async function loadPlannerContext(userId: string, opzioni: { feedback?: b
       scaricoInCorso: pianoRow?.plan?.scarico === true, ultimoTest,
     });
   }
-  const carico = calcolaCarico({ ...inputCarico, oggi, lunedi: mondayOfThisWeekRome(), isDeload: ciclo.isDeload, squadraSettimanale, squadraMisurata: misurata, condizione });
+  const carico = calcolaCarico({ ...inputCarico, oggi, lunedi: mondayOfThisWeekRome(), isDeload: ciclo.isDeload, squadraSettimanale, squadraMisurata: misurata, condizione, squadraPerSettimana: squadraStorica });
 
   const rows: TestResultRow[] = (results || []).map((r: { test_id: string; valore: number; livello_calcolato: string; punteggio_calcolato: number; dettaglio?: Record<string, unknown> | null }) => ({
     test_id: r.test_id, valore: Number(r.valore),

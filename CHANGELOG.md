@@ -2,7 +2,7 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
-## 2026-11-23 — Corpo: i giorni saltati per il carico si dicono
+## 2026-11-23 — Corpo: carico per parte, si sale di una seduta a settimana
 
 Ste, 23/11: «Come mai mi fa solo 1 giorno?». La settimana costruita dalle regole (Claude fuori tempo con due piani
 oltre il tetto) aveva una sola seduta: cosce dietro ferme (solo parte alta), niente squadra questa settimana, una
@@ -11,7 +11,13 @@ parte alta ne vale ~230. Il piano base saltava gli altri giorni senza dirlo (`if
 saltati perché ogni seduta sforava il tetto finiscono nelle rinunce (`giorniSenzaSedutaPerCarico` in
 `lib/trainingRinunce.ts`): «Mercoledì e Venerdì senza seduta: nelle ultime settimane hai fatto poche sedute con l'app,
 e il carico si alza un passo alla volta per non farti male». Test con il caso di Ste in `tests/trainingRinunce.test.ts`.
-Aperto per Ste: con una seduta a settimana il cronico resta ~230 e il tetto non arriva mai a due sedute (trappola).
+
+Poi, con le decisioni di Ste della sera (`docs/carico-tetto-2026-11-23.md`): il carico in **tre parti** (parte alta,
+gambe e corsa con la squadra, tecnica), la **squadra di ogni settimana** (resoconti, calendario, abitudine) al posto di
+quella di questa settimana per tutte, il **tetto per parte** (+30 % sulla media di 4 settimane o la più carica), il
+**pavimento di una seduta in più a settimana** fino alle giornate che il ragazzo vuole fare, e la **ripartenza dopo uno
+stop** con le sedute oltre la seconda facoltative. Prima con una seduta a settimana il tetto non arrivava mai a due.
+`PLANNER_V2_PROMPT_VERSION = 'v2.54-carico-per-parte'`. Test in `tests/caricoParti.test.ts`.
 
 ## 2026-11-22 — Audit del percorso: testi, codice e audio allineati
 

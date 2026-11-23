@@ -1,8 +1,8 @@
 # Carico e tetto: come si calcolano oggi, cosa non va, proposta
 
 23/11/2026. Ste: «dobbiamo capire bene come calcolare il carico e il tetto massimo, perché deve esserci possibilità di
-progressione». Nasce dalla settimana del 23/11 con una seduta sola. Niente codice cambiato in questo documento: le
-decisioni sono di Ste (il Campo è congelato per le regole nuove).
+progressione». Nasce dalla settimana del 23/11 con una seduta sola. Le decisioni di Ste e cosa è entrato nel codice
+sono in fondo (§6).
 
 ## 1. Come funziona oggi (`lib/trainingLoad.ts`)
 
@@ -96,3 +96,37 @@ tetto in più per l'app da sola (per esempio +1 seduta a settimana anche lì) la
 
 Lavoro stimato: mezza giornata (calcolo, test sui cinque casi sopra, simulazione della stagione rifatta), tutto in
 `lib/trainingLoad.ts` e nei due loader (`lib/trainingPlanner.ts`, `app/api/training/state/route.ts`).
+
+## 6. Decisioni di Ste (23/11) e cosa è nel codice
+
+Ste: «ok contare con squadra compresa ma vanno suddivisi i carichi secondo me: palestra, tecnica, squadra (che comprende
+resistenza, sprint, parte bassa ecc. ma non parte alta). Ok salire ma dipende da quanti allenamenti vuole fare il ragazzo
+a settimana. Dopo stop facciamo con facoltativa eventualmente.»
+
+- **Tre parti** (`lib/trainingLoad.ts`, `parteDiQualita`, `quotePerParte`, `calcolaParti`): **parte alta** (forza parte
+  alta e core, solo l'app), **gambe e corsa** (parte bassa, esplosiva, pliometria, velocità, resistenza, fascia: l'app più
+  la squadra), **tecnica** (solo l'app). Una seduta si divide tra le parti con minuti × fatica attesa dei suoi blocchi;
+  apertura, riscaldamento e mobilità vanno con la parte principale. `CaricoInfo.parti`.
+- **La squadra di ogni settimana** (`squadraPerSettimana` in `lib/trainingResoconto.ts`, loader
+  `loadSquadraPerSettimana` in `lib/trainingResocontoServer.ts`, usato da planner e state): risposta della settimana con i
+  resoconti al posto della stima; senza risposta ma con i resoconti, solo i resoconti; senza niente l'abitudine (0 in
+  off season). Questa settimana: la stima di prima.
+- **Tetto per parte** = il più alto tra +30 % sulla media delle 4 settimane e la settimana più carica, × 0,75 nello
+  scarico, × 0,9 da stanco, meno la squadra di questa settimana (solo gambe e corsa).
+- **Si sale di una seduta a settimana fino a quelle che il ragazzo vuole fare** (pavimento in sedute): per ogni parte
+  passano comunque tante sedute quante la settimana più piena delle ultime 3, più una, mai oltre le giornate del setup
+  (o della maschera). Il +1 non c'è se la settimana scorsa il voto medio era 8 o più, se è stanco o nello scarico.
+  Oltre il pavimento decide il tetto. Il validatore (`expandPiano`) lo controlla parte per parte; il piano base toglie
+  l'ultima seduta di quella parte e lo dice (`giornataTolta`, `giorniSenzaSedutaPerCarico`).
+- **Dopo uno stop** (nessuna seduta dell'app nelle 2 settimane complete prima, anche chi comincia): nessun taglio per il
+  carico, le sedute oltre la seconda sono **facoltative** (`PlanSession.facoltativa`, `conFacoltativeDopoStop`, riga
+  `NOTA_DOPO_STOP`), con il segno «Facoltativa» nell'hub e nella pagina della seduta; una facoltativa saltata non si
+  recupera la settimana dopo.
+- Nel prompt del planner e della chat la sezione «TETTO PER PARTE» (`partiTesto`); nella card Carico dell'hub le tre righe
+  (`partiRighe`). `PLANNER_V2_PROMPT_VERSION = 'v2.54-carico-per-parte'`. Il vecchio tetto unico resta solo per i
+  contesti senza parti.
+- **Non fatto (non deciso):** minuti calibrati (punto 5), un limite in più per l'off season (punto 6).
+
+Il caso di Ste con il codice nuovo: parte alta una seduta a settimana nelle ultime tre → questa settimana due sedute di
+parte alta (gambe ferme per il dolore), con la riga «per parte alta si sale di una seduta a settimana… la prossima una
+in più se le fai». Test: `tests/caricoParti.test.ts` e `tests/trainingRinunce.test.ts`.

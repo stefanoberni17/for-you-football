@@ -52,8 +52,10 @@ describe('mai la settimana base (17/11): il planner corregge invece di arrenders
 
   it('giorni saltati per il tetto di carico: si dice quali e perché (23/11)', async () => {
     expect(giorniSenzaSedutaPerCarico([], null)).toBeNull();
-    expect(giorniSenzaSedutaPerCarico(['Mercoledì', 'Venerdì'], { tettoDuro: 300 })).toMatch(/^Mercoledì e Venerdì senza seduta: nelle ultime settimane hai fatto poche sedute/);
-    expect(giorniSenzaSedutaPerCarico(['Giovedì'], { tettoDuro: 900 })).toMatch(/^Giovedì senza seduta, per non andare oltre il carico/);
+    const v = 'carico settimanale previsto ~700 AU per parte alta: oltre il tetto di 500 AU (ultime 4 settimane: media 120, la più carica 198; si sale di una seduta a settimana: questa settimana fino a 2 sedute di parte alta) — togli una seduta di parte alta o usa le varianti short';
+    expect(giorniSenzaSedutaPerCarico(['Mercoledì', 'Venerdì'], v)).toMatch(/^Mercoledì e Venerdì senza seduta: per parte alta si sale di una seduta a settimana.*fino a 2 sedute/);
+    expect(giorniSenzaSedutaPerCarico(['Giovedì'], 'carico settimanale previsto ~900 AU: porterebbe il rapporto oltre 1.5')).toMatch(/^Giovedì senza seduta, per non andare oltre il carico/);
+    expect(giornataTolta('Domenica', v)).toBe('Domenica: una seduta di parte alta in meno: si sale di una seduta a settimana (questa settimana fino a 2).');
     // Il caso di Ste del 23/11: cosce dietro ferme (solo parte alta), niente squadra, una seduta a settimana nelle ultime tre
     const lun = mondayOfThisWeekRome();
     const plans = [{ id: 'p1', plan: { sedute: [{ giorno: 1, titolo: 'x', tipo: 'fisica', durata_min: 32, items: [], blocchi: [{ id: 'pa-serie-short', nome: 'x', qualita: 'forza-parte-alta', durataMin: 32 }] }] } }];
@@ -66,7 +68,9 @@ describe('mai la settimana base (17/11): il planner corregge invece di arrenders
       statoDolore: { zona: 'cosce dietro', intensita: 8, fascia: 'forte', fase: 'altre_parti', da: addDays(lun, -6), faseDal: addDays(lun, -6), storia: [] },
     };
     const e = await generaPianoV2(contextFinto(atleta), undefined, {}, { senzaClaude: true });
-    expect(e.plan.sedute.length).toBeGreaterThan(0);
-    if (e.plan.sedute.length < 3) expect(e.plan.rinunce?.some((x) => /senza seduta/.test(x))).toBe(true);
+    // 23/11 sera: tetto per parte, una seduta di parte alta a settimana nelle ultime tre → questa settimana due
+    expect(e.plan.sedute.length).toBe(2);
+    expect(e.plan.sedute.every((x) => (x.blocchi ?? []).some((b) => b.qualita === 'forza-parte-alta'))).toBe(true);
+    expect(e.plan.rinunce?.some((x) => /parte alta/.test(x))).toBe(true);
   });
 });
