@@ -1,6 +1,6 @@
 # Schede esercizi: Fascia e prevenzione, riscaldamento, mobilità e recupero
 
-Generato da `scripts/build-schede-md.py` da `docs/training-catalogo-v2.json`. 46 schede su 46 esercizi attivi del gruppo.
+Generato da `scripts/build-schede-md.py` da `docs/training-catalogo-v2.json`. 47 schede su 47 esercizi attivi del gruppo.
 Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la riga da cambiare; il JSON lo aggiorno io.
 
 ## fascia-prevenzione (30)
@@ -622,7 +622,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Ampiezza crescente, aggiungi skip alti e calciate.
 **Sicurezza:** Niente rimbalzi sul dolore.
 
-## mobilita-recupero (2)
+## mobilita-recupero (3)
 
 ### Yoga Sequence - Recovery and Mobility
 `mob-sequenza-yoga-recupero-e-mobilita` · bilaterale · minuti · corpo libero · [video](https://youtu.be/iXgtmz6QnzA)
@@ -651,3 +651,17 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più facile:** Fermati a metà.
 **Più difficile:** Nessuna: è recupero.
 **Sicurezza:** Mai il giorno prima o il giorno della partita.
+
+### Rest Between Sets
+`rec-pausa-tra-serie` · bilaterale · secondi · corpo libero · senza video
+
+**Esecuzione**
+1. Fermati: la serie dopo vale solo se riparti fresco.
+2. Cammina piano, braccia sciolte, respira con il naso.
+3. Un sorso d'acqua se serve.
+4. Quando il timer suona, riparti.
+
+**Errori comuni:** Sederti o sdraiarti: le gambe si raffreddano. Ripartire prima del tempo: la pausa è parte dell'allenamento. Guardare il telefono per tre minuti: tieni la testa sulla serie dopo.
+**Più facile:** Allunga la pausa di un minuto.
+**Più difficile:** Non accorciarla: la dose la decide la serie, non la pausa.
+**Sicurezza:** Giramenti di testa o fiato che non torna: la seduta finisce qui.

@@ -1,4 +1,4 @@
-# Correzioni schede: fascia-riscaldamento (46 esercizi)
+# Correzioni schede: fascia-riscaldamento (47 esercizi)
 
 Come si usa: sotto ogni esercizio c'è la riga `Correzione:`. Scrivi lì, in libertà, cos'è davvero l'esercizio
 e come si fa (anche due righe). Se la scheda è giusta lascia `Correzione: ok`. Se non la vuoi guardare ora, lascia vuoto.
@@ -323,5 +323,12 @@ Correzione:
 bilaterale · minuti · senza video
 
 Come l'ho scritto io: Per i minuti indicati muovi le articolazioni in libertà, senza uno schema fisso: scegli tu l'ordine e le ripetizioni. Anche: aperture e chiusure del ginocchio verso l'esterno e verso l'interno, oscillazioni della gamba avanti e indietro e di lato. Caviglie: cerchi nei due sensi, affondo con il ginocchio che avanza oltre la punta del piede. Bacino, schiena e spalle: affondi camminati con rotazione del busto, cerchi delle braccia, qualche squat con le braccia in alto. Ampiezza crescente, mai forzata.
+
+Correzione: 
+
+## 47. Rest Between Sets
+bilaterale · secondi · senza video
+
+Come l'ho scritto io: Fermati: la serie dopo vale solo se riparti fresco. Cammina piano, braccia sciolte, respira con il naso. Un sorso d'acqua se serve. Quando il timer suona, riparti.
 
 Correzione: 

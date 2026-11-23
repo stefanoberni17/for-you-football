@@ -3,10 +3,6 @@
 Generato da `scripts/build-schede-md.py` da `docs/training-catalogo-v2.json`. 41 schede su 41 esercizi attivi del gruppo.
 Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la riga da cambiare; il JSON lo aggiorno io.
 
-## Da confermare (1)
-
-- **Reverse Drop Jump**: L'ho scritto come caduta all'indietro dal box e salto subito. Confermi?
-
 ## forza-esplosiva (19)
 
 ### Kettlebell Kneeling Snatch
@@ -124,7 +120,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Sicurezza:** Spazio libero intorno. Fastidio alla schiena bassa: fermati e riduci il peso.
 
 ### Kettlebell Swing
-`fesp-kettlebell-swing` · bilaterale · reps · kettlebell · [video](https://youtube.com/watch?v=E87gS0QjGOw)
+`fesp-kettlebell-swing` · bilaterale · reps · kettlebell · [video](https://youtube.com/shorts/E7kwZQajaZ8)
 
 **Esecuzione**
 1. Piedi poco più larghi delle anche, kettlebell a terra davanti, afferralo a due mani e portalo indietro tra le gambe.
@@ -279,7 +275,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Kettlebell più pesante, o cambio mano in aria.
 **Sicurezza:** Spazio libero intorno. Fastidio alla schiena bassa: fermati e riduci il peso.
 
-## pliometria-estensiva (11)
+## pliometria-estensiva (12)
 
 ### A-Skip
 `plioe-fascia-a-skip` · bilaterale · secondi · corpo libero · [video](https://www.youtube.com/watch?v=08abU7xxYEw)
@@ -350,6 +346,20 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più facile:** Salti più bassi, ritmo più lento.
 **Più difficile:** Versione intermedia: saltelli laterali e avanti-indietro. Versione avanzata: saltelli in tutte le direzioni, o su una gamba.
 **Sicurezza:** Caviglie e polpacci riscaldati. Fastidio al tendine d'Achille: fermati.
+
+### Wall Drive Skip
+`plioi-spinta-frontale-corsa-skip-fascia` · bilaterale · secondi · campo · [video](https://youtube.com/watch?v=DUfENQ6h8NI?si=uZQcXfFCQICbVhwM)
+
+**Esecuzione**
+1. Mani al muro all'altezza delle spalle, corpo inclinato in avanti in linea dai talloni alla testa, sull'avampiede.
+2. Porta un ginocchio in alto con decisione, come nella spinta dello sprint, e riporta il piede a terra sotto il corpo.
+3. Cambia gamba con un ritmo rapido, spingendo il muro con le braccia e il corpo rigido.
+4. Tieni per il tempo indicato.
+
+**Errori comuni:** Bacino che cede: il corpo resta in linea. Appoggiare i talloni. Ginocchio basso: deve arrivare all'altezza dell'anca.
+**Più facile:** Ritmo più lento, inclinazione minore.
+**Più difficile:** Ritmo più veloce, inclinazione maggiore.
+**Sicurezza:** Caviglie e polpacci riscaldati.
 
 ### Pogo Jumps Progression (Ankle Stiffness)
 `plioe-ankle-stiffness-pogo-jumps-progression` · bilaterale · reps · corpo libero · [video](https://youtube.com/shorts/0vrnKZpOtPI?feature=share)
@@ -435,21 +445,7 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più difficile:** Ritmo più veloce, spostamenti più lunghi.
 **Sicurezza:** Caviglie e ginocchia riscaldate.
 
-## pliometria-intensiva (11)
-
-### Wall Drive Skip
-`plioi-spinta-frontale-corsa-skip-fascia` · bilaterale · secondi · campo · [video](https://youtube.com/watch?v=DUfENQ6h8NI?si=uZQcXfFCQICbVhwM)
-
-**Esecuzione**
-1. Mani al muro all'altezza delle spalle, corpo inclinato in avanti in linea dai talloni alla testa, sull'avampiede.
-2. Porta un ginocchio in alto con decisione, come nella spinta dello sprint, e riporta il piede a terra sotto il corpo.
-3. Cambia gamba con un ritmo rapido, spingendo il muro con le braccia e il corpo rigido.
-4. Tieni per il tempo indicato.
-
-**Errori comuni:** Bacino che cede: il corpo resta in linea. Appoggiare i talloni. Ginocchio basso: deve arrivare all'altezza dell'anca.
-**Più facile:** Ritmo più lento, inclinazione minore.
-**Più difficile:** Ritmo più veloce, inclinazione maggiore.
-**Sicurezza:** Caviglie e polpacci riscaldati.
+## pliometria-intensiva (10)
 
 ### Squat Jump
 `plioi-squat-jump` · bilaterale · reps · corpo libero · senza video
@@ -522,7 +518,6 @@ Per correggere: scrivi qui sotto nella PR o in chat il nome dell'esercizio e la 
 **Più facile:** Box più basso, pausa a terra prima del salto.
 **Più difficile:** Box più alto.
 **Sicurezza:** Solo a gambe fresche e riscaldate, mai nei 2 giorni prima della partita. Fastidio a ginocchio o tendine d'Achille: fermati. Controlla lo spazio dietro di te prima di scendere.
-**DA CONFERMARE:** L'ho scritto come caduta all'indietro dal box e salto subito. Confermi?
 
 ### Single-Leg RDL to Single-Leg Knee Jump (Advanced)
 `plioi-singl-leg-rdl-sl-knee-jump-progression-advanced` · per lato · reps · corpo libero · [video](https://youtube.com/watch?v=5M85J6mWKz4)
