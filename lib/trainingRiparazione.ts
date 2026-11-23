@@ -59,7 +59,7 @@ export function riparaPiano(p: PianoLLM, ctx: ContextV2, o: OpzioniRiparazione):
     const ok: string[] = [];
     const via: string[] = [];
     for (const id of ids) { if (!disp.has(id)) via.push(id); else if (!ok.includes(id)) ok.push(id); }
-    if (via.length) note.push(`${giornoNome(Number(s.giorno))}: ${via.length === 1 ? 'un blocco' : `${via.length} blocchi`} non in libreria, tolti`);
+    if (via.length) note.push(`${giornoNome(Number(s.giorno))}: ${via.length === 1 ? 'tolto un blocco che' : `tolti ${via.length} blocchi che`} questa settimana non puoi fare`);
     return { ...s, giorno: Number(s.giorno), blocchi: ok, leggeri: Array.isArray(s.leggeri) ? s.leggeri.filter((id) => ok.includes(id)) : undefined };
   }).filter((s) => s.blocchi.length > 0).sort((a, b) => a.giorno - b.giorno);
 
