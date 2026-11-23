@@ -2,6 +2,17 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-23 — Corpo: due più una facoltativa
+
+Ste, 23/11: «Non possiamo fare 2 + 1 facoltativo come detto?». Con il pavimento di progressione la settimana si fermava
+alle sedute della salita (per Ste due di parte alta su tre chieste). Ora, se il ragazzo ha chiesto più giornate, oltre il
+pavimento di una parte passa una seduta in più (`FACOLTATIVE_OLTRE_PAVIMENTO` in `lib/trainingLoad.ts`) e il server la
+segna facoltativa (`conFacoltativeOltrePavimento` in `lib/trainingPlannerV2.ts`, riga `NOTA_OLTRE_PAVIMENTO`): l'ultima
+della settimana, mai i giorni passati né i recuperi; se non la fa non si recupera, se la fa conta per la settimana dopo.
+Prompt e card del carico lo dicono. `PLANNER_V2_PROMPT_VERSION = 'v2.55-facoltativa-oltre-pavimento'`. Test con il caso di
+Ste in `tests/trainingRinunce.test.ts`. Nell'hub la riga «un blocco non in libreria, tolti» ora dice «tolto un blocco che
+questa settimana non puoi fare» (PR #193, con il video di Ste del Kettlebell Swing).
+
 ## 2026-11-23 — Corpo: carico per parte, si sale di una seduta a settimana
 
 Ste, 23/11: «Come mai mi fa solo 1 giorno?». La settimana costruita dalle regole (Claude fuori tempo con due piani

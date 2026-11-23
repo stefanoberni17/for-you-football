@@ -116,6 +116,8 @@ export const SETTIMANE_PARTI = 4;
 export const VOTO_FERMA_PROGRESSIONE = 8;
 /** Dopo uno stop: le prime due sedute sono quelle da fare, le altre facoltative (Ste, 23/11). */
 export const SEDUTE_DOPO_STOP = 2;
+/** Oltre il pavimento di una parte, una seduta in più FACOLTATIVA, se il ragazzo ne ha chieste di più (Ste, 23/11: «2 + 1 facoltativo»). */
+export const FACOLTATIVE_OLTRE_PAVIMENTO = 1;
 /** Una seduta «ha» una parte se almeno questa quota del suo carico è di quella parte (l'apertura non fa una seduta di gambe). */
 export const QUOTA_PARTE_SEDUTA = 0.25;
 
@@ -454,7 +456,8 @@ export function partiRighe(c: CaricoInfo, volute: number | null): string[] {
     const n = volute ? Math.min(volute, x.pavimentoSedute) : x.pavimentoSedute;
     const nome = PARTE_LABEL[p].charAt(0).toUpperCase() + PARTE_LABEL[p].slice(1);
     const squadra = p === 'gambe' ? ', squadra compresa' : '';
-    return `${nome}: media ${x.media} a settimana${squadra}, la più carica ${x.massima}; questa settimana almeno ${n === 1 ? '1 seduta' : `${n} sedute`}${x.fermo ? ` (non si sale: ${x.fermo})` : ''}.`;
+    const extra = !volute || n < volute ? `, più ${FACOLTATIVE_OLTRE_PAVIMENTO} facoltativa` : '';
+    return `${nome}: media ${x.media} a settimana${squadra}, la più carica ${x.massima}; questa settimana ${n === 1 ? '1 seduta' : `${n} sedute`}${extra}${x.fermo ? ` (non si sale: ${x.fermo})` : ''}.`;
   });
 }
 
@@ -466,9 +469,9 @@ export function partiTesto(c: CaricoInfo): string {
   const righe = PARTI_CARICO.map((p) => {
     const x = c.parti![p];
     const storia = x.settimane.map((w) => `${w.totale}${w.squadra ? ` (squadra ${w.squadra})` : ''}`).join(' → ');
-    return `- ${PARTE_LABEL[p]}: ultime 4 settimane ${storia}; tetto app ${x.tetto} AU${x.squadra ? ` (squadra di questa settimana ${x.squadra} già tolta)` : ''}; comunque fino a ${x.pavimentoSedute} sedute di questa parte (si sale di una a settimana${x.fermo ? `, ferma: ${x.fermo}` : ''}).`;
+    return `- ${PARTE_LABEL[p]}: ultime 4 settimane ${storia}; tetto app ${x.tetto} AU${x.squadra ? ` (squadra di questa settimana ${x.squadra} già tolta)` : ''}; comunque fino a ${x.pavimentoSedute} sedute di questa parte (si sale di una a settimana${x.fermo ? `, ferma: ${x.fermo}` : ''}), più ${FACOLTATIVE_OLTRE_PAVIMENTO} che il server segna FACOLTATIVA se l'atleta ha chiesto più giornate e va oltre il tetto.`;
   });
-  return `\nTETTO PER PARTE (il validatore rifiuta oltre, parte per parte; la squadra conta solo su gambe e corsa, mai sulla parte alta):\n${righe.join('\n')}`;
+  return `\nTETTO PER PARTE (il validatore rifiuta oltre, parte per parte; la squadra conta solo su gambe e corsa, mai sulla parte alta). Se l'atleta ha chiesto più giornate di quelle che il tetto lascia, metti anche la seduta in più (l'ultima della settimana): il server la segna facoltativa e nel messaggio lo dici in una riga:\n${righe.join('\n')}`;
 }
 
 /** Blocco testo per i prompt del planner e del preparatore AI. */

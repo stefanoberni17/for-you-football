@@ -17,7 +17,7 @@ import { isFaticaAlta, isPeriodoScarso, isTestaAltrove, validatePlan, type PlanI
 import { todayRome, feedbackSeduteBlock, loadFocusSetup, loadPlannerContext, mondayOfThisWeekRome, percorsoMentaleTesto, storicoSerieBlock, type PlannerContext } from './trainingPlanner';
 import { distrettiZona, doloreAttivo, doloreTesto, limitazioniTesto } from './trainingDolore';
 import { bloccoAmmesso, faseTesto, intensiFuori, itemsSenzaZona, qualitaSullaZona, zonaGambe } from './doloreFasi';
-import { caricoPianificato, caricoPianificatoPerParte, DELOAD_RPE, caricoTesto, PARTE_LABEL, PARTI_CARICO, SEDUTE_DOPO_STOP, sedutaHaParte } from './trainingLoad';
+import { caricoPianificato, caricoPianificatoPerParte, DELOAD_RPE, caricoTesto, FACOLTATIVE_OLTRE_PAVIMENTO, PARTE_LABEL, PARTI_CARICO, SEDUTE_DOPO_STOP, sedutaHaParte } from './trainingLoad';
 import { squadraTesto } from './trainingSquadra';
 import { blocchiDisponibili, bloccoById, bloccoHaCarichiPesanti, bloccoRiga, expandBlocco, famiglie, type Blocco } from './trainingBlocks';
 import { esercizioById } from './trainingCatalog';
@@ -56,7 +56,7 @@ import { bloccoCopre, bloccoRiscaldamentoVelocita, filtraVelocitaPliometria, isP
 import { esercizioV2ById, LIVELLO_ORDINE } from './trainingCatalogV2';
 import type { Spostamento } from './spostamenti';
 
-export const PLANNER_V2_PROMPT_VERSION = 'v2.54-carico-per-parte';
+export const PLANNER_V2_PROMPT_VERSION = 'v2.55-facoltativa-oltre-pavimento';
 /** Piano base: candidati fisici provati per giornata (ognuno passa dal validatore con la settimana fin lì), per obiettivo, e leggeri in coda. */
 const FALLBACK_CANDIDATI_MAX = 18;
 const FALLBACK_PER_OBIETTIVO = 3;
@@ -1337,8 +1337,11 @@ export function expandPiano(p: PianoLLM, ctx: ContextV2): { plan: WeekPlan; erro
         // Pavimento in SEDUTE: fino a nSedute di questa parte la settimana passa comunque (ognuna nel tempo del setup);
         // oltre, decide il tetto dai dati
         const quante = settimana.filter((x) => sedutaHaParte(x, parte)).length;
-        if (quante > nSedute && perParte[parte] > info.tetto)
-          errors.push(`carico settimanale previsto ~${perParte[parte]} AU per ${PARTE_LABEL[parte]}: ${quante} sedute oltre il tetto di ${info.tetto} AU (ultime 4 settimane: media ${info.media}, la più carica ${info.massima}${info.squadra ? `, squadra di questa settimana ${info.squadra}` : ''}; si sale di una seduta a settimana: questa settimana fino a ${nSedute} sedute di ${PARTE_LABEL[parte]}${info.fermo ? `, non sale perché ${info.fermo}` : ''}) — togli una seduta di ${PARTE_LABEL[parte]}`);
+        // Ste (23/11, «2 + 1 facoltativo»): oltre il pavimento passa una seduta in più se l'atleta ne ha chieste di più;
+        // `rifinisci` la segna facoltativa (conFacoltativeOltrePavimento)
+        const extra = nSedute < volute ? FACOLTATIVE_OLTRE_PAVIMENTO : 0;
+        if (quante > nSedute + extra && perParte[parte] > info.tetto)
+          errors.push(`carico settimanale previsto ~${perParte[parte]} AU per ${PARTE_LABEL[parte]}: ${quante} sedute oltre il tetto di ${info.tetto} AU (ultime 4 settimane: media ${info.media}, la più carica ${info.massima}${info.squadra ? `, squadra di questa settimana ${info.squadra}` : ''}; si sale di una seduta a settimana: questa settimana fino a ${nSedute} sedute di ${PARTE_LABEL[parte]}${extra ? ` più ${extra} facoltativa` : ''}${info.fermo ? `, non sale perché ${info.fermo}` : ''}) — togli una seduta di ${PARTE_LABEL[parte]}`);
       }
     }
   } else if (c.tettoDuro !== null && previsto > c.tettoDuro)
@@ -2102,6 +2105,33 @@ export function conFacoltativeDopoStop(ctx: ContextV2, plan: WeekPlan): WeekPlan
   return { ...plan, sedute: plan.sedute.map((x) => (facoltative.has(x.giorno) && x.giorno >= ctx.base.oggiDow ? { ...x, facoltativa: true } : x)) };
 }
 
+/** La riga per il ragazzo quando una seduta è facoltativa perché va oltre la salita della settimana (23/11). */
+export const NOTA_OLTRE_PAVIMENTO = 'Si sale di una seduta a settimana: l\'ultima è facoltativa, falla se ti senti bene. Se la fai, la settimana prossima conta.';
+
+/**
+ * Oltre il pavimento di una parte (le sedute della settimana più piena + 1) la seduta in più che il tetto non lascia
+ * passare diventa FACOLTATIVA invece di sparire (Ste, 23/11: «2 + 1 facoltativo»). Le ultime della settimana, mai i
+ * giorni passati né i recuperi. Dopo uno stop e alla prima settimana valgono le loro regole.
+ */
+export function conFacoltativeOltrePavimento(ctx: ContextV2, plan: WeekPlan): WeekPlan {
+  const c = ctx.base.carico;
+  if (!c?.parti || c.dopoStop || c.inizio || !plan.sedute.length) return plan;
+  const volute = seduteRichieste(ctx) ?? ctx.maxSeduteFisiche;
+  const passate = ctx.sedutePassate ?? [];
+  const settimana = [...passate, ...plan.sedute];
+  const perParte = caricoPianificatoPerParte({ sedute: settimana }, c.calibrazione, ctx.base.ciclo.isDeload ? DELOAD_RPE : 1);
+  const facoltative = new Set<number>();
+  for (const parte of PARTI_CARICO) {
+    const info = c.parti[parte];
+    const nSedute = Math.min(info.pavimentoSedute, volute);
+    if (perParte[parte] <= info.tetto) continue;
+    const diParte = [...settimana].filter((x) => sedutaHaParte(x, parte)).sort((a, b) => a.giorno - b.giorno);
+    for (const x of diParte.slice(nSedute)) if (!x.recupero && !passate.includes(x) && x.giorno >= ctx.base.oggiDow) facoltative.add(x.giorno);
+  }
+  if (!facoltative.size) return plan;
+  return { ...plan, sedute: plan.sedute.map((x) => (facoltative.has(x.giorno) ? { ...x, facoltativa: true } : x)) };
+}
+
 export interface EsitoPianoV2 { plan: WeekPlan; generatoDa: 'llm' | 'fallback'; ctx: ContextV2; violazioni?: string[]; ibrido?: boolean }
 
 export async function generateWeekPlanV2(userId: string, richiesta?: string, vincoli: Vincoli = {}, livello?: LivelloFisico | null): Promise<EsitoPianoV2> {
@@ -2188,7 +2218,9 @@ export async function generaPianoV2(
     const mancanti = obiettiviMancanti(ctx, plan);
     plan = conFacoltativeDopoStop(ctx, plan);
     const ripartenza = plan.sedute.some((x) => x.facoltativa) ? NOTA_DOPO_STOP : null;
-    const notaTot = [nota, ripartenza, mancanti].filter(Boolean).join(' ');
+    plan = conFacoltativeOltrePavimento(ctx, plan);
+    const oltre = !ripartenza && plan.sedute.some((x) => x.facoltativa) ? NOTA_OLTRE_PAVIMENTO : null;
+    const notaTot = [nota, ripartenza, oltre, mancanti].filter(Boolean).join(' ');
     return { ...plan, scritto_il: todayRome(), ...(notaTot ? { nota: notaTot } : {}), ...(aggiustamenti.length ? { aggiustamenti } : {}), ...(ctx.base.ciclo.isDeload ? { scarico: true } : {}) };
   };
   // Dolore a fasce (17/11): se con la zona ferma non resta niente di adatto, la settimana vuota è la risposta giusta,

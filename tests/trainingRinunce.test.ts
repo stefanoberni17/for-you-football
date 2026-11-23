@@ -3,7 +3,7 @@ import { giornataTolta, giorniSenzaSedutaPerCarico, motivoBreve, rinunceDa, viol
 import { contextFinto, risultatoFinto as r, skill, SCENARI, type Atleta } from '@/lib/trainingSimulazione';
 import { mondayOfThisWeekRome } from '@/lib/trainingPlanner';
 import { addDays } from '@/lib/carta';
-import { generaPianoV2, validateCtxFor } from '@/lib/trainingPlannerV2';
+import { generaPianoV2, NOTA_OLTRE_PAVIMENTO, validateCtxFor } from '@/lib/trainingPlannerV2';
 import { validatePlan } from '@/lib/trainingEngine';
 
 describe('mai la settimana base (17/11): regole morbide e dure', () => {
@@ -68,9 +68,12 @@ describe('mai la settimana base (17/11): il planner corregge invece di arrenders
       statoDolore: { zona: 'cosce dietro', intensita: 8, fascia: 'forte', fase: 'altre_parti', da: addDays(lun, -6), faseDal: addDays(lun, -6), storia: [] },
     };
     const e = await generaPianoV2(contextFinto(atleta), undefined, {}, { senzaClaude: true });
-    // 23/11 sera: tetto per parte, una seduta di parte alta a settimana nelle ultime tre → questa settimana due
-    expect(e.plan.sedute.length).toBe(2);
-    expect(e.plan.sedute.every((x) => (x.blocchi ?? []).some((b) => b.qualita === 'forza-parte-alta'))).toBe(true);
-    expect(e.plan.rinunce?.some((x) => /parte alta/.test(x))).toBe(true);
+    // 23/11 sera: tetto per parte, una seduta di parte alta a settimana nelle ultime tre → questa settimana due, più una
+    // facoltativa (Ste: «2 + 1 facoltativo»), perché ne ha chieste tre
+    const ordinate = [...e.plan.sedute].sort((a, b) => a.giorno - b.giorno);
+    expect(ordinate.length).toBe(3);
+    expect(ordinate.every((x) => (x.blocchi ?? []).some((b) => b.qualita === 'forza-parte-alta'))).toBe(true);
+    expect(ordinate.map((x) => !!x.facoltativa)).toEqual([false, false, true]);
+    expect(e.plan.nota).toContain(NOTA_OLTRE_PAVIMENTO);
   });
 });
