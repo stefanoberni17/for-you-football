@@ -12,6 +12,7 @@ Remotion è gratuito per persone singole e aziende fino a 3 dipendenti (licenza 
 - **Tagli:** si tengono solo i pezzi parlati; via pause, intercalari ("eh"), inizio e fine fuori campo, frasi lasciate a metà.
 - **Sottotitoli** (`src/reel/Sottotitoli.tsx`): poco sotto la metà dello schermo (`SOTTOTITOLI_TOP_Y = 0.6`), **sempre sotto il mento, mai sopra il volto**; poche parole per volta (pagine da 900 ms); **Outfit 700, bianco con contorno nero pieno**, niente fondo grigio; la parola che sta dicendo in una **pillola verde** `#2dd17a` con testo scuro; le **parole chiave in Crimson Pro corsivo** verde chiaro `#8fe0b3` (diventano verdi quando le dice).
 - **Gancio** (facoltativo): frase nei primi 2,5" in una pillola verde in alto.
+- **Inserti grafici** (`src/reel/Inserti.tsx`, approvati da Ste il 23/11/2026): solo quando aggiungono qualcosa a quello che si dice, mai forzati; agganciati ai tempi delle parole nel girato (`frameNelReel`); nella fascia sotto i sottotitoli (`INSERTI_TOP_Y = 0.705`), mai sul volto; riquadro verde foresta scuro, titoli Outfit, sottotitoli Crimson Pro corsivo. Tipi: `scheda` (nome e ruolo o un concetto chiave, entra da sinistra) e `percorso` (linea del tempo che si accende tappa per tappa mentre le nomina). Prima di montare si propongono a Ste insieme al testo.
 - Colori e font in `src/reel/stile.ts`, presi da `app/globals.css` dell'app.
 
 ## Come si monta un video
@@ -35,4 +36,4 @@ npm run lint       # eslint + tsc
 
 ## Ancora da decidere
 
-Parole chiave (le sceglie Claude o Ste), testo del gancio, musica sotto la voce, chiusura con logo e invito all'app.
+Parole chiave (le sceglie Claude o Ste), testo del gancio, musica sotto la voce, chiusura con logo e invito all'app. Altri inserti possibili: numero che conta, prima e dopo, elenco a punti, screenshot dell'app in un telefono.
