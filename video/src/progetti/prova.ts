@@ -11,6 +11,18 @@ export const prova: ReelProps = {
   voltoY: 0.47,
   paroleChiave: ["professionista", "calcio", "vita", "professionistico", "percorso", "strade"],
   gancio: "Chi c'è dietro For You Football",
+  inserti: [
+    { tipo: "scheda", da: 11.1, a: 15.5, titolo: "Stefano Berni", sottotitolo: "ex calciatore professionista" },
+    {
+      tipo: "percorso",
+      a: 35.5,
+      tappe: [
+        { quando: 15.66, etichetta: "5 anni", sotto: "il primo pallone" },
+        { quando: 25.46, etichetta: "Serie C · D", sotto: "professionista" },
+        { quando: 30.12, etichetta: "26-27 anni", sotto: "nuova strada" },
+      ],
+    },
+  ],
   pezzi: [
     { da: 8.8, a: 13.72 },
     { da: 14.06, a: 19.56 },

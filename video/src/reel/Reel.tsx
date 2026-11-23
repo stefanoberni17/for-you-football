@@ -11,6 +11,7 @@ import {
 } from "remotion";
 import { GANCIO_SECONDI, inquadratura, montaPezzi, paroleNelReel, ZOOM_DERIVA } from "./montaggio";
 import type { PezzoMontato } from "./montaggio";
+import { Inserti } from "./Inserti";
 import { Sottotitoli } from "./Sottotitoli";
 import { stile } from "./stile";
 import type { ReelProps } from "./tipi";
@@ -79,6 +80,7 @@ export const Reel: React.FC<ReelProps> = ({
   parole,
   paroleChiave = [],
   gancio,
+  inserti = [],
 }) => {
   const { fps } = useVideoConfig();
   const montati = useMemo(() => montaPezzi(pezzi), [pezzi]);
@@ -92,6 +94,7 @@ export const Reel: React.FC<ReelProps> = ({
         </Sequence>
       ))}
       <Sottotitoli captions={captions} paroleChiave={paroleChiave} />
+      <Inserti inserti={inserti} pezzi={montati} />
       {gancio ? (
         <Sequence durationInFrames={Math.round(GANCIO_SECONDI * fps)}>
           <Gancio testo={gancio} />

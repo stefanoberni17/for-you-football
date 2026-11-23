@@ -51,6 +51,20 @@ export const inquadratura = (voltoY: number, zoom: number) => {
   };
 };
 
+// Fascia degli inserti: sotto i sottotitoli, sopra i bottoni di Instagram.
+export const INSERTI_TOP_Y = 0.705;
+
+// Dove cade nel Reel un secondo del girato. Se è in un pezzo tagliato,
+// si passa all'inizio del pezzo dopo.
+export const frameNelReel = (secondo: number, pezzi: PezzoMontato[]): number => {
+  for (const p of pezzi) {
+    if (secondo < p.da) return p.inizioFrame;
+    if (secondo < p.a) return p.inizioFrame + Math.round((secondo - p.da) * FPS);
+  }
+  const ultimo = pezzi[pezzi.length - 1];
+  return ultimo ? ultimo.inizioFrame + ultimo.durataFrame : 0;
+};
+
 export const durataReel = (pezzi: PezzoMontato[]): number =>
   pezzi.reduce((s, p) => s + p.durataFrame, 0);
 
