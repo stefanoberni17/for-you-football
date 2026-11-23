@@ -18,7 +18,7 @@ Remotion è gratuito per persone singole e aziende fino a 3 dipendenti (licenza 
 ## Come si monta un video
 
 1. Ste carica il girato nella cartella Drive dei video; l'originale finisce poi in `processato/`.
-2. Base di lavoro: `ffmpeg -i GIRATO.MOV -vf scale=1440:2560 -r 30 -c:v libx264 -crf 17 -c:a aac public/media/<nome>.mp4` (più grande del video finale, così lo zoom resta nitido). `public/media/` è fuori da Git.
+2. Base di lavoro: `scripts/prepara.sh GIRATO.MOV public/media/<nome>.mp4` (approvato da Ste il 23/11/2026): 1440×2560 a 30 fps (più grande del video finale, così lo zoom resta nitido), **colore leggero** (contrasto +5 %, saturazione +4 %, un filo più caldo, vignettatura leggera), **nitidezza leggera**, **sfondo sfocato** dietro la persona (`scripts/sfondo.py`, segmentazione MediaPipe), **voce pulita** (bassi, rumore, compressione, −14 LUFS). Serve Python con `scripts/requirements.txt` e il modello `selfie_multiclass_256x256.tflite` (da `storage.googleapis.com/mediapipe-models/image_segmenter/selfie_multiclass_256x256/float32/latest/`, in `modelli/`, fuori da Git) o in `MODELLO`; su Linux anche `libegl1` e `libgles2`. Circa 10 minuti per 45" di girato. Limite noto: le mani che si muovono veloci in basso a volte si sfocano. `public/media/` è fuori da Git.
 3. Trascrizione con i tempi parola per parola: audio estratto → ElevenLabs Scribe (circa 6 crediti al secondo).
 4. Si misura `voltoY` (altezza del centro del volto nel girato, 0-1) su un fotogramma con una griglia.
 5. Si scrive `src/progetti/<nome>.ts` (girato, `voltoY`, pezzi, parole, parole chiave, gancio) e lo si aggiunge a `progetti` in `src/Root.tsx`.
