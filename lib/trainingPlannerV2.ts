@@ -2185,6 +2185,12 @@ export function preparaContextV2(ctx: ContextV2, richiesta: string | undefined, 
   ctx.vincoli = applicaPreferenzeSetup(ctx.base.preferenzeSetup, vincoli, richiesta);
   // Modifica a settimana avviata: i giorni già passati del piano attuale restano e contano nei controlli (29/9)
   if (vincoli.modifica && ctx.base.pianoCorrente) ctx.sedutePassate = ctx.base.pianoCorrente.plan.sedute.filter((s) => s.giorno < ctx.base.oggiDow);
+  // 25/11 (Ste: «rigenerando mi ha cancellato l'allenamento fatto lunedì»): le sedute già fatte restano sempre, anche con
+  // «Rifai da capo», e contano nei controlli della settimana (carico per parte, formati, obiettivi)
+  if (vincoli.seduteFatte?.length) {
+    const fatte = new Set(vincoli.seduteFatte.map((s) => s.giorno));
+    ctx.sedutePassate = [...vincoli.seduteFatte, ...(ctx.sedutePassate ?? []).filter((s) => !fatte.has(s.giorno))].sort((a, b) => a.giorno - b.giorno);
+  }
   // Giorni ammessi tutti passati (es. domenica con lun/mer/ven): senza allargare ai giorni rimasti nessun piano è possibile
   if (ctx.vincoli.giorniAmmessi?.length && giorniRimasti(ctx).length === 0) ctx.vincoli = { ...ctx.vincoli, giorniAmmessi: undefined };
   if (vincoli.obiettivi?.length) { ctx.obiettivi = vincoli.obiettivi; applicaLivello(ctx); aggiornaParteAlta(ctx); aggiornaParteBassa(ctx); aggiornaKettlebell(ctx); }

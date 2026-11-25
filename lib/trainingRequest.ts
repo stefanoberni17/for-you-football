@@ -103,6 +103,36 @@ export interface Vincoli {
   recuperiFacoltativi?: boolean; // richiesta esplicita dell'atleta: i recuperi non sono più un vincolo
   modifica?: boolean;        // modo "modifica": i giorni già passati del piano attuale restano e contano nei controlli settimanali (29/9)
   conSquadra?: boolean;      // conferma della maschera (off season): con la squadra/partita questa settimana → resistenza al massimo 2 giornate; senza → fino a 4 (lib/trainingTetti)
+  seduteFatte?: PlanSession[]; // 25/11: le sedute già FATTE questa settimana (da qualsiasi piano della settimana): restano nel piano nuovo e contano nei controlli
+}
+
+/**
+ * Le sedute già fatte questa settimana, dai piani della settimana e dai completamenti (`session_key` = plan_id#giorno).
+ * Ste, 25/11: «rigenerando la settimana mi ha cancellato l'allenamento fatto lunedì». Una per giorno, l'ultima fatta.
+ */
+export function seduteFatteDellaSettimana(
+  piani: readonly { id: string; plan?: { sedute?: PlanSession[] } | null }[],
+  completamenti: readonly { session_key: string; completed_at?: string | null }[],
+): PlanSession[] {
+  const perId = new Map(piani.map((p) => [p.id, p.plan?.sedute ?? []]));
+  const perGiorno = new Map<number, { s: PlanSession; quando: string }>();
+  for (const c of completamenti) {
+    const [planId, g] = String(c.session_key).split('#');
+    const giorno = Number(g);
+    const s = (perId.get(planId) ?? []).find((x) => x.giorno === giorno);
+    if (!s) continue;
+    const quando = c.completed_at ?? '';
+    const prima = perGiorno.get(giorno);
+    if (!prima || quando > prima.quando) perGiorno.set(giorno, { s, quando });
+  }
+  return [...perGiorno.values()].map((x) => x.s).sort((a, b) => a.giorno - b.giorno);
+}
+
+/** Il piano nuovo con dentro le sedute già fatte: nel giorno di una seduta fatta resta quella (25/11). */
+export function conSeduteFatte<P extends { sedute: PlanSession[] }>(plan: P, fatte: readonly PlanSession[]): P {
+  if (!fatte.length) return plan;
+  const giorni = new Set(fatte.map((s) => s.giorno));
+  return { ...plan, sedute: [...fatte, ...plan.sedute.filter((s) => !giorni.has(s.giorno))].sort((a, b) => a.giorno - b.giorno) };
 }
 
 const clampDay = (d: unknown): number | null => { const n = Number(d); return Number.isInteger(n) && n >= 1 && n <= 7 ? n : null; };

@@ -12,7 +12,7 @@ import { logEvent } from '@/lib/events';
 import { notificaSte } from '@/lib/notifyOwner';
 import { generateWeekPlan, PLANNER_MODEL, PLANNER_PROMPT_VERSION, detectPain, mondayOfThisWeekRome, updateTrainingMemory } from '@/lib/trainingPlanner';
 import { generateWeekPlanV2, PLANNER_V2_MODEL, PLANNER_V2_PROMPT_VERSION, loadContextV2, validateCtxFor } from '@/lib/trainingPlannerV2';
-import { componiRichiesta, contaNelTetto, parseRichiesta, PIANI_LIMITE_ATTIVO, PIANI_MAX_SETTIMANA, PIANI_MAX_TOTALI_SETTIMANA, puoPosticipare, type Vincoli } from '@/lib/trainingRequest';
+import { componiRichiesta, conSeduteFatte, contaNelTetto, parseRichiesta, PIANI_LIMITE_ATTIVO, PIANI_MAX_SETTIMANA, PIANI_MAX_TOTALI_SETTIMANA, puoPosticipare, seduteFatteDellaSettimana, type Vincoli } from '@/lib/trainingRequest';
 import { validatePlan, type WeekPlan } from '@/lib/trainingEngine';
 import { oggiDowRome, todayRome } from '@/lib/trainingPlanner';
 
@@ -132,6 +132,17 @@ export async function POST(request: NextRequest) {
       ({ richiesta, vincoli } = componiRichiesta(guidata, pianoAttualeSedute));
     }
 
+    // 25/11 (Ste: «rigenerando la settimana mi ha cancellato l'allenamento fatto lunedì»): le sedute già fatte questa
+    // settimana, da qualsiasi piano, restano nel piano nuovo e il planner le conta
+    const idsSettimana = (pianiRows || []).map((p: { id: string }) => p.id);
+    let seduteFatte: WeekPlan['sedute'] = [];
+    if (idsSettimana.length) {
+      const { data: comp } = await supabaseAdmin.from('training_session_completions').select('session_key, completed_at')
+        .eq('user_id', userId).in('plan_id', idsSettimana);
+      seduteFatte = seduteFatteDellaSettimana(pianiRows as { id: string; plan?: WeekPlan }[], (comp || []) as { session_key: string; completed_at?: string | null }[]);
+      if (seduteFatte.length) vincoli = { ...vincoli, seduteFatte };
+    }
+
 
     // Regola dolore: se la richiesta stessa segnala dolore, attiva il pain-hold
     // PRIMA di generare (il planner lo vedrà attivo).
@@ -169,6 +180,9 @@ export async function POST(request: NextRequest) {
         if (errori.length) return NextResponse.json({ error: `Non sono riuscito ad applicare la modifica: ${errori[0]}. Il piano resta com'è.` }, { status: 409 });
       }
     }
+
+    // Le sedute fatte restano: nel loro giorno vince quella fatta (anche dopo una modifica)
+    plan = conSeduteFatte(plan, seduteFatte);
 
     // Piano di sicurezza: si salva PERCHÉ il planner AI è stato rifiutato (l'hub lo mostra, così si capisce e si corregge)
     if (generatoDa === 'fallback' && violazioni?.length) plan = { ...plan, violazioni: violazioni.slice(0, 6) };
