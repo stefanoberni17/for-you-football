@@ -1,3 +1,4 @@
+import { createContext, useContext } from "react";
 import {
   AbsoluteFill,
   interpolate,
@@ -17,17 +18,26 @@ const USCITA_FRAME = 8;
 const FONDO = "rgba(9, 26, 17, 0.88)";
 const GRIGIO = "rgba(255,255,255,0.28)";
 
-const Fascia: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <AbsoluteFill style={{ paddingTop: INSERTI_TOP_Y * ALTEZZA, alignItems: "center" }}>
-    {children}
-  </AbsoluteFill>
-);
+const FasciaY = createContext(INSERTI_TOP_Y);
+
+const Fascia: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const y = useContext(FasciaY);
+  return (
+    <AbsoluteFill style={{ paddingTop: y * ALTEZZA, alignItems: "center" }}>
+      {children}
+    </AbsoluteFill>
+  );
+};
 
 // Entrata con molla, uscita in dissolvenza negli ultimi frame.
 const useEntrataUscita = (durata: number) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const dentro = spring({ frame, fps, config: { damping: 18, stiffness: 140 } });
+  const dentro = spring({
+    frame,
+    fps,
+    config: { damping: 18, stiffness: 140 },
+  });
   const fuori = interpolate(frame, [durata - USCITA_FRAME, durata], [1, 0], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
@@ -35,15 +45,25 @@ const useEntrataUscita = (durata: number) => {
   return { frame, fps, dentro, fuori };
 };
 
-const Scheda: React.FC<{ titolo: string; sottotitolo?: string; durata: number }> = ({
-  titolo,
-  sottotitolo,
-  durata,
-}) => {
+const Scheda: React.FC<{
+  titolo: string;
+  sottotitolo?: string;
+  durata: number;
+}> = ({ titolo, sottotitolo, durata }) => {
   const { frame, fps, dentro, fuori } = useEntrataUscita(durata);
   // La barra verde entra prima, il testo la segue.
-  const barra = spring({ frame, fps, config: { damping: 200 }, durationInFrames: 8 });
-  const testo = spring({ frame: frame - 5, fps, config: { damping: 200 }, durationInFrames: 10 });
+  const barra = spring({
+    frame,
+    fps,
+    config: { damping: 200 },
+    durationInFrames: 8,
+  });
+  const testo = spring({
+    frame: frame - 5,
+    fps,
+    config: { damping: 200 },
+    durationInFrames: 10,
+  });
   return (
     <Fascia>
       <div
@@ -58,7 +78,13 @@ const Scheda: React.FC<{ titolo: string; sottotitolo?: string; durata: number }>
           boxShadow: "0 18px 40px rgba(0,0,0,0.45)",
         }}
       >
-        <div style={{ width: 14, background: stile.verde, transform: `scaleY(${barra})` }} />
+        <div
+          style={{
+            width: 14,
+            background: stile.verde,
+            transform: `scaleY(${barra})`,
+          }}
+        />
         <div style={{ padding: "22px 40px 24px 30px", opacity: testo }}>
           <div
             style={{
@@ -95,16 +121,17 @@ const Scheda: React.FC<{ titolo: string; sottotitolo?: string; durata: number }>
 
 type TappaReel = { frame: number; etichetta: string; sotto?: string };
 
-const Percorso: React.FC<{ tappe: TappaReel[]; inizio: number; durata: number }> = ({
-  tappe,
-  inizio,
-  durata,
-}) => {
+const Percorso: React.FC<{
+  tappe: TappaReel[];
+  inizio: number;
+  durata: number;
+}> = ({ tappe, inizio, durata }) => {
   const { frame, fps, dentro, fuori } = useEntrataUscita(durata);
   const ora = inizio + frame; // frame nel Reel
   const LARGHEZZA = 920;
   const MARGINE = 150;
-  const passo = tappe.length > 1 ? (LARGHEZZA - 2 * MARGINE) / (tappe.length - 1) : 0;
+  const passo =
+    tappe.length > 1 ? (LARGHEZZA - 2 * MARGINE) / (tappe.length - 1) : 0;
 
   // La linea verde avanza fino all'ultima tappa raggiunta, con una molla.
   const raggiunte = tappe.filter((t) => ora >= t.frame).length;
@@ -158,7 +185,11 @@ const Percorso: React.FC<{ tappe: TappaReel[]; inizio: number; durata: number }>
           }}
         />
         {tappe.map((t, i) => {
-          const accesa = spring({ frame: ora - t.frame, fps, config: { damping: 12, stiffness: 160 } });
+          const accesa = spring({
+            frame: ora - t.frame,
+            fps,
+            config: { damping: 12, stiffness: 160 },
+          });
           const attiva = ora >= t.frame;
           const ultimaAttiva = attiva && i === raggiunte - 1;
           const x = MARGINE + i * passo;
@@ -175,7 +206,9 @@ const Percorso: React.FC<{ tappe: TappaReel[]; inizio: number; durata: number }>
                   background: attiva ? stile.verde : FONDO,
                   border: `5px solid ${attiva ? stile.verde : GRIGIO}`,
                   transform: `scale(${attiva ? 0.6 + 0.4 * accesa : 0.8})`,
-                  boxShadow: ultimaAttiva ? `0 0 ${18 + 10 * accesa}px ${stile.verde}` : "none",
+                  boxShadow: ultimaAttiva
+                    ? `0 0 ${18 + 10 * accesa}px ${stile.verde}`
+                    : "none",
                 }}
               />
               <div
@@ -222,33 +255,50 @@ const Percorso: React.FC<{ tappe: TappaReel[]; inizio: number; durata: number }>
   );
 };
 
-export const Inserti: React.FC<{ inserti: Inserto[]; pezzi: PezzoMontato[] }> = ({
-  inserti,
-  pezzi,
-}) => {
+export const Inserti: React.FC<{
+  inserti: Inserto[];
+  pezzi: PezzoMontato[];
+  y?: number;
+}> = ({ inserti, pezzi, y = INSERTI_TOP_Y }) => {
   return (
-    <AbsoluteFill>
-      {inserti.map((ins, i) => {
-        if (ins.tipo === "scheda") {
-          const da = frameNelReel(ins.da, pezzi);
+    <FasciaY.Provider value={y}>
+      <AbsoluteFill>
+        {inserti.map((ins, i) => {
+          if (ins.tipo === "scheda") {
+            const da = frameNelReel(ins.da, pezzi);
+            const durata = frameNelReel(ins.a, pezzi) - da;
+            if (durata <= 0) return null;
+            return (
+              <Sequence
+                key={i}
+                from={da}
+                durationInFrames={durata}
+                layout="none"
+              >
+                <Scheda
+                  titolo={ins.titolo}
+                  sottotitolo={ins.sottotitolo}
+                  durata={durata}
+                />
+              </Sequence>
+            );
+          }
+          const tappe = ins.tappe.map((t) => ({
+            ...t,
+            frame: frameNelReel(t.quando, pezzi),
+          }));
+          const da = tappe[0]?.frame ?? 0;
           const durata = frameNelReel(ins.a, pezzi) - da;
           if (durata <= 0) return null;
           return (
             <Sequence key={i} from={da} durationInFrames={durata} layout="none">
-              <Scheda titolo={ins.titolo} sottotitolo={ins.sottotitolo} durata={durata} />
+              <FasciaY.Provider value={ins.y ?? y}>
+                <Percorso tappe={tappe} inizio={da} durata={durata} />
+              </FasciaY.Provider>
             </Sequence>
           );
-        }
-        const tappe = ins.tappe.map((t) => ({ ...t, frame: frameNelReel(t.quando, pezzi) }));
-        const da = tappe[0]?.frame ?? 0;
-        const durata = frameNelReel(ins.a, pezzi) - da;
-        if (durata <= 0) return null;
-        return (
-          <Sequence key={i} from={da} durationInFrames={durata} layout="none">
-            <Percorso tappe={tappe} inizio={da} durata={durata} />
-          </Sequence>
-        );
-      })}
-    </AbsoluteFill>
+        })}
+      </AbsoluteFill>
+    </FasciaY.Provider>
   );
 };

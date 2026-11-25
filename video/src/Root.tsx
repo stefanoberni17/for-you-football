@@ -3,9 +3,10 @@ import { Reel } from "./reel/Reel";
 import { durataReel, FPS, montaPezzi } from "./reel/montaggio";
 import type { ReelProps } from "./reel/tipi";
 import { prova } from "./progetti/prova";
+import { reel06 } from "./progetti/reel06";
 
 // Ogni video da pubblicare = una Composition con i suoi dati in src/progetti/.
-const progetti: Record<string, ReelProps> = { prova };
+const progetti: Record<string, ReelProps> = { prova, reel06 };
 
 export const RemotionRoot: React.FC = () => {
   return (

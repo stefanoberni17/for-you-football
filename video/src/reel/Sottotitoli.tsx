@@ -14,7 +14,11 @@ import { stile } from "./stile";
 // Poche parole per volta: si leggono col telefono in mano.
 const CAMBIA_OGNI_MS = 900;
 
-const Pagina: React.FC<{ page: TikTokPage; chiave: Set<string> }> = ({ page, chiave }) => {
+const Pagina: React.FC<{ page: TikTokPage; chiave: Set<string>; y: number }> = ({
+  page,
+  chiave,
+  y,
+}) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const oraMs = page.startMs + (frame / fps) * 1000;
@@ -24,7 +28,7 @@ const Pagina: React.FC<{ page: TikTokPage; chiave: Set<string> }> = ({ page, chi
     <AbsoluteFill
       style={{
         // Poco sotto la metà, sotto il volto.
-        paddingTop: SOTTOTITOLI_TOP_Y * ALTEZZA,
+        paddingTop: y * ALTEZZA,
         alignItems: "center",
         paddingLeft: 70,
         paddingRight: 70,
@@ -89,10 +93,11 @@ const Pagina: React.FC<{ page: TikTokPage; chiave: Set<string> }> = ({ page, chi
   );
 };
 
-export const Sottotitoli: React.FC<{ captions: Caption[]; paroleChiave: string[] }> = ({
-  captions,
-  paroleChiave,
-}) => {
+export const Sottotitoli: React.FC<{
+  captions: Caption[];
+  paroleChiave: string[];
+  y?: number;
+}> = ({ captions, paroleChiave, y = SOTTOTITOLI_TOP_Y }) => {
   const { fps } = useVideoConfig();
   const chiave = useMemo(() => new Set(paroleChiave), [paroleChiave]);
   const { pages } = useMemo(
@@ -112,7 +117,7 @@ export const Sottotitoli: React.FC<{ captions: Caption[]; paroleChiave: string[]
         if (durata <= 0) return null;
         return (
           <Sequence key={i} from={from} durationInFrames={durata} layout="none">
-            <Pagina page={page} chiave={chiave} />
+            <Pagina page={page} chiave={chiave} y={y} />
           </Sequence>
         );
       })}

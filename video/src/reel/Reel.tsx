@@ -81,6 +81,8 @@ export const Reel: React.FC<ReelProps> = ({
   paroleChiave = [],
   gancio,
   inserti = [],
+  sottotitoliY,
+  insertiY,
 }) => {
   const { fps } = useVideoConfig();
   const montati = useMemo(() => montaPezzi(pezzi), [pezzi]);
@@ -93,8 +95,8 @@ export const Reel: React.FC<ReelProps> = ({
           <Pezzo girato={girato} voltoY={voltoY} pezzo={p} />
         </Sequence>
       ))}
-      <Sottotitoli captions={captions} paroleChiave={paroleChiave} />
-      <Inserti inserti={inserti} pezzi={montati} />
+      <Sottotitoli captions={captions} paroleChiave={paroleChiave} y={sottotitoliY} />
+      <Inserti inserti={inserti} pezzi={montati} y={insertiY} />
       {gancio ? (
         <Sequence durationInFrames={Math.round(GANCIO_SECONDI * fps)}>
           <Gancio testo={gancio} />

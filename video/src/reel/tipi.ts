@@ -25,6 +25,7 @@ export type Inserto =
   | {
       tipo: "percorso"; // linea del tempo che si accende tappa per tappa
       a: number;
+      y?: number; // altezza (0-1) solo per questo inserto
       tappe: { quando: number; etichetta: string; sotto?: string }[];
     };
 
@@ -38,4 +39,8 @@ export type ReelProps = {
   paroleChiave?: string[];
   gancio?: string; // frase in alto nei primi secondi
   inserti?: Inserto[];
+  // Altezza (0-1) di sottotitoli e inserti: di default sotto il volto. Per i girati a terra
+  // (esercizi) si spostano dove non coprono il corpo.
+  sottotitoliY?: number;
+  insertiY?: number;
 };
