@@ -38,6 +38,9 @@ describe('settimane e candidati', () => {
     // rdl-2 testato 10 giorni fa: non si ripropone
     const recenti = [{ test_id: 'skill:rdl-2', valore: 5, livello_calcolato: 'skill', punteggio_calcolato: 0, created_at: '2026-10-10T10:00:00Z' }, ...results];
     expect(candidatiForza(recenti, [], OGGI).map((t) => t.id)).toEqual(['squat-2', 'aff-2', 'bridge-2']);
+    // 25/11: squat-1 passato due giorni fa (ri-test o seduta): il gradino dopo non si testa nella stessa finestra
+    const appenaPassato = [{ test_id: 'skill:squat-1', valore: 30, livello_calcolato: 'skill', punteggio_calcolato: 0, created_at: '2026-10-17T10:00:00Z' }, ...results];
+    expect(candidatiForza(appenaPassato, [], OGGI).map((t) => t.id)).toEqual(['aff-2', 'rdl-2', 'bridge-2']);
   });
   it('palestra: solo i lift nel piano; campo: per qualità e solo in off season (in season si testa solo la forza)', () => {
     expect(candidatiPalestra(results, piano(), OGGI).map((t) => t.id)).toEqual(['t2-lift-squat']);
@@ -116,5 +119,23 @@ describe('resistenza e velocità: guardrail in season, proposta in off season', 
     expect(p[0].tests.map((t) => t.id)).toEqual(['t2-50m', 't2-t-sprint']);
     expect(propostaOffSeason({ fase: 'in_season', settimanaDelCiclo: 5, sedute: [], oggiDow: 1, results, oggi: OGGI, campo: true })).toEqual([]);
     expect(propostaOffSeason({ fase: 'off_season', settimanaDelCiclo: 3, sedute: [], oggiDow: 1, results, oggi: OGGI, campo: true })).toEqual([]);
+  });
+});
+
+describe('sedute fatte e piano rifatto (25/11)', () => {
+  it('rigenerando, le sedute già fatte restano: da qualsiasi piano della settimana, una per giorno', async () => {
+    const { seduteFatteDellaSettimana, conSeduteFatte } = await import('@/lib/trainingRequest');
+    const lun = seduta(1, 'fisica', [item('pull-8', { blocco_id: 'pa-serie-pull' })]);
+    const piani = [
+      { id: 'nuovo', plan: { sedute: [seduta(3, 'fisica', []), seduta(5, 'fisica', [])] } },
+      { id: 'vecchio', plan: { sedute: [lun, seduta(3, 'fisica', [])] } },
+    ];
+    const fatte = seduteFatteDellaSettimana(piani, [{ session_key: 'vecchio#1', completed_at: '2026-11-23T21:41:00Z' }]);
+    expect(fatte.map((s) => s.giorno)).toEqual([1]);
+    expect(fatte[0]).toBe(lun);
+    const unito = conSeduteFatte({ sedute: [seduta(1, 'fisica', []), seduta(3, 'fisica', [])] }, fatte);
+    expect(unito.sedute.map((s) => s.giorno)).toEqual([1, 3]);
+    expect(unito.sedute[0]).toBe(lun); // nel giorno della seduta fatta vince quella fatta
+    expect(seduteFatteDellaSettimana(piani, [{ session_key: 'sconosciuto#2' }])).toEqual([]);
   });
 });

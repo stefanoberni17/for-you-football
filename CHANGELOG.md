@@ -2,6 +2,21 @@
 
 Storico datato delle modifiche, spostato qui da `CLAUDE.md` il 25/9/2026 (review esterna: "changelog e architettura mescolati"). `CLAUDE.md` descrive com'è fatta l'app; qui c'è come ci si è arrivati. Le voci nuove vanno in cima, con la data e il numero di PR.
 
+## 2026-11-25 — Corpo: le sedute fatte restano, un test per catena
+
+Ste, 25/11: «lunedì avevo fatto l'allenamento, martedì ho rigenerato la settimana e mi ha cancellato l'allenamento
+fatto; avevo già fatto il test per passare al gradino successivo (Typewriter) e adesso mi fa fare il test per One-arm
+assisted». Due cose:
+- **Rifai la settimana** costruiva il piano nuovo dai soli giorni da oggi in poi e teneva i giorni passati solo con
+  «Modifica»: la seduta fatta lunedì (salvata, con il test) spariva dalla settimana e il planner non la contava. Ora le
+  sedute fatte, da qualsiasi piano della settimana, restano nel piano nuovo e contano nei controlli
+  (`seduteFatteDellaSettimana` e `conSeduteFatte` in `lib/trainingRequest.ts`, `Vincoli.seduteFatte`,
+  `preparaContextV2`, `/api/training/plan`).
+- **Il test non era perso**: il Typewriter passato lunedì (6 su 5) è salvato e proprio per questo mercoledì proponeva il
+  gradino dopo. Ora una serie test per catena nella finestra del ri-test: se l'ultimo gradino è stato passato da meno di
+  4 settimane, il prossimo aspetta il ri-test dopo (`candidatiForza` in `lib/trainingRitest.ts`).
+Test in `tests/trainingRitest.test.ts`.
+
 ## 2026-11-23 — Corpo: due più una facoltativa
 
 Ste, 23/11: «Non possiamo fare 2 + 1 facoltativo come detto?». Con il pavimento di progressione la settimana si fermava

@@ -104,6 +104,9 @@ export function candidatiForza(results: readonly RisultatoConData[], storico: re
     const highest = l.points[l.points.length - 1];
     if (!highest || highest.valore < highest.soglia) return; // si sale solo da un gradino passato
     if (isRecente(ultimo(results, `skill:${l.next.id}`), oggi)) return;
+    // 25/11 (Ste: lunedì ha passato il Typewriter, mercoledì gli proponeva già il test del gradino dopo): una serie test
+    // per catena nella finestra del ri-test. Se l'ultimo gradino è stato passato da poco, il prossimo aspetta il ri-test dopo
+    if (isRecente(ultimo(results, `skill:${highest.esercizioId}`), oggi)) return;
     const r = byEx.get(l.amrap?.esercizioId ?? highest.esercizioId);
     const pronto = r ? (r.suggerimento === 'sali' || r.suggerimento === 'conferma' ? 2 : 1) : 0;
     out.push({
