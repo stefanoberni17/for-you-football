@@ -9,7 +9,14 @@ import {
 } from "remotion";
 import { ALTEZZA, frameNelReel, INSERTI_TOP_Y } from "./montaggio";
 import type { PezzoMontato } from "./montaggio";
-import { Chip, Colonne, Finale, Numeri } from "./Grafiche";
+import {
+  Chip,
+  Colonne,
+  Corrispondenza,
+  Finale,
+  Freccia,
+  Numeri,
+} from "./Grafiche";
 import { stile } from "./stile";
 import type { Inserto } from "./tipi";
 
@@ -319,6 +326,21 @@ export const Inserti: React.FC<{
                     titolo={ins.titolo}
                     voci={ins.voci.map((v) => ({ ...v, frame: rel(v.quando) }))}
                     y={ins.y ?? y}
+                  />
+                ) : ins.tipo === "freccia" ? (
+                  <Freccia
+                    durata={durata}
+                    titolo={ins.titolo}
+                    sotto={ins.sotto}
+                    quando={rel(ins.quando)}
+                  />
+                ) : ins.tipo === "corrispondenza" ? (
+                  <Corrispondenza
+                    durata={durata}
+                    sopra={ins.sopra}
+                    titolo={rel(ins.titolo)}
+                    riempi={rel(ins.riempi)}
+                    fine={rel(ins.fine)}
                   />
                 ) : (
                   <Finale durata={durata} righe={ins.righe} />

@@ -9,18 +9,24 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { GANCIO_SECONDI, inquadratura, montaPezzi, paroleNelReel, ZOOM_DERIVA } from "./montaggio";
+import {
+  GANCIO_SECONDI,
+  inquadratura,
+  montaPezzi,
+  paroleNelReel,
+  ZOOM_DERIVA,
+} from "./montaggio";
 import type { PezzoMontato } from "./montaggio";
 import { Inserti } from "./Inserti";
 import { Sottotitoli } from "./Sottotitoli";
 import { stile } from "./stile";
 import type { ReelProps } from "./tipi";
 
-const Pezzo: React.FC<{ girato: string; voltoY: number; pezzo: PezzoMontato }> = ({
-  girato,
-  voltoY,
-  pezzo,
-}) => {
+const Pezzo: React.FC<{
+  girato: string;
+  voltoY: number;
+  pezzo: PezzoMontato;
+}> = ({ girato, voltoY, pezzo }) => {
   const frame = useCurrentFrame();
   // Lento avvicinamento dentro il pezzo: l'immagine non resta mai ferma.
   const deriva = interpolate(frame, [0, pezzo.durataFrame], [0, ZOOM_DERIVA]);
@@ -44,11 +50,21 @@ const Pezzo: React.FC<{ girato: string; voltoY: number; pezzo: PezzoMontato }> =
 const Gancio: React.FC<{ testo: string }> = ({ testo }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
-  const dentro = spring({ frame, fps, config: { damping: 200 }, durationInFrames: 10 });
-  const fuori = interpolate(frame, [GANCIO_SECONDI * fps - 8, GANCIO_SECONDI * fps], [1, 0], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
+  const dentro = spring({
+    frame,
+    fps,
+    config: { damping: 200 },
+    durationInFrames: 10,
   });
+  const fuori = interpolate(
+    frame,
+    [GANCIO_SECONDI * fps - 8, GANCIO_SECONDI * fps],
+    [1, 0],
+    {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+    },
+  );
   return (
     <AbsoluteFill style={{ alignItems: "center", paddingTop: 170 }}>
       <div
@@ -86,7 +102,10 @@ export const Reel: React.FC<ReelProps> = ({
 }) => {
   const { fps } = useVideoConfig();
   const montati = useMemo(() => montaPezzi(pezzi), [pezzi]);
-  const captions = useMemo(() => paroleNelReel(parole, montati), [parole, montati]);
+  const captions = useMemo(
+    () => paroleNelReel(parole, montati),
+    [parole, montati],
+  );
 
   return (
     <AbsoluteFill style={{ backgroundColor: "black" }}>
@@ -97,7 +116,11 @@ export const Reel: React.FC<ReelProps> = ({
       ))}
       <Inserti inserti={inserti} pezzi={montati} y={insertiY} />
       {/* I sottotitoli sopra le grafiche: anche sui dati a tutto schermo si leggono. */}
-      <Sottotitoli captions={captions} paroleChiave={paroleChiave} y={sottotitoliY} />
+      <Sottotitoli
+        captions={captions}
+        paroleChiave={paroleChiave}
+        y={sottotitoliY}
+      />
       {gancio ? (
         <Sequence durationInFrames={Math.round(GANCIO_SECONDI * fps)}>
           <Gancio testo={gancio} />

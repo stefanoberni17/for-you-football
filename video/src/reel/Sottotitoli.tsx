@@ -14,15 +14,20 @@ import { stile } from "./stile";
 // Poche parole per volta: si leggono col telefono in mano.
 const CAMBIA_OGNI_MS = 900;
 
-const Pagina: React.FC<{ page: TikTokPage; chiave: Set<string>; y: number }> = ({
-  page,
-  chiave,
-  y,
-}) => {
+const Pagina: React.FC<{
+  page: TikTokPage;
+  chiave: Set<string>;
+  y: number;
+}> = ({ page, chiave, y }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const oraMs = page.startMs + (frame / fps) * 1000;
-  const entrata = spring({ frame, fps, config: { damping: 200 }, durationInFrames: 6 });
+  const entrata = spring({
+    frame,
+    fps,
+    config: { damping: 200 },
+    durationInFrames: 6,
+  });
 
   return (
     <AbsoluteFill
@@ -101,7 +106,11 @@ export const Sottotitoli: React.FC<{
   const { fps } = useVideoConfig();
   const chiave = useMemo(() => new Set(paroleChiave), [paroleChiave]);
   const { pages } = useMemo(
-    () => createTikTokStyleCaptions({ captions, combineTokensWithinMilliseconds: CAMBIA_OGNI_MS }),
+    () =>
+      createTikTokStyleCaptions({
+        captions,
+        combineTokensWithinMilliseconds: CAMBIA_OGNI_MS,
+      }),
     [captions],
   );
 

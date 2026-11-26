@@ -58,6 +58,23 @@ export type Inserto =
       y?: number;
     }
   | {
+      tipo: "freccia"; // scena a tutto schermo: la spinta dritta, corpo rigido
+      da: number;
+      a: number;
+      titolo: string;
+      sotto: string;
+      quando: number; // quando compare il sotto
+    }
+  | {
+      tipo: "corrispondenza"; // scena a tutto schermo: esercizio e partita, barra che si riempie
+      da: number;
+      a: number;
+      sopra: string; // frase iniziale
+      titolo: number; // quando compare il titolo
+      riempi: number; // quando la barra si riempie
+      fine: number; // quando compare la frase finale
+    }
+  | {
       tipo: "finale"; // frase di chiusura grande al centro
       da: number;
       a: number;

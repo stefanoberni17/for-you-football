@@ -314,3 +314,219 @@ export const Finale: React.FC<{ durata: number; righe: string[] }> = ({
     </AbsoluteFill>
   );
 };
+
+// Scene a tutto schermo (niente girato sotto): fondo verde foresta pieno.
+const FONDO_SCENA = "#08170f";
+
+const useScena = (durata: number) => {
+  const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const entra = interpolate(frame, [0, 8], [0, 1], {
+    extrapolateRight: "clamp",
+  });
+  const esce = interpolate(frame, [durata - 8, durata], [1, 0], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  return { frame, fps, vis: Math.min(entra, esce) };
+};
+
+const testoTitolo: React.CSSProperties = {
+  fontFamily: stile.font,
+  fontWeight: 800,
+  fontSize: 96,
+  lineHeight: 1.02,
+  color: stile.bianco,
+  textTransform: "uppercase",
+  textAlign: "center",
+};
+const testoSotto: React.CSSProperties = {
+  fontFamily: stile.fontAccento,
+  fontStyle: "italic",
+  fontWeight: 600,
+  fontSize: 64,
+  color: stile.verdeChiaro,
+  textAlign: "center",
+};
+
+export const Freccia: React.FC<{
+  durata: number;
+  titolo: string;
+  sotto: string;
+  quando: number;
+}> = ({ durata, titolo, sotto, quando }) => {
+  const { frame, fps, vis } = useScena(durata);
+  const linea = spring({
+    frame: frame - 4,
+    fps,
+    config: { damping: 200 },
+    durationInFrames: 24,
+  });
+  const s = spring({
+    frame: frame - quando,
+    fps,
+    config: { damping: 200 },
+    durationInFrames: 12,
+  });
+  const L = 760;
+  return (
+    <AbsoluteFill
+      style={{
+        background: FONDO_SCENA,
+        opacity: vis,
+        alignItems: "center",
+        justifyContent: "center",
+        paddingBottom: 420,
+      }}
+    >
+      <svg width={L + 80} height={120} style={{ overflow: "visible" }}>
+        <line
+          x1={40}
+          y1={60}
+          x2={40 + L * linea}
+          y2={60}
+          stroke={stile.verde}
+          strokeWidth={22}
+          strokeLinecap="round"
+        />
+        <polygon
+          points={`${40 + L * linea + 10},60 ${40 + L * linea - 50},18 ${40 + L * linea - 50},102`}
+          fill={stile.verde}
+          opacity={linea}
+        />
+      </svg>
+      <div style={{ ...testoTitolo, marginTop: 70 }}>{titolo}</div>
+      <div
+        style={{
+          ...testoSotto,
+          marginTop: 18,
+          opacity: s,
+          transform: `translateY(${(1 - s) * 20}px)`,
+        }}
+      >
+        {sotto}
+      </div>
+    </AbsoluteFill>
+  );
+};
+
+export const Corrispondenza: React.FC<{
+  durata: number;
+  sopra: string;
+  titolo: number;
+  riempi: number;
+  fine: number;
+}> = ({ durata, sopra, titolo, riempi, fine }) => {
+  const { frame, fps, vis } = useScena(durata);
+  const t = spring({
+    frame: frame - titolo,
+    fps,
+    config: { damping: 200 },
+    durationInFrames: 12,
+  });
+  const r = spring({
+    frame: frame - riempi,
+    fps,
+    config: { damping: 200 },
+    durationInFrames: 40,
+  });
+  const f = spring({
+    frame: frame - fine,
+    fps,
+    config: { damping: 200 },
+    durationInFrames: 12,
+  });
+  const sopraVis = interpolate(frame, [titolo - 6, titolo], [1, 0.35], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+  const LARGA = 820;
+  const etichetta = (testo: string, sotto: string) => (
+    <div style={{ width: 300, textAlign: "center" }}>
+      <div
+        style={{
+          fontFamily: stile.font,
+          fontWeight: 800,
+          fontSize: 54,
+          color: stile.bianco,
+        }}
+      >
+        {testo}
+      </div>
+      <div style={{ ...testoSotto, fontSize: 40 }}>{sotto}</div>
+    </div>
+  );
+  return (
+    <AbsoluteFill
+      style={{
+        background: FONDO_SCENA,
+        opacity: vis,
+        alignItems: "center",
+        paddingTop: 230,
+      }}
+    >
+      <div
+        style={{
+          fontFamily: stile.font,
+          fontWeight: 700,
+          fontSize: 58,
+          color: stile.bianco,
+          textAlign: "center",
+          maxWidth: 900,
+          opacity: sopraVis,
+        }}
+      >
+        {sopra}
+      </div>
+      <div
+        style={{
+          ...testoTitolo,
+          fontSize: 92,
+          color: stile.verde,
+          marginTop: 70,
+          opacity: t,
+          transform: `scale(${0.85 + 0.15 * t})`,
+        }}
+      >
+        Corrispondenza
+        <br />
+        dinamica
+      </div>
+      <div style={{ marginTop: 70, opacity: t }}>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            width: LARGA,
+          }}
+        >
+          {etichetta("ESERCIZIO", "in palestra")}
+          {etichetta("PARTITA", "in campo")}
+        </div>
+        <div
+          style={{
+            marginTop: 26,
+            width: LARGA,
+            height: 34,
+            borderRadius: 17,
+            background: "rgba(255,255,255,0.15)",
+            overflow: "hidden",
+          }}
+        >
+          <div
+            style={{
+              width: `${15 + 85 * r}%`,
+              height: "100%",
+              borderRadius: 17,
+              background: stile.verde,
+              boxShadow: `0 0 24px ${stile.verde}`,
+            }}
+          />
+        </div>
+        <div style={{ ...testoSotto, fontSize: 50, marginTop: 30, opacity: f }}>
+          più si somigliano, più forza porti in campo
+        </div>
+      </div>
+    </AbsoluteFill>
+  );
+};
