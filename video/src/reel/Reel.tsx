@@ -95,8 +95,9 @@ export const Reel: React.FC<ReelProps> = ({
           <Pezzo girato={girato} voltoY={voltoY} pezzo={p} />
         </Sequence>
       ))}
-      <Sottotitoli captions={captions} paroleChiave={paroleChiave} y={sottotitoliY} />
       <Inserti inserti={inserti} pezzi={montati} y={insertiY} />
+      {/* I sottotitoli sopra le grafiche: anche sui dati a tutto schermo si leggono. */}
+      <Sottotitoli captions={captions} paroleChiave={paroleChiave} y={sottotitoliY} />
       {gancio ? (
         <Sequence durationInFrames={Math.round(GANCIO_SECONDI * fps)}>
           <Gancio testo={gancio} />

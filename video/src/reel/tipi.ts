@@ -27,6 +27,41 @@ export type Inserto =
       a: number;
       y?: number; // altezza (0-1) solo per questo inserto
       tappe: { quando: number; etichetta: string; sotto?: string }[];
+    }
+  | {
+      tipo: "colonne"; // due concetti a confronto; la destra si accende a "accendi"
+      da: number;
+      a: number;
+      accendi: number;
+      sinistra: { titolo: string; sotto?: string };
+      destra: { titolo: string; sotto?: string };
+      y?: number;
+    }
+  | {
+      tipo: "numeri"; // dato di uno studio a tutto schermo, una riga alla volta
+      da: number;
+      a: number;
+      righe: {
+        quando: number;
+        valore: string;
+        etichetta: string;
+        spento?: boolean;
+      }[];
+      fonte: string;
+    }
+  | {
+      tipo: "chip"; // voci che si accendono una alla volta (es. muscoli che lavorano)
+      da: number;
+      a: number;
+      titolo: string;
+      voci: { quando: number; testo: string }[];
+      y?: number;
+    }
+  | {
+      tipo: "finale"; // frase di chiusura grande al centro
+      da: number;
+      a: number;
+      righe: string[];
     };
 
 export type ReelProps = {

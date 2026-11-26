@@ -9,6 +9,7 @@ import {
 } from "remotion";
 import { ALTEZZA, frameNelReel, INSERTI_TOP_Y } from "./montaggio";
 import type { PezzoMontato } from "./montaggio";
+import { Chip, Colonne, Finale, Numeri } from "./Grafiche";
 import { stile } from "./stile";
 import type { Inserto } from "./tipi";
 
@@ -280,6 +281,48 @@ export const Inserti: React.FC<{
                   sottotitolo={ins.sottotitolo}
                   durata={durata}
                 />
+              </Sequence>
+            );
+          }
+          if (ins.tipo !== "percorso") {
+            const da = frameNelReel(ins.da, pezzi);
+            const durata = frameNelReel(ins.a, pezzi) - da;
+            if (durata <= 0) return null;
+            const rel = (s: number) => frameNelReel(s, pezzi) - da;
+            return (
+              <Sequence
+                key={i}
+                from={da}
+                durationInFrames={durata}
+                layout="none"
+              >
+                {ins.tipo === "colonne" ? (
+                  <Colonne
+                    durata={durata}
+                    accendi={rel(ins.accendi)}
+                    sinistra={ins.sinistra}
+                    destra={ins.destra}
+                    y={ins.y ?? y}
+                  />
+                ) : ins.tipo === "numeri" ? (
+                  <Numeri
+                    durata={durata}
+                    righe={ins.righe.map((r) => ({
+                      ...r,
+                      frame: rel(r.quando),
+                    }))}
+                    fonte={ins.fonte}
+                  />
+                ) : ins.tipo === "chip" ? (
+                  <Chip
+                    durata={durata}
+                    titolo={ins.titolo}
+                    voci={ins.voci.map((v) => ({ ...v, frame: rel(v.quando) }))}
+                    y={ins.y ?? y}
+                  />
+                ) : (
+                  <Finale durata={durata} righe={ins.righe} />
+                )}
               </Sequence>
             );
           }
