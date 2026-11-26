@@ -208,7 +208,7 @@ export const reel06: ReelProps = {
     {
       tipo: "colonne",
       da: 39.25,
-      a: 47.27,
+      a: 47.2,
       accendi: 44.47,
       sinistra: { titolo: "FORZA", sotto: "in palestra" },
       destra: { titolo: "MOVIMENTO", sotto: "in campo" },
@@ -219,6 +219,6 @@ export const reel06: ReelProps = {
     { da: 14.29, a: 28.07, stretto: false },
     { da: 28.07, a: 30.07, stretto: false },
     { da: 30.07, a: 39.27, stretto: false },
-    { da: 39.27, a: 47.27, stretto: false },
+    { da: 39.27, a: 47.2, stretto: false },
   ],
 };
