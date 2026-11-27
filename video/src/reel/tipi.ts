@@ -75,6 +75,37 @@ export type Inserto =
       fine: number; // quando compare la frase finale
     }
   | {
+      tipo: "linea"; // grafico a linea a tutto schermo: palestra → partita, la forza sale
+      da: number;
+      a: number;
+      titolo: number;
+      traccia: number;
+      tracciaFine: number;
+      punto: number; // quando si accende "il contrasto"
+    }
+  | {
+      tipo: "barre3"; // tre colonne con due barre (forza costruita, somiglianza al gesto)
+      da: number;
+      a: number;
+      evidenzia: number; // quando si accende la colonna in mezzo
+      colonne: {
+        titolo: string;
+        quando: number;
+        forza: number;
+        somiglianza: number;
+        forzaDa: number;
+        somiglianzaDa: number;
+      }[];
+    }
+  | {
+      tipo: "ponte"; // tre nodi collegati, quello in mezzo si accende
+      da: number;
+      a: number;
+      sinistra: number;
+      destra: number;
+      centro: number;
+    }
+  | {
       tipo: "finale"; // frase di chiusura grande al centro
       da: number;
       a: number;
@@ -90,6 +121,9 @@ export type ReelProps = {
   // Parole da mettere in corsivo verde chiaro (minuscole, senza punteggiatura).
   paroleChiave?: string[];
   gancio?: string; // frase in alto nei primi secondi
+  // Gancio a effetto: due righe che sbattono dentro (la seconda in rosso), tempi nel girato.
+  // I sottotitoli partono dopo "fine".
+  gancioForte?: { riga1: string; riga2: string; quando2: number; fine: number };
   inserti?: Inserto[];
   // Altezza (0-1) di sottotitoli e inserti: di default sotto il volto. Per i girati a terra
   // (esercizi) si spostano dove non coprono il corpo.

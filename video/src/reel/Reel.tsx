@@ -10,6 +10,7 @@ import {
   useVideoConfig,
 } from "remotion";
 import {
+  frameNelReel,
   GANCIO_SECONDI,
   inquadratura,
   montaPezzi,
@@ -17,6 +18,7 @@ import {
   ZOOM_DERIVA,
 } from "./montaggio";
 import type { PezzoMontato } from "./montaggio";
+import { GancioForte } from "./Grafiche";
 import { Inserti } from "./Inserti";
 import { Sottotitoli } from "./Sottotitoli";
 import { stile } from "./stile";
@@ -96,16 +98,20 @@ export const Reel: React.FC<ReelProps> = ({
   parole,
   paroleChiave = [],
   gancio,
+  gancioForte,
   inserti = [],
   sottotitoliY,
   insertiY,
 }) => {
   const { fps } = useVideoConfig();
   const montati = useMemo(() => montaPezzi(pezzi), [pezzi]);
-  const captions = useMemo(
-    () => paroleNelReel(parole, montati),
-    [parole, montati],
-  );
+  const captions = useMemo(() => {
+    const tutte = paroleNelReel(parole, montati);
+    if (!gancioForte) return tutte;
+    // Durante il gancio a effetto niente sottotitoli: le parole sono già scritte grandi.
+    const fineMs = (frameNelReel(gancioForte.fine, montati) / fps) * 1000;
+    return tutte.filter((c) => c.startMs >= fineMs - 50);
+  }, [parole, montati, gancioForte, fps]);
 
   return (
     <AbsoluteFill style={{ backgroundColor: "black" }}>
@@ -124,6 +130,19 @@ export const Reel: React.FC<ReelProps> = ({
       {gancio ? (
         <Sequence durationInFrames={Math.round(GANCIO_SECONDI * fps)}>
           <Gancio testo={gancio} />
+        </Sequence>
+      ) : null}
+      {gancioForte ? (
+        <Sequence
+          durationInFrames={frameNelReel(gancioForte.fine, montati)}
+          layout="none"
+        >
+          <GancioForte
+            riga1={gancioForte.riga1}
+            riga2={gancioForte.riga2}
+            quando2={frameNelReel(gancioForte.quando2, montati)}
+            durata={frameNelReel(gancioForte.fine, montati)}
+          />
         </Sequence>
       ) : null}
     </AbsoluteFill>

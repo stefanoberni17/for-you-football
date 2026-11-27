@@ -14,8 +14,11 @@ import {
   Colonne,
   Corrispondenza,
   Finale,
+  Barre3,
   Freccia,
+  GraficoLinea,
   Numeri,
+  Ponte,
 } from "./Grafiche";
 import { stile } from "./stile";
 import type { Inserto } from "./tipi";
@@ -341,6 +344,32 @@ export const Inserti: React.FC<{
                     titolo={rel(ins.titolo)}
                     riempi={rel(ins.riempi)}
                     fine={rel(ins.fine)}
+                  />
+                ) : ins.tipo === "linea" ? (
+                  <GraficoLinea
+                    durata={durata}
+                    titolo={rel(ins.titolo)}
+                    traccia={rel(ins.traccia)}
+                    tracciaFine={rel(ins.tracciaFine)}
+                    punto={rel(ins.punto)}
+                  />
+                ) : ins.tipo === "barre3" ? (
+                  <Barre3
+                    durata={durata}
+                    evidenzia={rel(ins.evidenzia)}
+                    colonne={ins.colonne.map((c) => ({
+                      ...c,
+                      quando: rel(c.quando),
+                      forzaDa: rel(c.forzaDa),
+                      somiglianzaDa: rel(c.somiglianzaDa),
+                    }))}
+                  />
+                ) : ins.tipo === "ponte" ? (
+                  <Ponte
+                    durata={durata}
+                    sinistra={rel(ins.sinistra)}
+                    destra={rel(ins.destra)}
+                    centro={rel(ins.centro)}
                   />
                 ) : (
                   <Finale durata={durata} righe={ins.righe} />
